@@ -4,6 +4,9 @@
  */
 
 // Production Mock Dataset Infrastructure
+const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co'
+const SUPABASE_KEY = 'https://xxigkehuqtwaihyxaahk.supabase.co/rest/v1/Submissions'
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 const VERIFIED_PRICES_DATASET = [
     {
         id: 1,
@@ -139,9 +142,126 @@ function initPriceListingFilters() {
 /**
  * Coordinates calculation routines and renders cards array configuration
  */
-function processingPipeAndRender() {
+async function processingPipeAndRender() {
     const container = document.getElementById('pricesContainer');
     if (!container) return;
+
+    container.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-secondary);">Loading submissions...</div>`;
+
+    // Fetch only verified entries from Supabase
+    const { data, error } = await supabase
+        .from('submissions')
+        .select('*')
+        .eq('status', 'Verified')
+
+    if (error) {
+        container.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-secondary);">Could not load data. Please try again.</div>`;
+        console.error(error);
+        return;
+    }
+
+    // Map Supabase column names to what the rest of the code expects
+    let analyticalOutput = data.map(item => ({
+        id: item.id,
+        workshopName: item.workshop_name,
+        suburb: item.suburb,
+        city: item.city,
+        carMake: item.car_brand,
+        carModel: item.car_model,
+        year: item.car_year,
+        repairType: item.repair_type,
+        partDescription: item.part_description,
+        amountQuoted: item.amount_quoted,
+        amountPaid: item.amount_paid,
+        priceChanged: item.price_changed,
+        pricingExplained: item.pricing_explained,
+        newProblems: item.new_problems,
+        rating: item.rating,
+        notes: item.notes,
+        status: item.status,
+        timestamp: item.created_at
+    }));
+
+    // Direct Extraction values
+    const querySuburb = document.getElementById('filterSuburb').value.trim().toLowerCase();
+    const queryMake = document.getElementById('filterMake').value;
+    const queryRepair = document.getElementById('filterRepair').value;
+    const queryRating = document.getElementById('filterRating').value;
+    const sortingToken = document.getElementById('sortBy').value;
+
+    // Filter pipeline
+    analyticalOutput = analyticalOutput.filter(item => {
+        if (querySuburb && !item.suburb.toLowerCase().includes(querySuburb)) return false;
+        if (queryMake !== "All" && item.carMake !== queryMake) return false;
+        if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
+        if (queryRating !== "All") {
+            const floorLimit = parseInt(queryRating, 10);
+            if (item.rating < floorLimit) return false;
+        }
+        return true;
+    });
+
+    // Sorting
+    analyticalOutput.sort((alpha, beta) => {
+        switch (sortingToken) {
+            case "highestAmount": return beta.amountPaid - alpha.amountPaid;
+            case "lowestAmount": return alpha.amountPaid - beta.amountPaid;
+            case "lowestRated": return alpha.rating - beta.rating;
+            case "mostRecent":
+            default: return new Date(beta.timestamp) - new Date(alpha.timestamp);
+        }
+    });
+
+    if (analyticalOutput.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
+                <p style="font-size: 1.2rem;">No verified repairs match your filter query combinations.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Try adjusting structural scopes or clearing fields.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = analyticalOutput.map(entry => {
+        const formattedCost = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(entry.amountPaid);
+        const quoteDeltaMarkup = parseQuoteDifferenceBadge(entry.priceChanged);
+        const cascadingDefectsMarkup = entry.newProblems === "Yes"
+            ? `<span class="badge badge-danger">New Problems Appeared</span>`
+            : `<span class="badge badge-neutral">No Post-Repair Issues</span>`;
+
+        let starsElement = "";
+        for (let idx = 1; idx <= 5; idx++) {
+            starsElement += idx <= entry.rating ? "&#9733;" : "&#9734;";
+        }
+
+        const calculatedDateStr = convertToMonthYearFormat(entry.timestamp);
+
+        return `
+            <article class="price-card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="workshop-title">${escapeHTML(entry.workshopName)}</h3>
+                        <span class="suburb-label">${escapeHTML(entry.suburb)}, ${escapeHTML(entry.city)}</span>
+                    </div>
+                    <span class="badge badge-success">${entry.status}</span>
+                </div>
+                <div>
+                    <div class="car-details">${escapeHTML(entry.carMake)} ${escapeHTML(entry.carModel)} (${entry.year})</div>
+                    <div class="repair-type">${escapeHTML(entry.repairType)} — <span style="color: var(--text-secondary); font-size: 0.95rem;">${escapeHTML(entry.partDescription)}</span></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                    <div class="price-display">${formattedCost}</div>
+                    <div class="rating-stars" title="Rating: ${entry.rating}/5">${starsElement}</div>
+                </div>
+                <div class="card-meta-row">
+                    ${quoteDeltaMarkup}
+                    ${cascadingDefectsMarkup}
+                </div>
+                ${entry.notes ? `<p class="card-notes">${escapeHTML(entry.notes)}</p>` : ''}
+                <div class="card-date">Repaired: ${calculatedDateStr}</div>
+            </article>
+        `;
+    }).join('');
+}
 
     // Direct Extraction values
     const querySuburb = document.getElementById('filterSuburb').value.trim().toLowerCase();
