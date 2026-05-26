@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Repair Prices - Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">VERIYO</a>
+        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="prices.html">Browse Prices</a></li>
+            <li><a href="report.html">Report a Repair</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        
+        <header style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Verified Repair Benchmarks</h1>
+            <p style="color: var(--text-secondary);">Examine authentic cost indices generated entirely from verified invoices submitted across your region.</p>
+        </header>
+
+        <section class="filter-wrapper" aria-label="Data Filter Controls">
+            <div class="filter-grid">
+                
+                <div class="filter-group">
+                    <label for="filterSuburb">Filter by Suburb</label>
+                    <input type="text" id="filterSuburb" class="form-control" placeholder="e.g. Mayfair, Rosebank...">
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterMake">Car Make</label>
+                    <select id="filterMake" class="form-control">
+                        <option value="All">All Makes</option>
+                        <option value="Toyota">Toyota</option>
+                        <option value="VW">VW</option>
+                        <option value="Ford">Ford</option>
+                        <option value="Hyundai">Hyundai</option>
+                        <option value="Kia">Kia</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Mercedes">Mercedes</option>
+                        <option value="Nissan">Nissan</option>
+                        <option value="Mazda">Mazda</option>
+                        <option value="Suzuki">Suzuki</option>
+                        <option value="Renault">Renault</option>
+                        <option value="Unknown">Unknown/Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterRepair">Repair Type</label>
+                    <select id="filterRepair" class="form-control">
+                        <option value="All">All Mechanical Subsystems</option>
+                        <option value="Oil Change">Oil Change</option>
+                        <option value="Minor Service">Minor Service</option>
+                        <option value="Major Service">Major Service</option>
+                        <option value="Brakes">Brakes</option>
+                        <option value="Clutch">Clutch</option>
+                        <option value="Tyres">Tyres</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="Engine">Engine</option>
+                        <option value="Gearbox">Gearbox</option>
+                        <option value="Body Work">Body Work</option>
+                        <option value="Suspension">Suspension</option>
+                        <option value="Sound Installation">Sound Installation</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="filterRating">Rating Threshold</label>
+                    <select id="filterRating" class="form-control">
+                        <option value="All">All Ratings</option>
+                        <option value="1">1 Star and above</option>
+                        <option value="2">2 Stars and above</option>
+                        <option value="3">3 Stars and above</option>
+                        <option value="4">4 Stars and above</option>
+                        <option value="5">5 Stars only</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy" class="form-control">
+                        <option value="mostRecent">Most Recent</option>
+                        <option value="highestAmount">Highest Amount</option>
+                        <option value="lowestAmount">Lowest Amount</option>
+                        <option value="lowestRated">Lowest Rated</option>
+                    </select>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="pricesContainer" class="prices-grid" aria-live="polite">
+            </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Veriyo | Built for South African drivers</p>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="prices.js"></script>
+</body>
+</html>

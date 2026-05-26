@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Repair - Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-logo">VERIYO</a>
+        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="prices.html">Browse Prices</a></li>
+            <li><a href="report.html">Report a Repair</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        
+        <div class="form-container">
+            <header class="form-header">
+                <h2>Share Your Experience</h2>
+                <p>Your transparent feedback directly prevents fellow South African motorists from facing predatory invoices. Submission context is kept entirely anonymous.</p>
+            </header>
+
+            <form id="reportRepairForm" novalidate autocomplete="on">
+                
+                <div class="form-group">
+                    <label for="workshopName">Workshop Name *</label>
+                    <input type="text" id="workshopName" class="form-control" required placeholder="e.g. Randburg Auto Clinic">
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="suburb">Suburb *</label>
+                        <input type="text" id="suburb" class="form-control" required placeholder="e.g. Ferndale">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City *</label>
+                        <input type="text" id="city" class="form-control" value="Johannesburg" required>
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="carMake">Car Make *</label>
+                        <select id="carMake" class="form-control" required>
+                            <option value="" disabled selected>Select Make</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="VW">VW</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Kia">Kia</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Mercedes">Mercedes</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Mazda">Mazda</option>
+                            <option value="Suzuki">Suzuki</option>
+                            <option value="Renault">Renault</option>
+                            <option value="Unknown">Unknown/Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="carModel">Car Model *</label>
+                        <input type="text" id="carModel" class="form-control" required placeholder="e.g. Polo, Hilux">
+                    </div>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="carYear">Year of Vehicle *</label>
+                        <input type="number" id="carYear" class="form-control" min="1990" max="2025" required placeholder="e.g. 2018">
+                    </div>
+                    <div class="form-group">
+                        <label for="repairType">Type of Repair *</label>
+                        <select id="repairType" class="form-control" required>
+                            <option value="" disabled selected>Select repair segment</option>
+                            <option value="Oil Change">Oil Change</option>
+                            <option value="Minor Service">Minor Service</option>
+                            <option value="Major Service">Major Service</option>
+                            <option value="Brakes">Brakes</option>
+                            <option value="Clutch">Clutch</option>
+                            <option value="Tyres">Tyres</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Engine">Engine</option>
+                            <option value="Gearbox">Gearbox</option>
+                            <option value="Body Work">Body Work</option>
+                            <option value="Suspension">Suspension</option>
+                            <option value="Sound Installation">Sound Installation</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="partDescription">Part or Service Description *</label>
+                    <span class="label-desc">Specify exactly what was replaced or checked (e.g. "Front brake pads and discs machining").</span>
+                    <input type="text" id="partDescription" class="form-control" required placeholder="e.g. LUK Clutch Kit replacement">
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="amountQuoted">Amount Quoted (Rands)</label>
+                        <span class="label-desc">What were you quoted upfront?</span>
+                        <input type="number" id="amountQuoted" class="form-control" placeholder="e.g. 4500">
+                    </div>
+                    <div class="form-group">
+                        <label for="amountPaid">Amount Paid (Rands) *</label>
+                        <span class="label-desc">Absolute final invoice cost.</span>
+                        <input type="number" id="amountPaid" class="form-control" required placeholder="e.g. 4850">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="priceChanged">Did the final price differ from the quote? *</label>
+                    <select id="priceChanged" class="form-control" required>
+                        <option value="No it matched" selected>No, it matched exactly</option>
+                        <option value="Yes it was higher">Yes, it was higher than quoted</option>
+                        <option value="Yes it was lower">Yes, it was lower than quoted</option>
+                        <option value="No quote was given">No upfront quote was given</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="pricingExplained">Was pricing explained clearly? *</label>
+                    <select id="pricingExplained" class="form-control" required>
+                        <option value="Yes itemized receipt">Yes, full breakdown with an itemized receipt</option>
+                        <option value="Partial explanation">Partial explanation provided verbally</option>
+                        <option value="Just a total">Nothing itemized, just presented a total balance</option>
+                        <option value="Nothing explained">Nothing explained and zero visibility provided</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label bit="newProblems">Did new problems appear after the repair? *</label>
+                    <select id="newProblems" class="form-control" required>
+                        <option value="No">No, car runs perfectly</option>
+                        <option value="Yes">Yes, immediate tracking operational issues emerged</option>
+                        <option value="Not sure yet">Uncertain / tracking performance currently</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Overall Rating *</label>
+                    <div class="star-rating-picker" id="starRatingSelector" role="radiogroup" aria-label="Select your service score out of 5 stars">
+                        <span data-value="1" role="radio" aria-checked="false">&#9734;</span>
+                        <span data-value="2" role="radio" aria-checked="false">&#9734;</span>
+                        <span data-value="3" role="radio" aria-checked="false">&#9734;</span>
+                        <span data-value="4" role="radio" aria-checked="false">&#9734;</span>
+                        <span data-value="5" role="radio" aria-checked="false">&#9734;</span>
+                    </div>
+                    <input type="hidden" id="overallRatingValue" value="0" required>
+                </div>
+
+                <div class="form-group">
+                    <div class="counter-container">
+                        <label for="additionalNotes">Additional Notes</label>
+                        <span id="charCount" class="char-counter">0 / 500 characters</span>
+                    </div>
+                    <textarea id="additionalNotes" class="form-control" rows="4" maxlength="500" placeholder="Elaborate on turnaround timing, staff interactions, or physical outcomes contextually..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Did you keep a receipt?</label>
+                    <div class="radio-checkbox-group">
+                        <label class="radio-label">
+                            <input type="radio" name="keptReceipt" value="Yes"> Yes, upload proof
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="keptReceipt" value="No" checked> No receipt available
+                        </label>
+                    </div>
+                </div>
+
+                <div id="receiptUploadContainer" class="form-group conditional-container hidden">
+                    <label for="receiptImage">Upload Invoice Proof Image</label>
+                    <span class="label-desc" style="margin-bottom:0.5rem;">We blur internal identification and license numbers completely. Stripped for auditing.</span>
+                    <input type="file" id="receiptImage" class="form-control" accept="image/*">
+                </div>
+
+                <div style="margin: 2rem 0; padding-top: 1.5rem; border-top: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1.1rem;">Enter the Monthly Draw (Airtime Reward)</h4>
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="drawName">First Name</label>
+                            <input type="text" id="drawName" class="form-control" placeholder="Optional">
+                        </div>
+                        <div class="form-group">
+                            <label for="drawWhatsApp">WhatsApp Number</label>
+                            <input type="tel" id="drawWhatsApp" class="form-control" placeholder="Optional">
+                        </div>
+                    </div>
+                    <span class="label-desc" style="display:block; margin-top:-0.5rem;">Optional. Only used to deliver your R50 airtime prize if you win. We never share it.</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Submit My Experience</button>
+
+            </form>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Veriyo | Built for South African drivers</p>
+    </footer>
+
+    <script src="main.js"></script>
+    <script src="forms.js"></script>
+</body>
+</html>

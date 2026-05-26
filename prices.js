@@ -1,0 +1,281 @@
+/**
+ * Veriyo | Built for South African drivers
+ * Price Transparency Verification Engine & Live Queries
+ */
+
+// Production Mock Dataset Infrastructure
+const VERIFIED_PRICES_DATASET = [
+    {
+        id: 1,
+        workshopName: "Autostyle Motorsport JHB",
+        suburb: "Mayfair",
+        city: "Johannesburg",
+        carMake: "Unknown",
+        carModel: "Unknown",
+        year: 2024,
+        repairType: "Sound Installation",
+        partDescription: "Amplifier installation",
+        amountQuoted: 0,
+        amountPaid: 1800,
+        priceChanged: "No quote given",
+        pricingExplained: "Nothing explained",
+        newProblems: "Yes",
+        rating: 1,
+        notes: "Returned 4 times. Wires swapped incorrectly. Sold two sets of faulty RCA splitters. Customer fixed it himself.",
+        status: "Verified",
+        timestamp: "2024-11-15"
+    },
+    {
+        id: 2,
+        workshopName: "Muscle Auto",
+        suburb: "Johannesburg",
+        city: "Johannesburg",
+        carMake: "Unknown",
+        carModel: "Bakkie",
+        year: 2024,
+        repairType: "Engine",
+        partDescription: "Overheating problem",
+        amountQuoted: 30000,
+        amountPaid: 12900,
+        priceChanged: "Yes it was lower",
+        pricingExplained: "Just a total",
+        newProblems: "Yes",
+        rating: 1,
+        notes: "Paid R12,900. Car leaked oil within 30 minutes. Could not start. Had to be towed. Customer took out a loan to afford the repair. Still repaying 3 months later.",
+        status: "Verified",
+        timestamp: "2024-12-05"
+    },
+    {
+        id: 3,
+        workshopName: "Auto Care Workshop Auckland Park",
+        suburb: "Auckland Park",
+        city: "Johannesburg",
+        carMake: "Unknown",
+        carModel: "Unknown",
+        year: 2025,
+        repairType: "Electrical",
+        partDescription: "Lightbulb replacement full check",
+        amountQuoted: 0,
+        amountPaid: 140,
+        priceChanged: "No quote given",
+        pricingExplained: "Yes itemized receipt",
+        newProblems: "No",
+        rating: 5,
+        notes: "Charged R140 for full car lightbulb check and replacement. Others quoted R800 for same job. Excellent honest pricing.",
+        status: "Verified",
+        timestamp: "2025-02-20"
+    },
+    {
+        id: 4,
+        workshopName: "Dekra Turfontein",
+        suburb: "Turfontein",
+        city: "Johannesburg",
+        carMake: "Unknown",
+        carModel: "Unknown",
+        year: 2026,
+        repairType: "Other",
+        partDescription: "Roadworthy inspection",
+        amountQuoted: 0,
+        amountPaid: 795,
+        priceChanged: "No quote given",
+        pricingExplained: "Just a total",
+        newProblems: "No",
+        rating: 1,
+        notes: "Vehicle failed inspection. Inspector refused to show where the scratch was. Suspected deliberate failure to extract repeat payment.",
+        status: "Verified",
+        timestamp: "2026-04-12"
+    },
+    {
+        id: 5,
+        workshopName: "Joburg Auto Tech",
+        suburb: "Johannesburg CBD",
+        city: "Johannesburg",
+        carMake: "Toyota",
+        carModel: "Corolla",
+        year: 2025,
+        repairType: "Minor Service",
+        partDescription: "Oil change filter service",
+        amountQuoted: 1200,
+        amountPaid: 1200,
+        priceChanged: "No it matched",
+        pricingExplained: "Yes itemized receipt",
+        newProblems: "No",
+        rating: 5,
+        notes: "Price matched quote exactly. Friendly and professional. Quick turnaround.",
+        status: "Verified",
+        timestamp: "2025-08-18"
+    }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Only invoke logic if target render zone exists on page lifecycle load
+    if (document.getElementById('pricesContainer')) {
+        initPriceListingFilters();
+    }
+});
+
+/**
+ * Initializes listeners for standard input manipulation components
+ */
+function initPriceListingFilters() {
+    const filterSuburb = document.getElementById('filterSuburb');
+    const filterMake = document.getElementById('filterMake');
+    const filterRepair = document.getElementById('filterRepair');
+    const filterRating = document.getElementById('filterRating');
+    const sortByInput = document.getElementById('sortBy');
+
+    const executionTriggers = [filterSuburb, filterMake, filterRepair, filterRating, sortByInput];
+    executionTriggers.forEach(element => {
+        if (element) {
+            element.addEventListener('input', processingPipeAndRender);
+            element.addEventListener('change', processingPipeAndRender);
+        }
+    });
+
+    // Execute absolute initial display draw
+    processingPipeAndRender();
+}
+
+/**
+ * Coordinates calculation routines and renders cards array configuration
+ */
+function processingPipeAndRender() {
+    const container = document.getElementById('pricesContainer');
+    if (!container) return;
+
+    // Direct Extraction values
+    const querySuburb = document.getElementById('filterSuburb').value.trim().toLowerCase();
+    const queryMake = document.getElementById('filterMake').value;
+    const queryRepair = document.getElementById('filterRepair').value;
+    const queryRating = document.getElementById('filterRating').value;
+    const sortingToken = document.getElementById('sortBy').value;
+
+    // Filter pipeline logic - Restricting elements explicitly strictly to Verified
+    let analyticalOutput = VERIFIED_PRICES_DATASET.filter(item => {
+        if (item.status !== "Verified") return false;
+
+        if (querySuburb && !item.suburb.toLowerCase().includes(querySuburb)) return false;
+        if (queryMake !== "All" && item.carMake !== queryMake) return false;
+        if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
+
+        if (queryRating !== "All") {
+            const floorLimit = parseInt(queryRating, 10);
+            if (item.rating < floorLimit) return false;
+        }
+
+        return true;
+    });
+
+    // Multi-criteria sorting matrices
+    analyticalOutput.sort((alpha, beta) => {
+        switch (sortingToken) {
+            case "highestAmount":
+                return beta.amountPaid - alpha.amountPaid;
+            case "lowestAmount":
+                return alpha.amountPaid - beta.amountPaid;
+            case "lowestRated":
+                return alpha.rating - beta.rating;
+            case "mostRecent":
+            default:
+                return new Date(beta.timestamp) - new Date(alpha.timestamp);
+        }
+    });
+
+    // Render operations execution
+    if (analyticalOutput.length === 0) {
+        container.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
+                <p style="font-size: 1.2rem;">No verified repairs match your filter query combinations.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Try adjusting structural scopes or clearing fields.</p>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = analyticalOutput.map(entry => {
+        // String converters for South African Currency Formatting standards
+        const formattedCost = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(entry.amountPaid);
+        
+        // Evaluates internal flags to draw respective markup badges
+        const quoteDeltaMarkup = parseQuoteDifferenceBadge(entry.priceChanged);
+        const cascadingDefectsMarkup = entry.newProblems === "Yes" 
+            ? `<span class="badge badge-danger">New Problems Appeared</span>` 
+            : `<span class="badge badge-neutral">No Post-Repair Issues</span>`;
+
+        // Render graphical star configurations safely
+        let starsElement = "";
+        for (let idx = 1; idx <= 5; idx++) {
+            starsElement += idx <= entry.rating ? "&#9733;" : "&#9734;";
+        }
+
+        // Extrapolates standard ISO dates to clean localized views
+        const calculatedDateStr = convertToMonthYearFormat(entry.timestamp);
+
+        return `
+            <article class="price-card">
+                <div class="card-header">
+                    <div>
+                        <h3 class="workshop-title">${escapeHTML(entry.workshopName)}</h3>
+                        <span class="suburb-label">${escapeHTML(entry.suburb)}, ${escapeHTML(entry.city)}</span>
+                    </div>
+                    <span class="badge badge-success">${entry.status}</span>
+                </div>
+                
+                <div>
+                    <div class="car-details">${escapeHTML(entry.carMake)} ${escapeHTML(entry.carModel)} (${entry.year})</div>
+                    <div class="repair-type">${escapeHTML(entry.repairType)} — <span style="color: var(--text-secondary); font-size: 0.95rem;">${escapeHTML(entry.partDescription)}</span></div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                    <div class="price-display">${formattedCost}</div>
+                    <div class="rating-stars" title="Rating: ${entry.rating}/5">${starsElement}</div>
+                </div>
+
+                <div class="card-meta-row">
+                    ${quoteDeltaMarkup}
+                    ${cascadingDefectsMarkup}
+                </div>
+
+                ${entry.notes ? `<p class="card-notes">${escapeHTML(entry.notes)}</p>` : ''}
+                
+                <div class="card-date">Repaired: ${calculatedDateStr}</div>
+            </article>
+        `;
+    }).join('');
+}
+
+/**
+ * Contextual Badge styling assignments
+ */
+function parseQuoteDifferenceBadge(statusValue) {
+    if (statusValue.includes("higher")) {
+        return `<span class="badge badge-danger">Price Changed (Higher)</span>`;
+    } else if (statusValue.includes("lower")) {
+        return `<span class="badge badge-success">Price Changed (Lower)</span>`;
+    } else if (statusValue.includes("matched")) {
+        return `<span class="badge badge-success">Matched Quote Exactly</span>`;
+    } else {
+        return `<span class="badge badge-neutral">No Upfront Quote Given</span>`;
+    }
+}
+
+/**
+ * Conversions function for timestamps
+ */
+function convertToMonthYearFormat(isoDateString) {
+    const targetObj = new Date(isoDateString);
+    if (isNaN(targetObj.getTime())) return "Unknown Date";
+    const calendarMonths = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    return `${calendarMonths[targetObj.getMonth()]} ${targetObj.getFullYear()}`;
+}
+
+/**
+ * XSS Deflection Mechanism
+ */
+function escapeHTML(unsafeString) {
+    return unsafeString
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
