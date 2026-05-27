@@ -84,8 +84,8 @@ function initRepairReportingModules(formNode) {
         // Collect all form values
         const submission = {
             workshop_name: document.getElementById('workshopName').value.trim(),
-            suburb: document.getElementById('workshopSuburb').value.trim(),
-            city: document.getElementById('workshopCity').value.trim(),
+            suburb: document.getElementById('suburb').value.trim(),
+            city: document.getElementById('city').value.trim(),
             car_brand: document.getElementById('carMake').value,
             car_model: document.getElementById('carModel').value.trim(),
             car_year: parseInt(document.getElementById('carYear').value, 10),
@@ -99,7 +99,7 @@ function initRepairReportingModules(formNode) {
             rating: parseInt(internalRatingStorage.value, 10),
             notes: document.getElementById('additionalNotes').value.trim(),
             firstname: document.getElementById('drawName') ? document.getElementById('drawName').value.trim() : '',
-            whatsapp: document.getElementById('drawWhatsapp') ? document.getElementById('drawWhatsapp').value.trim() : '',
+            whatsapp: document.getElementById('drawWhatsApp') ? document.getElementById('drawWhatsApp').value.trim() : '',
             status: 'Pending'
         }
 
