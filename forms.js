@@ -112,55 +112,54 @@ function initWorkshopListingModules(formNode) {
     });
 // Capture submit pipelines and output direct verification responses
 formNode.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    // 1. Gather all data from your form fields right when the user clicks submit
-    const submission = {
-        workshop_name: document.getElementById('workshopName')?.value.trim() || '',
-        suburb: document.getElementById('suburb')?.value.trim() || '',
-        city: document.getElementById('city')?.value.trim() || '',
-        car_brand: document.getElementById('carMake')?.value || '',
-        car_model: document.getElementById('carModel')?.value.trim() || '',
-        car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
-        repair_type: document.getElementById('repairType')?.value || '',
-        part_description: document.getElementById('partDescription')?.value.trim() || '',
-        amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
-        amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
-        price_changed: document.getElementById('priceChanged')?.value || '',
-        pricing_explained: document.getElementById('pricingExplained')?.value || '',
-        new_problems: document.getElementById('newProblems')?.value || '',
+        event.preventDefault();
         
-        // This grabs your star rating value from your internal storage variable
-        rating: typeof internalRatingStorage !== 'undefined' ? parseInt(internalRatingStorage.value, 10) : 5,
-        
-        notes: document.getElementById('additionalNotes')?.value.trim() || '',
-        status: 'Pending',
-        first_name: document.getElementById('drawName')?.value.trim() || '',
-        whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
-    };
+        // Enforce Rating Verification check prior to allowing dispatch pipeline
+        if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
+            alert("Please select a structural rating star score before submitting.");
+            return;
+        }
 
-    // 2. The Constraint: Push to Supabase and wait for the response
-    // Replace 'your_table_name' with your actual Supabase table name
-    const { data, error } = await _supabase
-        .from('your_table_name') 
-        .insert([submission]);
+        const submission = {
+            workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+            suburb: document.getElementById('suburb')?.value.trim() || '',
+            city: document.getElementById('city')?.value.trim() || '',
+            car_brand: document.getElementById('carMake')?.value || '',
+            car_model: document.getElementById('carModel')?.value.trim() || '',
+            car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
+            repair_type: document.getElementById('repairType')?.value || '',
+            part_description: document.getElementById('partDescription')?.value.trim() || '',
+            amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
+            amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
+            price_changed: document.getElementById('priceChanged')?.value || '',
+            pricing_explained: document.getElementById('pricingExplained')?.value || '',
+            new_problems: document.getElementById('newProblems')?.value || '',
+            rating: parseInt(internalRatingStorage.value, 10),
+            notes: document.getElementById('additionalNotes')?.value.trim() || '',
+            status: 'Pending',
+            first_name: document.getElementById('drawName')?.value.trim() || '',
+            whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
+        };
 
-    // 3. Error Handling Constraint: Stop the code if the database fails
-    if (error) {
-        console.error("Supabase Error:", error.message);
-        alert("Submission failed to save: " + error.message);
-        return; // Exits the function completely. The thank-you screen will NOT show.
-    }
+        const { data, error } = await _supabase
+            .from('your_table_name')
+            .insert([submission]);
 
-    // 4. Success Execution: This ONLY runs if Supabase accepts the data above
-    const destinationWrapper = formNode.parentElement;
-    destinationWrapper.innerHTML = `
-        <div class="thank-you-view">
-            <div class="icon-success">&#22C5;</div>
-            <h3>Registration Logged</h3>
-            <p>Thank you for listing your operational profile. We will manually review your credentials and get back to your administration branch within 48 hours.</p>
-            <a href="index.html" class="btn btn-secondary">Return to Homepage</a>
-        </div>
-    `;
-});
+        if (error) {
+            console.error("Supabase Error:", error.message);
+            alert("Submission failed to save: " + error.message);
+            return;
+        }
+
+        // Standard client-side HTML5 constraints verified, transition UI container state
+        const targetContainer = formNode.parentElement;
+        targetContainer.innerHTML = `
+            <div class="thank-you-view">
+                <div class="icon-success">&#22C5;</div>
+                <h3>Thank You!</h3>
+                <p>Your submission is under operational review by our audit team. If approved, it will appear on the verified Prices dashboard page within 24 hours.</p>
+                <a href="prices.html" class="btn btn-primary">Go to Browse Prices</a>
+            </div>
+        `;
+    });
 }
