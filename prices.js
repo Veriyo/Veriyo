@@ -5,8 +5,8 @@
 
 // Production Mock Dataset Infrastructure
 const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_eiHzLsBdrkhJxzFGsGKztQ_xHqvE9K8'
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 const VERIFIED_PRICES_DATASET = [
     {
         id: 1,
@@ -148,7 +148,7 @@ async function processingPipeAndRender() {
 
     container.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--text-secondary);">Loading submissions...</div>`;
 
-    // Fetch only verified entries from Supabase
+    // Fetch only verified entries from db
     const { data, error } = await supabase
         .from('Submissions')
         .select('*')
