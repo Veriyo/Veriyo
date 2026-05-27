@@ -6,7 +6,7 @@
 // Supabase connection
 const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_eiHzLsBdrkhJxzFGsGKztQ_xHqvE9K8'
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+const supabaseDB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
 document.addEventListener('DOMContentLoaded', () => {
     const reportRepairForm = document.getElementById('reportRepairForm')
@@ -76,8 +76,8 @@ function initRepairReportingModules(formNode) {
         // Collect all form values
         const submission = {
             workshop_name: document.getElementById('workshopName').value.trim(),
-            suburb: document.getElementById('suburb').value.trim(),
-            city: document.getElementById('city').value.trim(),
+            suburb: document.getElementById('workshopSuburb').value.trim(),
+            city: document.getElementById('workshopCity').value.trim(),
             car_brand: document.getElementById('carMake').value,
             car_model: document.getElementById('carModel').value.trim(),
             car_year: parseInt(document.getElementById('carYear').value, 10),
@@ -90,13 +90,13 @@ function initRepairReportingModules(formNode) {
             new_problems: document.getElementById('newProblems').value,
             rating: parseInt(internalRatingStorage.value, 10),
             notes: document.getElementById('additionalNotes').value.trim(),
-            firstname: document.getElementById('firstName') ? document.getElementById('firstName').value.trim() : '',
-            whatsapp: document.getElementById('whatsappNumber') ? document.getElementById('whatsappNumber').value.trim() : '',
+            firstname: document.getElementById('drawName') ? document.getElementById('drawName').value.trim() : '',
+            whatsapp: document.getElementById('drawWhatsapp') ? document.getElementById('drawWhatsapp').value.trim() : '',
             status: 'Pending'
         }
 
         // Save to Supabase
-        const { error } = await supabase
+        const { error } = await supabaseDB
             .from('Submissions')
             .insert([submission])
 
