@@ -5,8 +5,8 @@
 
 // Supabase connection
 const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_eiHzLsBdrkhJxzFGsGKztQ_xHqvE9K8'
-const supabaseDB = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
 document.addEventListener('DOMContentLoaded', () => {
     const reportRepairForm = document.getElementById('reportRepairForm')
@@ -96,7 +96,7 @@ function initRepairReportingModules(formNode) {
         }
 
         // Save to Supabase
-        const { error } = await supabaseDB
+        const { error } = await db
             .from('Submissions')
             .insert([submission])
 
@@ -139,12 +139,12 @@ function initWorkshopListingModules(formNode) {
 
         const listing = {
             workshop_name: document.getElementById('workshopName').value.trim(),
-            suburb: document.getElementById('suburb').value.trim(),
-            city: document.getElementById('city').value.trim(),
+            suburb: document.getElementById('workshopSuburb').value.trim(),
+            city: document.getElementById('workshopCity').value.trim(),
             status: 'Pending'
         }
 
-        const { error } = await supabase
+        const { error } = await db
             .from('Submissions')
             .insert([listing])
 
