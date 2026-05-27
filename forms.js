@@ -69,12 +69,43 @@ function initRepairReportingModules(formNode) {
     });
 
     // Dynamic Execution interception on form submission
-    formNode.addEventListener('submit', (event) => {
+   formNode.addEventListener('submit', async (event) => {
         event.preventDefault();
         
         // Enforce Rating Verification check prior to allowing dispatch pipeline
         if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
             alert("Please select a structural rating star score before submitting.");
+            return;
+        }
+
+        const submission = {
+            workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+            suburb: document.getElementById('suburb')?.value.trim() || '',
+            city: document.getElementById('city')?.value.trim() || '',
+            car_brand: document.getElementById('carMake')?.value || '',
+            car_model: document.getElementById('carModel')?.value.trim() || '',
+            car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
+            repair_type: document.getElementById('repairType')?.value || '',
+            part_description: document.getElementById('partDescription')?.value.trim() || '',
+            amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
+            amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
+            price_changed: document.getElementById('priceChanged')?.value || '',
+            pricing_explained: document.getElementById('pricingExplained')?.value || '',
+            new_problems: document.getElementById('newProblems')?.value || '',
+            rating: parseInt(internalRatingStorage.value, 10),
+            notes: document.getElementById('additionalNotes')?.value.trim() || '',
+            status: 'Pending',
+            first_name: document.getElementById('drawName')?.value.trim() || '',
+            whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
+        };
+
+        const { data, error } = await _supabase
+            .from('your_table_name')
+            .insert([submission]);
+
+        if (error) {
+            console.error("Supabase Error:", error.message);
+            alert("Submission failed to save: " + error.message);
             return;
         }
 
