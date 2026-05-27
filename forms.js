@@ -2,7 +2,9 @@
  * Veriyo | Built for South African drivers
  * Submission Form Processing & Client-Side Interactivity Validations
  */
-
+const supabaseUrl = 'https://your-project.supabase.co'
+const supabaseKey = 'your-anon-key'
+const _supabase = supabase.createClient(supabaseUrl, supabaseKey)
 document.addEventListener('DOMContentLoaded', () => {
     const reportRepairForm = document.getElementById('reportRepairForm');
     const listWorkshopForm = document.getElementById('listWorkshopForm');
