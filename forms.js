@@ -2,8 +2,8 @@
  * Veriyo | Built for South African drivers
  * Submission Form Processing & Client-Side Interactivity Validations
  */
-const supabaseUrl = 'https://your-project.supabase.co'
-const supabaseKey = 'your-anon-key'
+const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey)
 document.addEventListener('DOMContentLoaded', () => {
     const reportRepairForm = document.getElementById('reportRepairForm');
@@ -110,19 +110,57 @@ function initWorkshopListingModules(formNode) {
             }
         });
     });
+// Capture submit pipelines and output direct verification responses
+formNode.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    // Capture submit pipelines and output direct verification responses
-    formNode.addEventListener('submit', (event) => {
-        event.preventDefault();
+    // 1. Gather all data from your form fields right when the user clicks submit
+    const submission = {
+        workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+        suburb: document.getElementById('suburb')?.value.trim() || '',
+        city: document.getElementById('city')?.value.trim() || '',
+        car_brand: document.getElementById('carMake')?.value || '',
+        car_model: document.getElementById('carModel')?.value.trim() || '',
+        car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
+        repair_type: document.getElementById('repairType')?.value || '',
+        part_description: document.getElementById('partDescription')?.value.trim() || '',
+        amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
+        amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
+        price_changed: document.getElementById('priceChanged')?.value || '',
+        pricing_explained: document.getElementById('pricingExplained')?.value || '',
+        new_problems: document.getElementById('newProblems')?.value || '',
         
-        const destinationWrapper = formNode.parentElement;
-        destinationWrapper.innerHTML = `
-            <div class="thank-you-view">
-                <div class="icon-success">&#22C5;</div>
-                <h3>Registration Logged</h3>
-                <p>Thank you for listing your operational profile. We will manually review your credentials and get back to your administration branch within 48 hours.</p>
-                <a href="index.html" class="btn btn-secondary">Return to Homepage</a>
-            </div>
-        `;
-    });
+        // This grabs your star rating value from your internal storage variable
+        rating: typeof internalRatingStorage !== 'undefined' ? parseInt(internalRatingStorage.value, 10) : 5,
+        
+        notes: document.getElementById('additionalNotes')?.value.trim() || '',
+        status: 'Pending',
+        first_name: document.getElementById('drawName')?.value.trim() || '',
+        whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
+    };
+
+    // 2. The Constraint: Push to Supabase and wait for the response
+    // Replace 'your_table_name' with your actual Supabase table name
+    const { data, error } = await _supabase
+        .from('your_table_name') 
+        .insert([submission]);
+
+    // 3. Error Handling Constraint: Stop the code if the database fails
+    if (error) {
+        console.error("Supabase Error:", error.message);
+        alert("Submission failed to save: " + error.message);
+        return; // Exits the function completely. The thank-you screen will NOT show.
+    }
+
+    // 4. Success Execution: This ONLY runs if Supabase accepts the data above
+    const destinationWrapper = formNode.parentElement;
+    destinationWrapper.innerHTML = `
+        <div class="thank-you-view">
+            <div class="icon-success">&#22C5;</div>
+            <h3>Registration Logged</h3>
+            <p>Thank you for listing your operational profile. We will manually review your credentials and get back to your administration branch within 48 hours.</p>
+            <a href="index.html" class="btn btn-secondary">Return to Homepage</a>
+        </div>
+    `;
+});
 }
