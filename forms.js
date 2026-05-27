@@ -142,7 +142,7 @@ formNode.addEventListener('submit', async (event) => {
         };
 
         const { data, error } = await _supabase
-            .from('your_table_name')
+            .from('Submissions')
             .insert([submission]);
 
         if (error) {
