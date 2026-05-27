@@ -95,12 +95,12 @@ function initRepairReportingModules(formNode) {
             rating: parseInt(internalRatingStorage.value, 10),
             notes: document.getElementById('additionalNotes')?.value.trim() || '',
             status: 'Pending',
-            first_name: document.getElementById('drawName')?.value.trim() || '',
+            firstname: document.getElementById('drawName')?.value.trim() || '',
             whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
         };
 
         const { data, error } = await _supabase
-            .from('your_table_name')
+            .from('Submissions')
             .insert([submission]);
 
         if (error) {
@@ -142,55 +142,61 @@ function initWorkshopListingModules(formNode) {
         });
     });
 // Capture submit pipelines and output direct verification responses
+// Capture submit pipelines and output direct verification responses
 formNode.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        
-        // Enforce Rating Verification check prior to allowing dispatch pipeline
-        if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
-            alert("Please select a structural rating star score before submitting.");
-            return;
-        }
+    event.preventDefault();
 
-        const submission = {
-            workshop_name: document.getElementById('workshopName')?.value.trim() || '',
-            suburb: document.getElementById('suburb')?.value.trim() || '',
-            city: document.getElementById('city')?.value.trim() || '',
-            car_brand: document.getElementById('carMake')?.value || '',
-            car_model: document.getElementById('carModel')?.value.trim() || '',
-            car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
-            repair_type: document.getElementById('repairType')?.value || '',
-            part_description: document.getElementById('partDescription')?.value.trim() || '',
-            amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
-            amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
-            price_changed: document.getElementById('priceChanged')?.value || '',
-            pricing_explained: document.getElementById('pricingExplained')?.value || '',
-            new_problems: document.getElementById('newProblems')?.value || '',
-            rating: parseInt(internalRatingStorage.value, 10),
-            notes: document.getElementById('additionalNotes')?.value.trim() || '',
-            status: 'Pending',
-            first_name: document.getElementById('drawName')?.value.trim() || '',
-            whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
-        };
+    // 1. Gather all data from your form fields right when the user clicks submit
+const submission = {
+    workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+    physical_address: document.getElementById('physicalAddress')?.value.trim() || '',
+    suburb: document.getElementById('workshopSuburb')?.value.trim() || '',
+    city: document.getElementById('workshopCity')?.value.trim() || '',
+    province: document.getElementById('province')?.value || '',
+    contact_number: document.getElementById('contactNumber')?.value.trim() || '',
+    email_address: document.getElementById('emailAddress')?.value.trim() || '',
+    operating_hours: document.getElementById('operatingHours')?.value.trim() || '',
+    specialisation: Array.from(document.querySelectorAll('input[name="specialisation"]:checked')).map(cb => cb.value).join(', '),
+    years_operation: parseInt(document.getElementById('yearsOperation')?.value, 10) || 0,
+    rmi_registered: document.querySelector('input[name="rmiRegistered"]:checked')?.value || 'No',
+    written_quote: document.querySelector('input[name="writtenQuote"]:checked')?.value || 'No',
+    guarantee_work: document.querySelector('input[name="guaranteeWork"]:checked')?.value || 'No',
+    guarantee_period: document.getElementById('guaranteePeriod')?.value.trim() || '',
+    price_oil_change: parseInt(document.getElementById('priceOilChange')?.value, 10) || 0,
+    price_minor_service: parseInt(document.getElementById('priceMinorService')?.value, 10) || 0,
+    price_major_service: parseInt(document.getElementById('priceMajorService')?.value, 10) || 0,
+    price_alignment: parseInt(document.getElementById('priceAlignment')?.value, 10) || 0,
+    price_brake_pads: parseInt(document.getElementById('priceBrakePads')?.value, 10) || 0,
+    price_diagnostic: parseInt(document.getElementById('priceDiagnostic')?.value, 10) || 0,
+    custom_service_name_1: document.getElementById('customServiceName1')?.value.trim() || '',
+    custom_service_price_1: parseInt(document.getElementById('customServicePrice1')?.value, 10) || 0,
+    custom_service_name_2: document.getElementById('customServiceName2')?.value.trim() || '',
+    custom_service_price_2: parseInt(document.getElementById('customServicePrice2')?.value, 10) || 0,
+    status: 'Pending'
+};
 
-        const { data, error } = await _supabase
-            .from('Submissions')
-            .insert([submission]);
+    // 2. The Constraint: Push to Supabase and wait for the response
+    // Replace 'your_table_name' with your actual Supabase table name
+    const { data, error } = await _supabase
+        .from('Submissions') 
+        .insert([submission]);
 
-        if (error) {
-            console.error("Supabase Error:", error.message);
-            alert("Submission failed to save: " + error.message);
-            return;
-        }
+    // 3. Error Handling Constraint: Stop the code if the database fails
+    if (error) {
+        console.error("Supabase Error:", error.message);
+        alert("Submission failed to save: " + error.message);
+        return; // Exits the function completely. The thank-you screen will NOT show.
+    }
 
-        // Standard client-side HTML5 constraints verified, transition UI container state
-        const targetContainer = formNode.parentElement;
-        targetContainer.innerHTML = `
-            <div class="thank-you-view">
-                <div class="icon-success">&#22C5;</div>
-                <h3>Thank You!</h3>
-                <p>Your submission is under operational review by our audit team. If approved, it will appear on the verified Prices dashboard page within 24 hours.</p>
-                <a href="prices.html" class="btn btn-primary">Go to Browse Prices</a>
-            </div>
-        `;
-    });
+    // 4. Success Execution: This ONLY runs if Supabase accepts the data above
+    const destinationWrapper = formNode.parentElement;
+    destinationWrapper.innerHTML = `
+        <div class="thank-you-view">
+            <div class="icon-success">&#22C5;</div>
+            <h3>Registration Logged</h3>
+            <p>Thank you for listing your operational profile. We will manually review your credentials and get back to your administration branch within 48 hours.</p>
+            <a href="index.html" class="btn btn-secondary">Return to Homepage</a>
+        </div>
+    `;
+});
 }
