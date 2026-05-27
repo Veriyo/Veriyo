@@ -150,7 +150,7 @@ async function processingPipeAndRender() {
 
     // Fetch only verified entries from Supabase
     const { data, error } = await supabase
-        .from('submissions')
+        .from('Submissions')
         .select('*')
         .eq('status', 'Verified')
 
