@@ -68,6 +68,14 @@ function initRepairReportingModules(formNode) {
     formNode.addEventListener('submit', async (event) => {
         event.preventDefault()
 
+        // NEW: Force the browser to check for missing required fields
+        if (!formNode.checkValidity()) {
+            formNode.reportValidity()
+            return // Stop execution if the form is incomplete
+        }
+
+        const listing = {
+
         if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
             alert("Please select a rating before submitting.")
             return
@@ -101,9 +109,23 @@ function initRepairReportingModules(formNode) {
             .insert([submission])
 
         if (error) {
-            alert('Something went wrong. Please try again.')
-            console.error(error)
+            console.error("Supabase Error:", error); // Logs the actual error for you to debug
+            
+            // Visual UI feedback instead of a frozen alert
+            const submitBtn = formNode.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.textContent = 'Submission Failed. Check inputs.';
+            submitBtn.style.backgroundColor = 'var(--danger-color)';
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.style.backgroundColor = '';
+            }, 3000);
+            
             return
+        }
         }
 
         // Show thank you message
@@ -137,11 +159,19 @@ function initWorkshopListingModules(formNode) {
     formNode.addEventListener('submit', async (event) => {
         event.preventDefault()
 
-        const listing = {
+       const listing = {
             workshop_name: document.getElementById('workshopName').value.trim(),
             suburb: document.getElementById('workshopSuburb').value.trim(),
             city: document.getElementById('workshopCity').value.trim(),
+            
+            // NEW: Add the missing fields based on your HTML IDs. 
+            // Note: Make sure these column names exactly match your Supabase table columns!
+            custom_service_2_name: document.getElementById('customServiceName2') ? document.getElementById('customServiceName2').value.trim() : null,
+            custom_service_2_price: document.getElementById('customServicePrice2') ? document.getElementById('customServicePrice2').value.trim() : null,
+            terms_agreed: document.getElementById('termsAgree').checked,
+            
             status: 'Pending'
+        }
         }
 
         const { error } = await db
