@@ -5,7 +5,7 @@
 
 // Supabase connection
 const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co'
-const SUPABASE_KEY = 'your full publishable key here'
+const SUPABASE_KEY = 'sb_publishable_eiHzLsBdrkhJxzFGsGKztQ_xHqvE9K8'
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
 document.addEventListener('DOMContentLoaded', () => {
