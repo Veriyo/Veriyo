@@ -88,6 +88,7 @@ submitBtn.textContent = 'Submitting...';
             car_brand: document.getElementById('carMake')?.value || '',
             car_model: document.getElementById('carModel')?.value.trim() || '',
             car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
+            repair_date: document.getElementById('repairDate')?.value || null,
             repair_type: document.getElementById('repairType')?.value || '',
             part_description: document.getElementById('partDescription')?.value.trim() || '',
             amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
