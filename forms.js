@@ -70,7 +70,10 @@ function initRepairReportingModules(formNode) {
 
     // Dynamic Execution interception on form submission
    formNode.addEventListener('submit', async (event) => {
-        event.preventDefault();
+       event.preventDefault();
+const submitBtn = formNode.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+submitBtn.textContent = 'Submitting...';
         
         // Enforce Rating Verification check prior to allowing dispatch pipeline
         if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
@@ -144,7 +147,10 @@ function initWorkshopListingModules(formNode) {
 // Capture submit pipelines and output direct verification responses
 // Capture submit pipelines and output direct verification responses
 formNode.addEventListener('submit', async (event) => {
-    event.preventDefault();
+event.preventDefault();
+const submitBtn = formNode.querySelector('button[type="submit"]');
+submitBtn.disabled = true;
+submitBtn.textContent = 'Submitting...';
 
     // 1. Gather all data from your form fields right when the user clicks submit
 const submission = {
