@@ -99,8 +99,6 @@ submitBtn.textContent = 'Submitting...';
             rating: parseInt(internalRatingStorage.value, 10),
             notes: document.getElementById('additionalNotes')?.value.trim() || '',
             status: 'Pending',
-            firstname: document.getElementById('drawName')?.value.trim() || '',
-            whatsapp: document.getElementById('drawWhatsApp')?.value.trim() || ''
         };
 
         const { data, error } = await _supabase
