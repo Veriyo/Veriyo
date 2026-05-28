@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Fetch live verified records from Supabase and merge with hardcoded set
         const { data, error } = await _supabasePrices
-            .from('"Submissions"')
+            .from('Submissions')
             .select('*')
             .eq('status', 'Verified');
 
@@ -150,8 +150,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Re-render with the combined dataset now available
             processingPipeAndRender();
         }
-    }
-});
     }
 });
 
