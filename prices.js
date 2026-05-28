@@ -4,6 +4,9 @@
  */
 
 // Production Mock Dataset Infrastructure
+const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co'
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
+const _supabasePrices = supabase.createClient(supabaseUrl, supabaseKey)
 const VERIFIED_PRICES_DATASET = [
     {
         id: 1,
@@ -106,11 +109,49 @@ const VERIFIED_PRICES_DATASET = [
         timestamp: "2025-08-18"
     }
 ];
+let liveDataset = [...VERIFIED_PRICES_DATASET];
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Only invoke logic if target render zone exists on page lifecycle load
+document.addEventListener('DOMContentLoaded', async () => {
     if (document.getElementById('pricesContainer')) {
         initPriceListingFilters();
+
+        // Fetch live verified records from Supabase and merge with hardcoded set
+        const { data, error } = await _supabasePrices
+            .from('Submissions')
+            .select('*')
+            .eq('status', 'Verified');
+
+        if (!error && data && data.length > 0) {
+            // Normalize Supabase snake_case fields to match hardcoded array format
+            const normalizedLive = data.map(row => ({
+                id: row.id,
+                workshopName: row.workshop_name || '',
+                suburb: row.suburb || '',
+                city: row.city || '',
+                carMake: row.car_brand || 'Unknown',
+                carModel: row.car_model || 'Unknown',
+                year: row.car_year || new Date().getFullYear(),
+                repairType: row.repair_type || 'Other',
+                partDescription: row.part_description || '',
+                amountQuoted: row.amount_quoted || 0,
+                amountPaid: row.amount_paid || 0,
+                priceChanged: row.price_changed || '',
+                pricingExplained: row.pricing_explained || '',
+                newProblems: row.new_problems || 'No',
+                rating: row.rating || 3,
+                notes: row.notes || '',
+                status: row.status || 'Verified',
+                timestamp: row.created_at ? row.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+            }));
+
+            // Merge live Supabase records with hardcoded array — hardcoded stays intact
+            liveDataset = [...VERIFIED_PRICES_DATASET, ...normalizedLive];
+
+            // Re-render with the combined dataset now available
+            processingPipeAndRender();
+        }
+    }
+});
     }
 });
 
@@ -151,7 +192,7 @@ function processingPipeAndRender() {
     const sortingToken = document.getElementById('sortBy').value;
 
     // Filter pipeline logic - Restricting elements explicitly strictly to Verified
-    let analyticalOutput = VERIFIED_PRICES_DATASET.filter(item => {
+    let analyticalOutput = liveDataset.filter(item => {
         if (item.status !== "Verified") return false;
 
         if (querySuburb && !item.suburb.toLowerCase().includes(querySuburb)) return false;
