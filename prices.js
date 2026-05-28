@@ -7,109 +7,7 @@
 const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
 const _supabasePrices = supabase.createClient(supabaseUrl, supabaseKey)
-const VERIFIED_PRICES_DATASET = [
-    {
-        id: 1,
-        workshopName: "Autostyle Motorsport JHB",
-        suburb: "Mayfair",
-        city: "Johannesburg",
-        carMake: "Unknown",
-        carModel: "Unknown",
-        year: 2024,
-        repairType: "Sound Installation",
-        partDescription: "Amplifier installation",
-        amountQuoted: 0,
-        amountPaid: 1800,
-        priceChanged: "No quote given",
-        pricingExplained: "Nothing explained",
-        newProblems: "Yes",
-        rating: 1,
-        notes: "Returned 4 times. Wires swapped incorrectly. Sold two sets of faulty RCA splitters. Customer fixed it himself.",
-        status: "Verified",
-        timestamp: "2024-11-15"
-    },
-    {
-        id: 2,
-        workshopName: "Muscle Auto",
-        suburb: "Johannesburg",
-        city: "Johannesburg",
-        carMake: "Unknown",
-        carModel: "Bakkie",
-        year: 2024,
-        repairType: "Engine",
-        partDescription: "Overheating problem",
-        amountQuoted: 30000,
-        amountPaid: 12900,
-        priceChanged: "Yes it was lower",
-        pricingExplained: "Just a total",
-        newProblems: "Yes",
-        rating: 1,
-        notes: "Paid R12,900. Car leaked oil within 30 minutes. Could not start. Had to be towed. Customer took out a loan to afford the repair. Still repaying 3 months later.",
-        status: "Verified",
-        timestamp: "2024-12-05"
-    },
-    {
-        id: 3,
-        workshopName: "Auto Care Workshop Auckland Park",
-        suburb: "Auckland Park",
-        city: "Johannesburg",
-        carMake: "Unknown",
-        carModel: "Unknown",
-        year: 2025,
-        repairType: "Electrical",
-        partDescription: "Lightbulb replacement full check",
-        amountQuoted: 0,
-        amountPaid: 140,
-        priceChanged: "No quote given",
-        pricingExplained: "Yes itemized receipt",
-        newProblems: "No",
-        rating: 5,
-        notes: "Charged R140 for full car lightbulb check and replacement. Others quoted R800 for same job. Excellent honest pricing.",
-        status: "Verified",
-        timestamp: "2025-02-20"
-    },
-    {
-        id: 4,
-        workshopName: "Dekra Turfontein",
-        suburb: "Turfontein",
-        city: "Johannesburg",
-        carMake: "Unknown",
-        carModel: "Unknown",
-        year: 2026,
-        repairType: "Other",
-        partDescription: "Roadworthy inspection",
-        amountQuoted: 0,
-        amountPaid: 795,
-        priceChanged: "No quote given",
-        pricingExplained: "Just a total",
-        newProblems: "No",
-        rating: 1,
-        notes: "Vehicle failed inspection. Inspector refused to show where the scratch was. Suspected deliberate failure to extract repeat payment.",
-        status: "Verified",
-        timestamp: "2026-04-12"
-    },
-    {
-        id: 5,
-        workshopName: "Joburg Auto Tech",
-        suburb: "Johannesburg CBD",
-        city: "Johannesburg",
-        carMake: "Toyota",
-        carModel: "Corolla",
-        year: 2025,
-        repairType: "Minor Service",
-        partDescription: "Oil change filter service",
-        amountQuoted: 1200,
-        amountPaid: 1200,
-        priceChanged: "No it matched",
-        pricingExplained: "Yes itemized receipt",
-        newProblems: "No",
-        rating: 5,
-        notes: "Price matched quote exactly. Friendly and professional. Quick turnaround.",
-        status: "Verified",
-        timestamp: "2025-08-18"
-    }
-];
-let liveDataset = [...VERIFIED_PRICES_DATASET];
+let liveDataset = [];;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (document.getElementById('pricesContainer')) {
@@ -141,11 +39,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 rating: row.rating || 3,
                 notes: row.notes || '',
                 status: row.status || 'Verified',
-                timestamp: row.created_at ? row.created_at.split('T')[0] : new Date().toISOString().split('T')[0]
+                timestamp: row.repair_date || null
             }));
 
             // Merge live Supabase records with hardcoded array — hardcoded stays intact
-            liveDataset = [...VERIFIED_PRICES_DATASET, ...normalizedLive];
+            // Supabase is the only data source
+liveDataset = normalizedLive;;
 
             // Re-render with the combined dataset now available
             processingPipeAndRender();
@@ -247,7 +146,7 @@ function processingPipeAndRender() {
         }
 
         // Extrapolates standard ISO dates to clean localized views
-        const calculatedDateStr = convertToMonthYearFormat(entry.timestamp);
+       const calculatedDateStr = entry.timestamp ? convertToMonthYearFormat(entry.timestamp) : 'Date not provided';
 
         return `
             <article class="price-card">
@@ -276,7 +175,7 @@ function processingPipeAndRender() {
 
                 ${entry.notes ? `<p class="card-notes">${escapeHTML(entry.notes)}</p>` : ''}
                 
-                <div class="card-date">Repaired: ${calculatedDateStr}</div>
+               <div class="card-date">Repaired: ${calculatedDateStr}</div>
             </article>
         `;
     }).join('');
