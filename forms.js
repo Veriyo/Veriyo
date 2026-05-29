@@ -110,6 +110,13 @@ submitBtn.textContent = 'Submitting...';
             alert("Submission failed to save: " + error.message);
             return;
         }
+       // Notify you of new submission
+        const workshopVal = document.getElementById('workshopName')?.value.trim() || 'Unknown';
+        const cityVal = document.getElementById('city')?.value.trim() || 'Unknown';
+        const repairVal = document.getElementById('repairType')?.value || 'Unknown';
+        const paidVal = document.getElementById('amountPaid')?.value || '?';
+        const submitTime = new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' });
+        sendAlert(`New Submission\nWorkshop: ${workshopVal}\nCity: ${cityVal}\nRepair: ${repairVal}\nAmount Paid: R${paidVal}\nTime: ${submitTime}`);
 
         // Standard client-side HTML5 constraints verified, transition UI container state
         const targetContainer = formNode.parentElement;
