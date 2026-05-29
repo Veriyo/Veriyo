@@ -3,8 +3,23 @@
  * Global Framework Architecture & Navigation Operations
  */
 
+// ── Veriyo Alerts via ntfy.sh ──────────────────────────────
+const NTFY_TOPIC = 'veriyo-akerts-g71f25'; // must match what you typed in the app
+
+function sendAlert(message) {
+    fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+        method: 'POST',
+        body: message
+    }).catch(() => {});
+}
+// ───────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', () => {
     initNavigationHandlers();
+
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const visitTime = new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' });
+    sendAlert(`Visit on ${currentPage} at ${visitTime}`);
 });
 
 /**
