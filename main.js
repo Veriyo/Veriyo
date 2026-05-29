@@ -4,7 +4,7 @@
  */
 
 // ── Veriyo Alerts via ntfy.sh ──────────────────────────────
-const NTFY_TOPIC = 'veriyo-akerts-g71f25'; // must match what you typed in the app
+const NTFY_TOPIC = 'veriyo-alerts-g71f25'; // must match what you typed in the app
 
 function sendAlert(message) {
     fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
