@@ -27,6 +27,15 @@ function initRepairReportingModules(formNode) {
     const wrapperReceiptUpload = document.getElementById('receiptUploadContainer');
     const dynamicStarSpans = document.querySelectorAll('.star-rating-picker span');
     const internalRatingStorage = document.getElementById('overallRatingValue');
+    // Toggle the submit button state dynamically based on user privacy consent agreement
+const privacyAgreeCheckbox = document.getElementById('privacyAgree');
+const submitBtnElement = document.getElementById('submitReportBtn');
+
+if (privacyAgreeCheckbox && submitBtnElement) {
+    privacyAgreeCheckbox.addEventListener('change', (e) => {
+        submitBtnElement.disabled = !e.target.checked;
+    });
+}
 
     // Live textarea character tracking routines
     if (characterTextArea && counterDisplay) {
@@ -71,9 +80,9 @@ function initRepairReportingModules(formNode) {
     // Dynamic Execution interception on form submission
    formNode.addEventListener('submit', async (event) => {
        event.preventDefault();
-const submitBtn = formNode.querySelector('button[type="submit"]');
-submitBtn.disabled = true;
-submitBtn.textContent = 'Submitting...';
+const submitBtnElement = document.getElementById('submitReportBtn');
+submitBtnElement.disabled = true;
+submitBtnElement.textContent = 'Submitting...';
         
         // Enforce Rating Verification check prior to allowing dispatch pipeline
         if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
@@ -124,7 +133,7 @@ submitBtn.textContent = 'Submitting...';
             <div class="thank-you-view">
                 <div class="icon-success">&#22C5;</div>
                 <h3>Thank You!</h3>
-                <p>Your submission is under operational review by our audit team. If approved, it will appear on the verified Prices dashboard page within 24 hours.</p>
+               <p>Your submission is under operational review by our audit team. If approved, it will appear on the approved Prices dashboard page within 24 hours.</p>
                 <a href="prices.html" class="btn btn-primary">Go to Browse Prices</a>
             </div>
         `;
