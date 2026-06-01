@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const { data, error } = await _supabasePrices
             .from('Submissions')
             .select('*')
-            .eq('status', 'Verified');
+            .eq('status', 'Approved');
 
         if (!error && data && data.length > 0) {
             // Normalize Supabase snake_case fields to match hardcoded array format
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 newProblems: row.new_problems || 'No',
                 rating: row.rating || 3,
                 notes: row.notes || '',
-                status: row.status || 'Verified',
+                status: row.status || 'Approved',
                 timestamp: row.repair_date || null
             }));
 
