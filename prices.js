@@ -123,8 +123,7 @@ function processingPipeAndRender() {
     if (analyticalOutput.length === 0) {
         container.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
-               ```javascript
-  <p style="font-size: 1.2rem;">No approved repairs match your filter query combinations.</p>
+            <p style="font-size: 1.2rem;">No approved repairs match your filter query combinations.</p>
                 <p style="margin-top: 0.5rem; font-size: 0.9rem;">Try adjusting structural scopes or clearing fields.</p>
             </div>`;
         return;
