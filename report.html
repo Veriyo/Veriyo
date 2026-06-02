@@ -197,20 +197,45 @@
         <input type="checkbox" id="privacyConsent" required>
         I understand that my submission will be stored by Veriyo and may be published on this platform. I have read and agree to the <a href="privacy.html" style="color: var(--secondary-accent);">Privacy Policy</a>.
     </label>
-<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
-    <div style="display: flex; align-items: flex-start; gap: 8px;">
-        <input type="checkbox" id="privacyConsent" style="margin-top: 3px; cursor: pointer;">
-        <label for="privacyConsent" style="font-weight: 500; font-size: 0.9rem; line-height: 1.2; white-space: nowrap;">
-            I accept the <a href="privacy.html" style="color: var(--secondary-accent); font-size: 0.8rem; text-decoration: underline;">Privacy Policy</a> and Veriyo's storage and publication terms.
+<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1rem;">
+
+    <div style="display:flex; align-items:flex-start; gap:8px;">
+        <input
+            type="checkbox"
+            id="privacyConsent"
+            style="margin-top:2px; cursor:pointer;"
+        >
+
+        <label
+            for="privacyConsent"
+            style="font-size:0.88rem; line-height:1.2; white-space:nowrap;"
+        >
+            I understand my submission may be stored and published by Veriyo. I agree to the
+            <a href="privacy.html"
+               style="font-size:0.78rem; color:var(--secondary-accent); text-decoration:underline;">
+                Privacy Policy
+            </a>.
         </label>
     </div>
-    
-    <p id="privacyErrorMsg" style="color: #dc3545; display: none; margin: 8px 0 0 24px; font-size: 0.85rem; font-weight: bold;">
-        Please tick the check box to confirm you understand and accept the terms.
+
+    <p id="privacyErrorMsg"
+       style="display:none; color:#dc3545; font-size:0.85rem; margin:6px 0 0 24px;">
+        Please tick the checkbox above before submitting.
     </p>
+
 </div>
 
-<button type="submit" id="submitReportBtn" class="btn" style="width: 100%; margin-top: 1rem; background-color: #1a1a1a; border: 1px solid #1a1a1a; color: #ffffff; cursor: pointer; font-weight: 600; padding: 0.75rem; border-radius: 4px; transition: background-color 0.2s;">
+<button
+    type="submit"
+    id="submitReportBtn"
+    class="btn"
+    style="
+        width:100%;
+        background:#1a1a1a;
+        border:1px solid #1a1a1a;
+        color:#fff;
+        cursor:pointer;
+    ">
     Submit My Experience
 </button>
 
