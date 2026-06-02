@@ -198,44 +198,19 @@
         I understand that my submission will be stored by Veriyo and may be published on this platform. I have read and agree to the <a href="privacy.html" style="color: var(--secondary-accent);">Privacy Policy</a>.
     </label>
 <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1rem;">
-
-    <div style="display:flex; align-items:flex-start; gap:8px;">
-        <input
-            type="checkbox"
-            id="privacyConsent"
-            style="margin-top:2px; cursor:pointer;"
-        >
-
-        <label
-            for="privacyConsent"
-            style="font-size:0.88rem; line-height:1.2; white-space:nowrap;"
-        >
-            I understand my submission may be stored and published by Veriyo. I agree to the
-            <a href="privacy.html"
-               style="font-size:0.78rem; color:var(--secondary-accent); text-decoration:underline;">
-                Privacy Policy
-            </a>.
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="privacyConsent" style="margin: 0; cursor: pointer;">
+        <label for="privacyConsent" style="font-size: 0.9rem; font-weight: 500; white-space: nowrap; cursor: pointer;">
+            I accept Veriyo's storage terms and the <a href="privacy.html" style="font-size: 0.8rem; color: var(--secondary-accent); text-decoration: underline;">Privacy Policy</a>.
         </label>
     </div>
 
-    <p id="privacyErrorMsg"
-       style="display:none; color:#dc3545; font-size:0.85rem; margin:6px 0 0 24px;">
-        Please tick the checkbox above before submitting.
+    <p id="privacyErrorMsg" style="display: none; color: var(--danger-color); font-size: 0.85rem; margin-top: 6px; font-weight: 600;">
+        Please tick the checkbox above to confirm you accept the terms.
     </p>
-
 </div>
 
-<button
-    type="submit"
-    id="submitReportBtn"
-    class="btn"
-    style="
-        width:100%;
-        background:#1a1a1a;
-        border:1px solid #1a1a1a;
-        color:#fff;
-        cursor:pointer;
-    ">
+<button type="submit" id="submitReportBtn" class="btn btn-primary" style="width: 100%; transition: background-color 0.2s, color 0.2s;">
     Submit My Experience
 </button>
 
@@ -253,30 +228,7 @@
     <script src="main.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="forms.js"></script>
- <script>
-        document.getElementById('reportRepairForm').addEventListener('submit', function(event) {
-            const consentCheckbox = document.getElementById('privacyConsent');
-            const errorMsg = document.getElementById('privacyErrorMsg');
-            
-            // If the checkbox is not ticked, intercept submission
-            if (!consentCheckbox.checked) {
-                event.preventDefault(); // Stop form submission to Supabase/Firebase
-                errorMsg.style.display = 'block'; // Show the red message
-                
-                // Smoothly scroll to the error message so the user notices it immediately
-                errorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            } else {
-                errorMsg.style.display = 'none'; // Clear error message if checked
-            }
-        });
 
-        // Optional: Hide the error message instantly the moment they click the checkbox
-        document.getElementById('privacyConsent').addEventListener('change', function() {
-            if (this.checked) {
-                document.getElementById('privacyErrorMsg').style.display = 'none';
-            }
-        });
-    </script>
 </body>
 </html>   
 </body>
