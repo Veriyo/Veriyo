@@ -28,15 +28,33 @@ function initRepairReportingModules(formNode) {
     const dynamicStarSpans = document.querySelectorAll('.star-rating-picker span');
     const internalRatingStorage = document.getElementById('overallRatingValue');
     // Toggle the submit button state dynamically based on user privacy consent agreement
-const privacyAgreeCheckbox = document.getElementById('privacyAgree');
+const privacyCheckbox = document.getElementById('privacyConsent');
 const submitBtnElement = document.getElementById('submitReportBtn');
 
-if (privacyAgreeCheckbox && submitBtnElement) {
-    privacyAgreeCheckbox.addEventListener('change', (e) => {
-        submitBtnElement.disabled = !e.target.checked;
+if (privacyCheckbox && submitBtnElement) {
+
+    // Start dark
+    submitBtnElement.style.backgroundColor = '#1a1a1a';
+    submitBtnElement.style.borderColor = '#1a1a1a';
+
+    privacyCheckbox.addEventListener('change', () => {
+
+        if (privacyCheckbox.checked) {
+
+            document.getElementById('privacyErrorMsg').style.display = 'none';
+
+            // Restore original button colour
+            submitBtnElement.style.backgroundColor = '';
+            submitBtnElement.style.borderColor = '';
+
+        } else {
+
+            submitBtnElement.style.backgroundColor = '#1a1a1a';
+            submitBtnElement.style.borderColor = '#1a1a1a';
+
+        }
     });
 }
-
     // Live textarea character tracking routines
     if (characterTextArea && counterDisplay) {
         characterTextArea.addEventListener('input', () => {
@@ -80,6 +98,18 @@ if (privacyAgreeCheckbox && submitBtnElement) {
     // Dynamic Execution interception on form submission
    formNode.addEventListener('submit', async (event) => {
        event.preventDefault();
+       const privacyCheckbox = document.getElementById('privacyConsent');
+const privacyError = document.getElementById('privacyErrorMsg');
+
+if (!privacyCheckbox.checked) {
+
+    privacyError.style.display = 'block';
+
+    submitBtnElement.style.backgroundColor = '#1a1a1a';
+    submitBtnElement.style.borderColor = '#1a1a1a';
+
+    return;
+}
 const submitBtnElement = document.getElementById('submitReportBtn');
 submitBtnElement.disabled = true;
 submitBtnElement.textContent = 'Submitting...';
