@@ -198,10 +198,16 @@ const submission = {
 
     // 2. The Constraint: Push to Supabase and wait for the response
     // Replace 'your_table_name' with your actual Supabase table name
-    const { data, error } = await _supabase
-        .from('Submissions') 
-        .insert([submission]);
-
+// REPLACE WITH THIS:
+const { data, error } = await _supabase
+    .from('workshopprofiles') // Points directly to your brand new isolated table
+    .insert([{
+        workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+        physical_address: document.getElementById('workshopAddress')?.value.trim() || '',
+        specialisation: document.getElementById('workshopSpecialisation')?.value.trim() || '',
+        price_oil_change: parseInt(document.getElementById('oilChangePrice')?.value, 10) || 0,
+        status: 'Pending' // Holds entry for dashboard validation before displaying live
+    }]);
     // 3. Error Handling Constraint: Stop the code if the database fails
     if (error) {
         console.error("Supabase Error:", error.message);
