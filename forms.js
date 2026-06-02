@@ -27,34 +27,33 @@ function initRepairReportingModules(formNode) {
     const wrapperReceiptUpload = document.getElementById('receiptUploadContainer');
     const dynamicStarSpans = document.querySelectorAll('.star-rating-picker span');
     const internalRatingStorage = document.getElementById('overallRatingValue');
-    // Toggle the submit button state dynamically based on user privacy consent agreement
-const privacyCheckbox = document.getElementById('privacyConsent');
-const submitBtnElement = document.getElementById('submitReportBtn');
+// Toggle the submit button state dynamically based on user privacy consent agreement
+    const privacyCheckbox = document.getElementById('privacyConsent');
+    const submitBtnElement = document.getElementById('submitReportBtn');
+    const privacyErrorMsg = document.getElementById('privacyErrorMsg');
 
-if (privacyCheckbox && submitBtnElement) {
+    if (privacyCheckbox && submitBtnElement) {
+        // Force the button into a dark, inactive visual state on page load
+        submitBtnElement.style.backgroundColor = '#1a1a1a';
+        submitBtnElement.style.borderColor = '#1a1a1a';
+        submitBtnElement.style.color = '#ffffff';
 
-    // Start dark
-    submitBtnElement.style.backgroundColor = '#1a1a1a';
-    submitBtnElement.style.borderColor = '#1a1a1a';
-
-    privacyCheckbox.addEventListener('change', () => {
-
-        if (privacyCheckbox.checked) {
-
-            document.getElementById('privacyErrorMsg').style.display = 'none';
-
-            // Restore original button colour
-            submitBtnElement.style.backgroundColor = '';
-            submitBtnElement.style.borderColor = '';
-
-        } else {
-
-            submitBtnElement.style.backgroundColor = '#1a1a1a';
-            submitBtnElement.style.borderColor = '#1a1a1a';
-
-        }
-    });
-}
+        privacyCheckbox.addEventListener('change', () => {
+            if (privacyCheckbox.checked) {
+                // User checked the box: Hide error and restore btn-primary yellow colors
+                if(privacyErrorMsg) privacyErrorMsg.style.display = 'none';
+                
+                submitBtnElement.style.backgroundColor = ''; 
+                submitBtnElement.style.borderColor = '';
+                submitBtnElement.style.color = ''; 
+            } else {
+                // User unchecked the box: Revert back to dark state
+                submitBtnElement.style.backgroundColor = '#1a1a1a';
+                submitBtnElement.style.borderColor = '#1a1a1a';
+                submitBtnElement.style.color = '#ffffff';
+            }
+        });
+    }
     // Live textarea character tracking routines
     if (characterTextArea && counterDisplay) {
         characterTextArea.addEventListener('input', () => {
@@ -96,20 +95,27 @@ if (privacyCheckbox && submitBtnElement) {
     });
 
     // Dynamic Execution interception on form submission
-   formNode.addEventListener('submit', async (event) => {
-       event.preventDefault();
-       const privacyCheckbox = document.getElementById('privacyConsent');
-const privacyError = document.getElementById('privacyErrorMsg');
+    formNode.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        if (!privacyCheckbox.checked) {
+            // Show red error text. Button stays dark natively.
+            if (privacyErrorMsg) privacyErrorMsg.style.display = 'block';
+            return; // Halt submission completely
+        }
 
-if (!privacyCheckbox.checked) {
+        submitBtnElement.disabled = true;
+        submitBtnElement.textContent = 'Submitting...';
+        
+        // Enforce Rating Verification check prior to allowing dispatch pipeline
+        if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
+            alert("Please select a structural rating star score before submitting.");
+            submitBtnElement.disabled = false;
+            submitBtnElement.textContent = 'Submit My Experience';
+            return;
+        }
 
-    privacyError.style.display = 'block';
-
-    submitBtnElement.style.backgroundColor = '#1a1a1a';
-    submitBtnElement.style.borderColor = '#1a1a1a';
-
-    return;
-}
+        // ... Keep your existing Supabase submission payload below this ...
 const submitBtnElement = document.getElementById('submitReportBtn');
 submitBtnElement.disabled = true;
 submitBtnElement.textContent = 'Submitting...';
@@ -189,7 +195,6 @@ function initWorkshopListingModules(formNode) {
             }
         });
     });
-// Capture submit pipelines and output direct verification responses
 // Capture submit pipelines and output direct verification responses
 formNode.addEventListener('submit', async (event) => {
 event.preventDefault();
