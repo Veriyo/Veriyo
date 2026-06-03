@@ -195,54 +195,74 @@ function initWorkshopListingModules(formNode) {
             }
         });
     });
-// Capture submit pipelines and output direct verification responses
-formNode.addEventListener('submit', async (event) => {
-event.preventDefault();
-const submitBtn = formNode.querySelector('button[type="submit"]');
-submitBtn.disabled = true;
-submitBtn.textContent = 'Submitting...';
+// Toggle the submit button state dynamically based on user privacy consent
+    const privacyCheckbox = document.getElementById('privacyConsentWorkshop');
+    const submitBtnElement = document.getElementById('submitWorkshopBtn');
+    const privacyErrorMsg = document.getElementById('privacyErrorMsgWorkshop');
 
-    // 1. Gather all data from your form fields right when the user clicks submit
-const submission = {
-    workshop_name: document.getElementById('workshopName')?.value.trim() || '',
-    physical_address: document.getElementById('physicalAddress')?.value.trim() || '',
-    suburb: document.getElementById('workshopSuburb')?.value.trim() || '',
-    city: document.getElementById('workshopCity')?.value.trim() || '',
-    province: document.getElementById('province')?.value || '',
-    contact_number: document.getElementById('contactNumber')?.value.trim() || '',
-    email_address: document.getElementById('emailAddress')?.value.trim() || '',
-    operating_hours: document.getElementById('operatingHours')?.value.trim() || '',
-    specialisation: Array.from(document.querySelectorAll('input[name="specialisation"]:checked')).map(cb => cb.value).join(', '),
-    years_operation: parseInt(document.getElementById('yearsOperation')?.value, 10) || 0,
-    rmi_registered: document.querySelector('input[name="rmiRegistered"]:checked')?.value || 'No',
-    written_quote: document.querySelector('input[name="writtenQuote"]:checked')?.value || 'No',
-    guarantee_work: document.querySelector('input[name="guaranteeWork"]:checked')?.value || 'No',
-    guarantee_period: document.getElementById('guaranteePeriod')?.value.trim() || '',
-    price_oil_change: parseInt(document.getElementById('priceOilChange')?.value, 10) || 0,
-    price_minor_service: parseInt(document.getElementById('priceMinorService')?.value, 10) || 0,
-    price_major_service: parseInt(document.getElementById('priceMajorService')?.value, 10) || 0,
-    price_alignment: parseInt(document.getElementById('priceAlignment')?.value, 10) || 0,
-    price_brake_pads: parseInt(document.getElementById('priceBrakePads')?.value, 10) || 0,
-    price_diagnostic: parseInt(document.getElementById('priceDiagnostic')?.value, 10) || 0,
-    custom_service_name_1: document.getElementById('customServiceName1')?.value.trim() || '',
-    custom_service_price_1: parseInt(document.getElementById('customServicePrice1')?.value, 10) || 0,
-    custom_service_name_2: document.getElementById('customServiceName2')?.value.trim() || '',
-    custom_service_price_2: parseInt(document.getElementById('customServicePrice2')?.value, 10) || 0,
-    status: 'Pending'
-};
+    if (privacyCheckbox && submitBtnElement) {
+        submitBtnElement.style.backgroundColor = '#1a1a1a';
+        submitBtnElement.style.borderColor = '#1a1a1a';
+        submitBtnElement.style.color = '#ffffff';
 
-    // 2. The Constraint: Push to Supabase and wait for the response
-    // Replace 'your_table_name' with your actual Supabase table name
-// REPLACE WITH THIS:
-const { data, error } = await _supabase
-    .from('workshopprofiles') // Points directly to your brand new isolated table
-    .insert([{
-        workshop_name: document.getElementById('workshopName')?.value.trim() || '',
-        physical_address: document.getElementById('workshopAddress')?.value.trim() || '',
-        specialisation: document.getElementById('workshopSpecialisation')?.value.trim() || '',
-        price_oil_change: parseInt(document.getElementById('oilChangePrice')?.value, 10) || 0,
-        status: 'Pending' // Holds entry for dashboard validation before displaying live
-    }]);
+        privacyCheckbox.addEventListener('change', () => {
+            if (privacyCheckbox.checked) {
+                if(privacyErrorMsg) privacyErrorMsg.style.display = 'none';
+                submitBtnElement.style.backgroundColor = ''; 
+                submitBtnElement.style.borderColor = '';
+                submitBtnElement.style.color = ''; 
+            } else {
+                submitBtnElement.style.backgroundColor = '#1a1a1a';
+                submitBtnElement.style.borderColor = '#1a1a1a';
+                submitBtnElement.style.color = '#ffffff';
+            }
+        });
+    }
+
+    // Capture submit pipelines and output direct verification responses
+    formNode.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        if (privacyCheckbox && !privacyCheckbox.checked) {
+            if (privacyErrorMsg) privacyErrorMsg.style.display = 'block';
+            return;
+        }
+
+        submitBtnElement.disabled = true;
+        submitBtnElement.textContent = 'Submitting...';
+
+        const submission = {
+            workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+            physical_address: document.getElementById('physicalAddress')?.value.trim() || '',
+            suburb: document.getElementById('workshopSuburb')?.value.trim() || '',
+            city: document.getElementById('workshopCity')?.value.trim() || '',
+            province: document.getElementById('province')?.value || '',
+            contact_number: document.getElementById('contactNumber')?.value.trim() || '',
+            email_address: document.getElementById('emailAddress')?.value.trim() || '',
+            operating_hours: document.getElementById('operatingHours')?.value.trim() || '',
+            specialisation: Array.from(document.querySelectorAll('input[name="specialisation"]:checked')).map(cb => cb.value).join(', '),
+            years_operation: parseInt(document.getElementById('yearsOperation')?.value, 10) || 0,
+            rmi_registered: document.querySelector('input[name="rmiRegistered"]:checked')?.value || 'No',
+            written_quote: document.querySelector('input[name="writtenQuote"]:checked')?.value || 'No',
+            guarantee_work: document.querySelector('input[name="guaranteeWork"]:checked')?.value || 'No',
+            guarantee_period: document.getElementById('guaranteePeriod')?.value.trim() || '',
+            price_oil_change: parseInt(document.getElementById('priceOilChange')?.value, 10) || 0,
+            price_minor_service: parseInt(document.getElementById('priceMinorService')?.value, 10) || 0,
+            price_major_service: parseInt(document.getElementById('priceMajorService')?.value, 10) || 0,
+            price_alignment: parseInt(document.getElementById('priceAlignment')?.value, 10) || 0,
+            price_brake_pads: parseInt(document.getElementById('priceBrakePads')?.value, 10) || 0,
+            price_diagnostic: parseInt(document.getElementById('priceDiagnostic')?.value, 10) || 0,
+            custom_service_name_1: document.getElementById('customServiceName1')?.value.trim() || '',
+            custom_service_price_1: parseInt(document.getElementById('customServicePrice1')?.value, 10) || 0,
+            custom_service_name_2: document.getElementById('customServiceName2')?.value.trim() || '',
+            custom_service_price_2: parseInt(document.getElementById('customServicePrice2')?.value, 10) || 0,
+            status: 'Pending'
+        };
+
+        const { data, error } = await _supabase
+            .from('workshopprofiles') 
+            .insert([submission]); // CORRECTED: Now pushes the actual gathered data!
+
     // 3. Error Handling Constraint: Stop the code if the database fails
     if (error) {
         console.error("Supabase Error:", error.message);
