@@ -116,7 +116,7 @@ function initRepairReportingModules(formNode) {
         }
 
         // ... Keep your existing Supabase submission payload below this ...
-const submitBtnElement = document.getElementById('submitReportBtn');
+
 submitBtnElement.disabled = true;
 submitBtnElement.textContent = 'Submitting...';
         
