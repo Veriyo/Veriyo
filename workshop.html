@@ -204,22 +204,25 @@
                     </div>
                 </div>
 
-                <div class="form-group" style="margin: 2rem 0;">
-                    <label class="checkbox-label" style="font-weight: 500 !important;">
-                        <input type="checkbox" id="termsAgree" required> I confirm these are our actual prices and I am authorised to list this workshop on Veriyo.
-                    </label>
-                </div>
-<div class="form-group" style="margin-bottom: 1.5rem;">
-    <label class="checkbox-label" style="font-weight: 500 !important; line-height: 1.6;">
-        <input type="checkbox" id="privacyConsentWorkshop" required>
-        I understand that the information submitted here will be stored by Veriyo in accordance with the <a href="privacy.html" style="color: var(--secondary-accent);">Privacy Policy</a>.
-    </label>
-</div>
-                <button type="submit" class="btn btn-primary" style="width: 100%;">List My Workshop — It's Free</button>
-
+             
             </form>
         </div>
+<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <input type="checkbox" id="privacyConsentWorkshop" style="margin-top: 3px; cursor: pointer;">
+                        <label for="privacyConsentWorkshop" style="font-weight: 500; font-size: 0.9rem; line-height: 1.2; white-space: nowrap;">
+                            I confirm our listed prices and accept the <a href="privacy.html" style="color: var(--secondary-accent); font-size: 0.8rem; text-decoration: underline;">Privacy Policy</a>.
+                        </label>
+                    </div>
+                    
+                    <p id="privacyErrorMsgWorkshop" style="color: var(--danger-color); display: none; margin: 8px 0 0 24px; font-size: 0.85rem; font-weight: 600;">
+                        Please tick the checkbox to confirm authorization and accept the terms.
+                    </p>
+                </div>
 
+                <button type="submit" id="submitWorkshopBtn" class="btn btn-primary" style="width: 100%; transition: background-color 0.2s, color 0.2s;">
+                    List My Workshop — It's Free
+                </button>
     </main>
 
 <footer class="footer">
