@@ -192,28 +192,23 @@
                     <span class="label-desc" style="margin-bottom:0.5rem;">We blur internal identification and license numbers completely. Stripped for auditing.</span>
                     <input type="file" id="receiptImage" class="form-control" accept="image/*">
                 </div>
-<div class="form-group" style="margin-top: 1.5rem;">
-    <label class="checkbox-label" style="font-weight: 500 !important; line-height: 1.6;">
-        <input type="checkbox" id="privacyConsent" required>
-        I understand that my submission will be stored by Veriyo and may be published on this platform. I have read and agree to the <a href="privacy.html" style="color: var(--secondary-accent);">Privacy Policy</a>.
-    </label>
-<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1rem;">
-    <div style="display: flex; align-items: center; gap: 8px;">
-        <input type="checkbox" id="privacyConsent" style="margin: 0; cursor: pointer;">
-        <label for="privacyConsent" style="font-size: 0.9rem; font-weight: 500; white-space: nowrap; cursor: pointer;">
-            I accept Veriyo's storage terms and the <a href="privacy.html" style="font-size: 0.8rem; color: var(--secondary-accent); text-decoration: underline;">Privacy Policy</a>.
+
+<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: flex-start; gap: 8px;">
+        <input type="checkbox" id="privacyConsent" style="margin-top: 3px; cursor: pointer;">
+        <label for="privacyConsent" style="font-weight: 500; font-size: 0.9rem; line-height: 1.2; white-space: nowrap;">
+            I accept the <a href="privacy.html" style="color: var(--secondary-accent); font-size: 0.8rem; text-decoration: underline;">Privacy Policy</a> and Veriyo's storage terms.
         </label>
     </div>
-
-    <p id="privacyErrorMsg" style="display: none; color: var(--danger-color); font-size: 0.85rem; margin-top: 6px; font-weight: 600;">
-        Please tick the checkbox above to confirm you accept the terms.
+    
+    <p id="privacyErrorMsg" style="color: var(--danger-color); display: none; margin: 8px 0 0 24px; font-size: 0.85rem; font-weight: 600;">
+        Please tick the checkbox to confirm you accept the terms.
     </p>
 </div>
 
 <button type="submit" id="submitReportBtn" class="btn btn-primary" style="width: 100%; transition: background-color 0.2s, color 0.2s;">
     Submit My Experience
 </button>
-
             </form>
         </div>
 
@@ -224,9 +219,7 @@
         <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
     </p>
 </footer>
-    <script src="main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="forms.js"></script>
+
 
 </body>
 </html>   
