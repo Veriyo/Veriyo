@@ -158,8 +158,8 @@ if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
                 </div>
                 
                 <div>
-                    <div class="car-details">${escapeHTML(entry.carMake)} ${escapeHTML(entry.carModel)} (${entry.year})</div>
-                    <div class="repair-type">${escapeHTML(entry.repairType)} — <span style="color: var(--text-secondary); font-size: 0.95rem;">${escapeHTML(entry.partDescription)}</span></div>
+                    <div class="car-details"><span style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem; margin-right: 0.3rem;">Vehicle</span> ${escapeHTML(entry.carMake)} ${escapeHTML(entry.carModel)} (${entry.year})</div>
+                    <div class="repair-type"><span style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem; margin-right: 0.3rem;">Repair</span> ${escapeHTML(entry.repairType)} — <span style="color: var(--text-secondary); font-size: 0.95rem;">${escapeHTML(entry.partDescription)}</span></div>
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
