@@ -45,21 +45,24 @@ function initNavigationHandlers() {
                 spans[0].style.transform = 'none';
                 spans[1].style.opacity = '1';
                 spans[2].style.transform = 'none';
-            }
+  }
         });
     }
 
     // Set active link configuration by tracking current resource location paths
-    const localPathname = window.location.pathname;
-    const currentFileName = localPathname.substring(localPathname.lastIndexOf('/') + 1);
+    const currentUrl = window.location.href.split('?')[0].split('#')[0]; 
     const elementsToMap = document.querySelectorAll('.nav-links a');
 
     elementsToMap.forEach(linkAnchor => {
-        const structuralTarget = linkAnchor.getAttribute('href');
-        if (currentFileName === structuralTarget || (currentFileName === '' && structuralTarget === 'index.html')) {
+        // Resolve absolute URL natively via the DOM and create a clean extensionless variant
+        const linkUrl = linkAnchor.href.split('?')[0].split('#')[0];
+        const cleanLinkUrl = linkUrl.replace('.html', '');
+        
+        // Match exact URL, extensionless URL, or root directory index mapping
+        if (currentUrl === linkUrl || currentUrl === cleanLinkUrl || (currentUrl.endsWith('/') && linkUrl.endsWith('index.html'))) {
             linkAnchor.classList.add('active');
         } else {
             linkAnchor.classList.remove('active');
         }
     });
-}
+}      
