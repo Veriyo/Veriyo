@@ -92,10 +92,9 @@ function processingPipeAndRender() {
     let analyticalOutput = liveDataset.filter(item => {
        if (item.status !== "Approved") return false;
 
-        if (querySuburb && !item.suburb.toLowerCase().includes(querySuburb)) return false;
-        if (queryMake !== "All" && item.carMake !== queryMake) return false;
-        if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
-
+   if (querySuburb && !(item.suburb || '').toLowerCase().includes(querySuburb)) return false;
+if (queryMake !== "All" && item.carMake !== queryMake) return false;
+if (queryRepair !== "All" && item.repairType !== queryRepair) return false;  
         if (queryRating !== "All") {
             const floorLimit = parseInt(queryRating, 10);
             if (item.rating < floorLimit) return false;
