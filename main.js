@@ -16,8 +16,7 @@ function sendAlert(message) {
 
 document.addEventListener('DOMContentLoaded', () => {
     initNavigationHandlers();
-
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     const visitTime = new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' });
     sendAlert(`Visit on ${currentPage} at ${visitTime}`);
 });
