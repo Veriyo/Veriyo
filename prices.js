@@ -145,10 +145,11 @@ if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
 
     // Render operations execution
     if (analyticalOutput.length === 0) {
-        container.innerHTML = `
+container.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
-            <p style="font-size: 1.2rem;">No approved repairs match your filter query combinations.</p>
-                <p style="margin-top: 0.5rem; font-size: 0.9rem;">Try adjusting structural scopes or clearing fields.</p>
+                <p style="font-size: 1.2rem; color: var(--text-primary);">No verified repairs found for this filter combination.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">This area might not have submissions yet — you could be the first.</p>
+                <a href="report.html" class="btn btn-primary" style="display:inline-block; margin-top:1.5rem;">Report What You Paid</a>
             </div>`;
         return;
     }
