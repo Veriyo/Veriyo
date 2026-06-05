@@ -69,7 +69,9 @@ function initPriceListingFilters() {
     const filterRating = document.getElementById('filterRating');
     const sortByInput = document.getElementById('sortBy');
 
-    const executionTriggers = [filterSuburb, filterMake, filterRepair, filterRating, sortByInput];
+   const filterMinPrice = document.getElementById('filterMinPrice');
+    const filterMaxPrice = document.getElementById('filterMaxPrice');
+    const executionTriggers = [filterSuburb, filterMake, filterRepair, filterRating, sortByInput, filterMinPrice, filterMaxPrice];
     executionTriggers.forEach(element => {
         if (element) {
             element.addEventListener('input', processingPipeAndRender);
@@ -93,7 +95,9 @@ function processingPipeAndRender() {
     const queryMake = document.getElementById('filterMake').value;
     const queryRepair = document.getElementById('filterRepair').value;
     const queryRating = document.getElementById('filterRating').value;
-    const sortingToken = document.getElementById('sortBy').value;
+  const sortingToken = document.getElementById('sortBy').value;
+    const queryMin = parseFloat(document.getElementById('filterMinPrice').value) || 0;
+    const queryMax = parseFloat(document.getElementById('filterMaxPrice').value) || Infinity;
 
     // Filter pipeline logic - Restricting elements explicitly strictly to Verified
     let analyticalOutput = liveDataset.filter(item => {
