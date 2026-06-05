@@ -98,8 +98,13 @@ function processingPipeAndRender() {
   const sortingToken = document.getElementById('sortBy').value;
     const queryMin = parseFloat(document.getElementById('filterMinPrice').value) || 0;
     const queryMax = parseFloat(document.getElementById('filterMaxPrice').value) || Infinity;
+const repairAverages = {};
+    liveDataset.filter(i => i.status === 'Approved').forEach(i => {
+        if (!repairAverages[i.repairType]) repairAverages[i.repairType] = { total: 0, count: 0 };
+        repairAverages[i.repairType].total += i.amountPaid;
+        repairAverages[i.repairType].count += 1;
+    });
 
-    // Filter pipeline logic - Restricting elements explicitly strictly to Verified
     let analyticalOutput = liveDataset.filter(item => {
        if (item.status !== "Approved") return false;
 
@@ -186,6 +191,13 @@ if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
 
                 ${entry.notes ? `<p class="card-notes">${escapeHTML(entry.notes)}</p>` : ''}
                 
+             ${(() => {
+                    const avg = repairAverages[entry.repairType];
+                    if (!avg || avg.count < 2) return '';
+                    const avgVal = Math.round(avg.total / avg.count);
+                    const formatted = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(avgVal);
+                    return `<div style="font-size:0.78rem; color:var(--text-secondary); border-top:1px solid var(--border-color); padding-top:0.5rem;">Avg for ${escapeHTML(entry.repairType)}: ${formatted}</div>`;
+                })()}
                <div class="card-date">Repaired: ${calculatedDateStr}</div>
             </article>
         `;
