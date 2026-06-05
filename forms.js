@@ -140,8 +140,7 @@ const dupCheck = await _supabase
             }
         }
 
-        const submission = {
-            workshop_name: document.getElementById('workshopName')?.value.trim() || '',
+
         const submission = {
             workshop_name: document.getElementById('workshopName')?.value.trim() || '',
             suburb: document.getElementById('suburb')?.value.trim() || '',
@@ -183,7 +182,7 @@ const dupCheck = await _supabase
         const targetContainer = formNode.parentElement;
         targetContainer.innerHTML = `
             <div class="thank-you-view">
-                <div class="icon-success">&#22C5;</div>
+  <div class="icon-success">&#10003;</div>
                 <h3>Thank You!</h3>
                <p>Your submission is under operational review by our audit team. If approved, it will appear on the approved Prices dashboard page within 24 hours.</p>
                 <a href="prices.html" class="btn btn-primary">Go to Browse Prices</a>
@@ -290,7 +289,7 @@ function initWorkshopListingModules(formNode) {
     const destinationWrapper = formNode.parentElement;
     destinationWrapper.innerHTML = `
         <div class="thank-you-view">
-            <div class="icon-success">&#22C5;</div>
+      <div class="icon-success">&#10003;</div>
             <h3>Registration Logged</h3>
             <p>Thank you for listing your operational profile. We will manually review your credentials and get back to your administration branch within 48 hours.</p>
             <a href="index.html" class="btn btn-secondary">Return to Homepage</a>
