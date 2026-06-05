@@ -72,6 +72,14 @@ function initPriceListingFilters() {
    const filterMinPrice = document.getElementById('filterMinPrice');
     const filterMaxPrice = document.getElementById('filterMaxPrice');
     const executionTriggers = [filterSuburb, filterMake, filterRepair, filterRating, sortByInput, filterMinPrice, filterMaxPrice];
+    const filterToggleBtn = document.getElementById('filterToggleBtn');
+    const filterGridPanel = document.getElementById('filterGridPanel');
+    if (filterToggleBtn && filterGridPanel) {
+        filterToggleBtn.addEventListener('click', () => {
+            filterGridPanel.classList.toggle('filter-open');
+            filterToggleBtn.textContent = filterGridPanel.classList.contains('filter-open') ? '▲ Filter & Sort' : '▼ Filter & Sort';
+        });
+    }
     executionTriggers.forEach(element => {
         if (element) {
             element.addEventListener('input', processingPipeAndRender);
