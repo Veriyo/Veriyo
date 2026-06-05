@@ -32,8 +32,9 @@
     <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Approved Repair Benchmarks</h1>
     <p style="color: var(--text-secondary);">Examine authentic cost indices generated entirely from approved invoices submitted across your region.</p>
 </header>
-        <section class="filter-wrapper" aria-label="Data Filter Controls">
-            <div class="filter-grid">
+<section class="filter-wrapper" aria-label="Data Filter Controls">
+            <button id="filterToggleBtn" style="display:none; width:100%; background:var(--surface-color); color:var(--text-primary); border:1px solid var(--border-color); border-radius:var(--radius); padding:0.75rem 1rem; font-size:0.95rem; font-weight:600; cursor:pointer; margin-bottom:0.75rem; text-align:left;">&#9660; Filter &amp; Sort</button>
+            <div class="filter-grid" id="filterGridPanel">
                 
                 <div class="filter-group">
                     <label for="filterSuburb">Filter by Suburb</label>
