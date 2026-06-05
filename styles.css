@@ -583,7 +583,10 @@ button, input, select, textarea {
 
     .stats-bar { grid-template-columns: 1fr; gap: 2rem; }
     .steps-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-    .prices-grid { grid-template-columns: 1fr; }
+.prices-grid { grid-template-columns: 1fr; }
+    #filterToggleBtn { display: block !important; }
+    #filterGridPanel { display: none; }
+    #filterGridPanel.filter-open { display: grid; }
     
     .form-container { padding: 1.5rem; }
     .form-group-row { grid-template-columns: 1fr; gap: 0; }
