@@ -125,7 +125,23 @@ submitBtnElement.textContent = 'Submitting...';
             alert("Please select a structural rating star score before submitting.");
             return;
         }
+const dupCheck = await _supabase
+            .from('Submissions')
+            .select('id')
+            .eq('workshop_name', document.getElementById('workshopName')?.value.trim() || '')
+            .eq('repair_type', document.getElementById('repairType')?.value || '')
+            .eq('repair_date', document.getElementById('repairDate')?.value || '');
 
+        if (dupCheck.data && dupCheck.data.length > 0) {
+            if (!confirm('A submission for this workshop, repair type, and date already exists. Submit anyway?')) {
+                submitBtnElement.disabled = false;
+                submitBtnElement.textContent = 'Submit My Experience';
+                return;
+            }
+        }
+
+        const submission = {
+            workshop_name: document.getElementById('workshopName')?.value.trim() || '',
         const submission = {
             workshop_name: document.getElementById('workshopName')?.value.trim() || '',
             suburb: document.getElementById('suburb')?.value.trim() || '',
