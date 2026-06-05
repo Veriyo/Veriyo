@@ -47,9 +47,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 liveDataset = normalizedLive;;
 
             // Re-render with the combined dataset now available
-            processingPipeAndRender();
-        }
-    }
+processingPipeAndRender();
+const suburbList = document.getElementById('suburbSuggestions');
+if (suburbList) {
+    const uniqueSuburbs = [...new Set(normalizedLive.map(r => r.suburb).filter(Boolean))].sort();
+    uniqueSuburbs.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        suburbList.appendChild(opt);
+    });
+}
 });
 
 /**
