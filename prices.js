@@ -103,8 +103,7 @@ function processingPipeAndRender() {
     const queryRepair = document.getElementById('filterRepair').value;
     const queryRating = document.getElementById('filterRating').value;
   const sortingToken = document.getElementById('sortBy').value;
-    const queryMin = parseFloat(document.getElementById('filterMinPrice').value) || 0;
-    const queryMax = parseFloat(document.getElementById('filterMaxPrice').value) || Infinity;
+   
 const repairAverages = {};
     liveDataset.filter(i => i.status === 'Approved').forEach(i => {
         if (!repairAverages[i.repairType]) repairAverages[i.repairType] = { total: 0, count: 0 };
@@ -118,7 +117,7 @@ const repairAverages = {};
    if (querySuburb && !(item.suburb || '').toLowerCase().includes(querySuburb)) return false;
 if (queryMake !== "All" && item.carMake !== queryMake) return false;
 if (queryRepair !== "All" && item.repairType !== queryRepair) return false;  
-if (item.amountPaid < queryMin || item.amountPaid > queryMax) return false;
+
         if (queryRating !== "All") {
                    const floorLimit = parseInt(queryRating, 10);
             if (item.rating < floorLimit) return false;
