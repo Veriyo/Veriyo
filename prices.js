@@ -57,6 +57,7 @@ if (suburbList) {
         suburbList.appendChild(opt);
     });
 }
+    }
 });
 
 /**
