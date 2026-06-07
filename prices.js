@@ -7,7 +7,7 @@
 const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
 const _supabasePrices = supabase.createClient(supabaseUrl, supabaseKey)
-let liveDataset = [];;
+let liveDataset = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (document.getElementById('pricesContainer')) {
@@ -23,43 +23,39 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Normalize Supabase snake_case fields to match hardcoded array format
             const normalizedLive = data.map(row => ({
                 id: row.id,
-                workshopName: row.workshop_name || '',
-                suburb: row.suburb || '',
-                city: row.city || '',
-                carMake: row.car_brand || 'Unknown',
-                carModel: row.car_model || 'Unknown',
-                year: row.car_year || new Date().getFullYear(),
-                repairType: row.repair_type || 'Other',
-                partDescription: row.part_description || '',
-                amountQuoted: row.amount_quoted || 0,
-                amountPaid: row.amount_paid || 0,
-                priceChanged: row.price_changed || '',
-                pricingExplained: row.pricing_explained || '',
-                newProblems: row.new_problems || 'No',
-                rating: row.rating || 3,
-                notes: row.notes || '',
-                status: row.status || 'Approved',
-                timestamp: row.repair_date || null
+                carMake: row.car_make || row.carMake,
+                carModel: row.car_model || row.carModel,
+                year: row.year,
+                serviceType: row.service_type || row.serviceType,
+                amountPaid: row.amount_paid || row.amountPaid,
+                workshopName: row.workshop_name || row.workshopName,
+                suburb: row.suburb,
+                province: row.province,
+                rating: row.rating,
+                quoteDifference: row.quote_difference || row.quoteDifference,
+                dateAdded: row.created_at || row.dateAdded
             }));
 
-            // Merge live Supabase records with hardcoded array — hardcoded stays intact
-            // Supabase is the only data source
-liveDataset = normalizedLive;;
+            liveDataset = normalizedLive;
 
             // Re-render with the combined dataset now available
-processingPipeAndRender();
-const suburbList = document.getElementById('suburbSuggestions');
-if (suburbList) {
-    const uniqueSuburbs = [...new Set(normalizedLive.map(r => r.suburb).filter(Boolean))].sort();
-    uniqueSuburbs.forEach(s => {
-        const opt = document.createElement('option');
-        opt.value = s;
-        suburbList.appendChild(opt);
-    });
-}
+            processingPipeAndRender();
+            
+            const suburbList = document.getElementById('suburbSuggestions');
+            if (suburbList) {
+                const uniqueSuburbs = [...new Set(normalizedLive.map(r => r.suburb).filter(Boolean))].sort();
+                uniqueSuburbs.forEach(s => {
+                    const opt = document.createElement('option');
+                    opt.value = s;
+                    suburbList.appendChild(opt);
+                });
+            }
+        } else {
+            // Fallback rendering phase if live download encounters no records
+            processingPipeAndRender();
+        }
     }
 });
-
 /**
  * Initializes listeners for standard input manipulation components
  */
