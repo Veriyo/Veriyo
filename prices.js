@@ -70,9 +70,7 @@ function initPriceListingFilters() {
     const filterRating = document.getElementById('filterRating');
     const sortByInput = document.getElementById('sortBy');
 
-   const filterMinPrice = document.getElementById('filterMinPrice');
-    const filterMaxPrice = document.getElementById('filterMaxPrice');
-    const executionTriggers = [filterSuburb, filterMake, filterRepair, filterRating, sortByInput, filterMinPrice, filterMaxPrice];
+  const executionTriggers = [filterSuburb, filterMake, filterRepair, filterRating, sortByInput];
     const filterToggleBtn = document.getElementById('filterToggleBtn');
     const filterGridPanel = document.getElementById('filterGridPanel');
     if (filterToggleBtn && filterGridPanel) {
