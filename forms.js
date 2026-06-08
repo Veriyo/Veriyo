@@ -144,7 +144,7 @@ submitBtnElement.textContent = 'Submitting...';
             status: 'Pending',
         };
 const { data, error } = await _supabase
-            .from('submissions')
+            .from('Submissions')
             .insert([submission]);
 
         if (error) {
@@ -249,7 +249,7 @@ const submitBtnElement = document.getElementById('submitWorkshopBtn');
             status: 'Pending'
         };
 const { data, error } = await _supabase
-            .from('submissions')
+            .from('Submissions')
             .insert([submission]);
 
         if (error) {
