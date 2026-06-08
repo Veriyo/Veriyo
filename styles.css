@@ -2,6 +2,11 @@
    Veriyo - Core Stylesheet (Built for South African drivers)
    ========================================================================== */
 
+/* Smooth scrolling for anchor navigation */
+html {
+    scroll-behavior: smooth;
+}
+
 /* Google Fonts Import */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -19,6 +24,7 @@
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     --radius: 8px;
     --transition: all 0.2s ease-in-out;
+}
 }
 
 /* Base Reset */
