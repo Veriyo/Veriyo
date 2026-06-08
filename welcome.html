@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,8 +15,6 @@
             align-items: center;
             justify-content: center;
             padding: 2rem 1.5rem;
-            /* Remove the default body padding-top since there is no navbar on this page */
-            padding-top: 2rem;
         }
 
         .welcome-brand {
@@ -150,7 +149,13 @@
         }
     </style>
 </head>
-<body style="padding-top: 0;">
+<body>
+
+    <nav class="navbar">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+    </nav>
 
     <main class="welcome-page">
 
@@ -169,7 +174,7 @@
                 <div class="welcome-card-icon">&#128663;</div>
                 <h2>I'm a Motorist</h2>
                 <p>Browse real repair prices paid by drivers across South Africa, or report your own experience to help others.</p>
-                <a href="prices.html" class="welcome-card-btn">Enter as Motorist</a>
+                <a href="index.html" class="welcome-card-btn">Continue as Motorist</a>
             </div>
 
             <!-- Workshop Manager portal -->
@@ -177,7 +182,7 @@
                 <div class="welcome-card-icon">&#128295;</div>
                 <h2>I'm a Workshop Manager</h2>
                 <p>List your workshop, publish your service pricing, and build credibility with verified South African vehicle owners.</p>
-                <a href="workshop.html" class="welcome-card-btn">Enter as Workshop Manager</a>
+                <a href="workshop.html" class="welcome-card-btn">Continue as Workshop</a>
             </div>
 
         </div>
@@ -191,3 +196,4 @@
 
 </body>
 </html>
+```
