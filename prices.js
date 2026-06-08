@@ -237,8 +237,9 @@ function convertToMonthYearFormat(isoDateString) {
  * XSS Deflection Mechanism
  */
 function escapeHTML(unsafeString) {
-    return unsafeString
-         .replace(/&/g, "&amp;")
+    if (unsafeString == null) return '';
+    return String(unsafeString)
+         .replace(/&/g, '&amp;')
          .replace(/</g, "&lt;")
          .replace(/>/g, "&gt;")
          .replace(/"/g, "&quot;")
