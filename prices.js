@@ -21,19 +21,20 @@ if (document.getElementById('pricesContainer')) {
 
         if (!error && data && data.length > 0) {
             // Normalize Supabase snake_case fields to match hardcoded array format
-            const normalizedLive = data.map(row => ({
+const normalizedLive = data.map(row => ({
                 id: row.id,
-                carMake: row.car_make || row.carMake,
+                status: 'Approved',    ← explicitly set; Supabase already filtered .eq('status','Approved')
+                carMake: row.car_brand || row.car_make || row.carMake || '',
                 carModel: row.car_model || row.carModel,
                 year: row.year,
-                serviceType: row.service_type || row.serviceType,
+                    repairType: row.repair_type || row.serviceType || '', ← CORRECT KEY
                 amountPaid: row.amount_paid || row.amountPaid,
                 workshopName: row.workshop_name || row.workshopName,
                 suburb: row.suburb,
                 province: row.province,
                 rating: row.rating,
-                quoteDifference: row.quote_difference || row.quoteDifference,
-                dateAdded: row.created_at || row.dateAdded
+           priceChanged: row.price_changed || row.priceChanged || '',
+                timestamp: row.created_at || row.timestamp || row.dateAdded || '' ← CORRECT KEY
             }));
 
             liveDataset = normalizedLive;
