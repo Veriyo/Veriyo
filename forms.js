@@ -109,7 +109,7 @@ submitBtnElement.textContent = 'Submitting...';
         }
 
         const dupCheck = await _supabase
-            .from('submissions')
+            .from('Submissions')
             .select('id')
             .eq('workshop_name', document.getElementById('workshopName')?.value.trim() || '')
             .eq('repair_type', document.getElementById('repairType')?.value || '')
