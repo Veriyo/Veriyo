@@ -98,7 +98,7 @@ function initRepairReportingModules(formNode) {
         }
 
         submitBtnElement.disabled = true;
-        submitBtnElement.textContent = 'Submitting...';
+submitBtnElement.textContent = 'Submitting...';
         
         // Enforce Rating Verification check prior to allowing dispatch pipeline
         if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
@@ -108,18 +108,8 @@ function initRepairReportingModules(formNode) {
             return;
         }
 
-        // ... Keep your existing Supabase submission payload below this ...
-
-submitBtnElement.disabled = true;
-submitBtnElement.textContent = 'Submitting...';
-        
-        // Enforce Rating Verification check prior to allowing dispatch pipeline
-        if (!internalRatingStorage.value || internalRatingStorage.value === "0") {
-            alert("Please select a structural rating star score before submitting.");
-            return;
-        }
-const dupCheck = await _supabase
-            .from('Submissions')
+        const dupCheck = await _supabase
+            .from('submissions')
             .select('id')
             .eq('workshop_name', document.getElementById('workshopName')?.value.trim() || '')
             .eq('repair_type', document.getElementById('repairType')?.value || '')
@@ -153,14 +143,12 @@ const dupCheck = await _supabase
             notes: document.getElementById('additionalNotes')?.value.trim() || '',
             status: 'Pending',
         };
-
-        const { data, error } = await _supabase
-            .from('Submissions')
+const { data, error } = await _supabase
+            .from('submissions')
             .insert([submission]);
 
         if (error) {
             console.error("Supabase Error:", error.message);
-            alert("Submission failed to save: " + error.message);
             return;
         }
        // Notify you of new submission
@@ -260,14 +248,12 @@ const submitBtnElement = document.getElementById('submitWorkshopBtn');
             custom_service_price_2: parseInt(document.getElementById('customServicePrice2')?.value, 10) || 0,
             status: 'Pending'
         };
+const { data, error } = await _supabase
+            .from('submissions')
+            .insert([submission]);
 
-        const { data, error } = await _supabase
-            .from('workshopprofiles') 
-            .insert([submission]); // CORRECTED: Now pushes the actual gathered data!
-
-    // 3. Error Handling Constraint: Stop the code if the database fails
-    if (error) {
-        console.error("Supabase Error:", error.message);
+        if (error) {
+            console.error("Supabase Error:", error.message);
         alert("Submission failed to save: " + error.message);
         return; // Exits the function completely. The thank-you screen will NOT show.
     }
