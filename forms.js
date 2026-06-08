@@ -29,28 +29,21 @@ function initRepairReportingModules(formNode) {
     const internalRatingStorage = document.getElementById('overallRatingValue');
 // Toggle the submit button state dynamically based on user privacy consent agreement
     const privacyCheckbox = document.getElementById('privacyConsent');
-    const submitBtnElement = document.getElementById('submitReportBtn');
+   const submitBtnElement = document.getElementById('submitReportBtn');
     const privacyErrorMsg = document.getElementById('privacyErrorMsg');
 
     if (privacyCheckbox && submitBtnElement) {
-        // Force the button into a dark, inactive visual state on page load
-        submitBtnElement.style.backgroundColor = '#1a1a1a';
-        submitBtnElement.style.borderColor = '#1a1a1a';
-        submitBtnElement.style.color = '#ffffff';
+        // Force the button into a disabled visual state on page load
+        submitBtnElement.disabled = true;
 
         privacyCheckbox.addEventListener('change', () => {
             if (privacyCheckbox.checked) {
-                // User checked the box: Hide error and restore btn-primary yellow colors
+                // User checked the box: Hide error and restore functionality
                 if(privacyErrorMsg) privacyErrorMsg.style.display = 'none';
-                
-                submitBtnElement.style.backgroundColor = ''; 
-                submitBtnElement.style.borderColor = '';
-                submitBtnElement.style.color = ''; 
+                submitBtnElement.disabled = false;
             } else {
-                // User unchecked the box: Revert back to dark state
-                submitBtnElement.style.backgroundColor = '#1a1a1a';
-                submitBtnElement.style.borderColor = '#1a1a1a';
-                submitBtnElement.style.color = '#ffffff';
+                // User unchecked the box: Revert back to disabled state
+                submitBtnElement.disabled = true;
             }
         });
     }
@@ -212,24 +205,18 @@ function initWorkshopListingModules(formNode) {
     });
 // Toggle the submit button state dynamically based on user privacy consent
     const privacyCheckbox = document.getElementById('privacyConsentWorkshop');
-    const submitBtnElement = document.getElementById('submitWorkshopBtn');
+const submitBtnElement = document.getElementById('submitWorkshopBtn');
     const privacyErrorMsg = document.getElementById('privacyErrorMsgWorkshop');
 
     if (privacyCheckbox && submitBtnElement) {
-        submitBtnElement.style.backgroundColor = '#1a1a1a';
-        submitBtnElement.style.borderColor = '#1a1a1a';
-        submitBtnElement.style.color = '#ffffff';
+        submitBtnElement.disabled = true;
 
         privacyCheckbox.addEventListener('change', () => {
             if (privacyCheckbox.checked) {
                 if(privacyErrorMsg) privacyErrorMsg.style.display = 'none';
-                submitBtnElement.style.backgroundColor = ''; 
-                submitBtnElement.style.borderColor = '';
-                submitBtnElement.style.color = ''; 
+                submitBtnElement.disabled = false;
             } else {
-                submitBtnElement.style.backgroundColor = '#1a1a1a';
-                submitBtnElement.style.borderColor = '#1a1a1a';
-                submitBtnElement.style.color = '#ffffff';
+                submitBtnElement.disabled = true;
             }
         });
     }
