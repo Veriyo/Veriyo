@@ -10,7 +10,7 @@ const _supabasePrices = supabase.createClient(supabaseUrl, supabaseKey)
 let liveDataset = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
-    if (document.getElementById('pricesContainer')) {
+if (document.getElementById('pricesContainer')) {
         initPriceListingFilters();
 
         // Fetch live verified records from Supabase and merge with hardcoded set
