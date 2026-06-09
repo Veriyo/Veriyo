@@ -9,29 +9,21 @@
 <body>
 
     <nav class="navbar">
-        <a href="welcome.html" class="nav-logo">
-            <img src="logo.png" alt="Veriyo">
-        </a>
-        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
+   <a href="index.html" class="nav-logo">
+    <img src="logo.png" alt="Veriyo">
+</a>
+<button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
             <span></span>
             <span></span>
             <span></span>
         </button>
         <ul class="nav-links" id="navLinksContainer">
-            <li><a href="workshop.html" class="active">Home</a></li>
-            <li><a href="#listWorkshopForm" style="color: var(--primary-accent);">List Your Workshop</a></li>
+            <li><a href="workshop-home.html">Home</a></li>
+            <li><a href="workshop.html" class="active">List Your Workshop</a></li>
         </ul>
     </nav>
-    <main class="container">
+<main class="container">
         
-        <header class="hero">
-            <h1>Get Your Workshop Found By Drivers Who Value Transparency</h1>
-            <p>List your workshop on Veriyo. Build trust through verified pricing and honest reviews.</p>
-            <div class="cta-group">
-                <a href="#listWorkshopForm" class="btn btn-primary">List Your Workshop</a>
-            </div>
-        </header>
-
         <section style="margin-bottom: 3rem;">
             <h2 class="section-title">How It Works</h2>
             <div class="steps-grid">
@@ -53,7 +45,7 @@
             </div>
         </section>
 
-        <div id="listing-section" class="notice-banner" role="note">
+        <div class="notice-banner" role="note">
             This page is for workshop managers only. This profile configuration grants business accountability features.
         </div>
 
@@ -231,7 +223,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
                     <div style="display: flex; align-items: flex-start; gap: 8px;">
                         <input type="checkbox" id="privacyConsentWorkshop" style="margin-top: 3px; cursor: pointer;">
                         <label for="privacyConsentWorkshop" style="font-weight: 500; font-size: 0.9rem; line-height: 1.2; white-space: nowrap;">
@@ -251,14 +243,14 @@
     </main>
 
 <footer class="footer">
-    <p>&copy; Veriyo | Built for South African drivers</p>
+    <p>&copy;  Veriyo | Built for South African drivers</p>
     <p style="margin-top: 0.5rem;">
         <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
     </p>
 </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="forms.js"></script>
 </body>
 </html>
