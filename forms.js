@@ -151,13 +151,6 @@ const { data, error } = await _supabase
             console.error("Supabase Error:", error.message);
             return;
         }
-       // Notify you of new submission
-        const workshopVal = document.getElementById('workshopName')?.value.trim() || 'Unknown';
-        const cityVal = document.getElementById('city')?.value.trim() || 'Unknown';
-        const repairVal = document.getElementById('repairType')?.value || 'Unknown';
-        const paidVal = document.getElementById('amountPaid')?.value || '?';
-        const submitTime = new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' });
-        sendAlert(`New Submission\nWorkshop: ${workshopVal}\nCity: ${cityVal}\nRepair: ${repairVal}\nAmount Paid: R${paidVal}\nTime: ${submitTime}`);
 
         // Standard client-side HTML5 constraints verified, transition UI container state
         const targetContainer = formNode.parentElement;
@@ -226,7 +219,7 @@ const submitBtnElement = document.getElementById('submitWorkshopBtn');
             physical_address: document.getElementById('physicalAddress')?.value.trim() || '',
             suburb: document.getElementById('workshopSuburb')?.value.trim() || '',
             city: document.getElementById('workshopCity')?.value.trim() || '',
-            province: document.getElementById('province')?.value || '',
+            province: (document.getElementById('province')?.value || '').toLowerCase(),
             contact_number: document.getElementById('contactNumber')?.value.trim() || '',
             email_address: document.getElementById('emailAddress')?.value.trim() || '',
             operating_hours: document.getElementById('operatingHours')?.value.trim() || '',
@@ -265,7 +258,7 @@ const { data, error } = await _supabase
       <div class="icon-success">&#10003;</div>
             <h3>Registration Logged</h3>
             <p>Thank you for listing your operational profile. We will manually review your credentials and get back to your administration branch within 48 hours.</p>
-            <a href="index.html" class="btn btn-secondary">Return to Homepage</a>
+            <a href="index.html" class="btn btn-primary">Return to Homepage</a>
         </div>
     `;
 });
