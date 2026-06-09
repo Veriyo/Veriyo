@@ -21,31 +21,31 @@ if (document.getElementById('pricesContainer')) {
 
         if (!error && data && data.length > 0) {
             // Normalize Supabase snake_case fields to match hardcoded array format
-const normalizedLive = data.map(row => ({
+            const normalizedLive = data.map(row => ({
                 id: row.id,
-                status: 'Approved', // explicitly set; Supabase already filtered .eq('status','Approved')
-                carMake: row.car_brand || row.car_make || row.carMake || '',
-                carModel: row.car_model || row.carModel,
-                year: row.year,
+                status: 'Approved',
+                carMake: row.car_make || row.carMake || '',
+                carModel: row.car_model || row.carModel || '',
+                year: row.year || '',
+                repairType: row.repair_type || row.repairType || row.service_type || row.serviceType || '',
+                partDescription: row.part_description || row.partDescription || '',
+                amountPaid: parseFloat(row.amount_paid || row.amountPaid) || 0,
+                workshopName: row.workshop_name || row.workshopName || '',
+                suburb: row.suburb || '',
                 city: row.city || '',
-                repairType: row.repair_type || row.serviceType || '', // CORRECT KEY
-                amountPaid: row.amount_paid || row.amountPaid,
-                workshopName: row.workshop_name || row.workshopName,
-                suburb: row.suburb,
-                province: row.province,
-                rating: row.rating,
-                priceChanged: row.price_changed || row.priceChanged || '',
-                partDescription: row.part_description || '',
-                newProblems: row.new_problems || '',
-                notes: row.notes || '',
-                timestamp: row.created_at || row.timestamp || row.dateAdded || '' // CORRECT KEY
+                province: row.province || '',
+                rating: parseInt(row.rating) || 0,
+                priceChanged: row.price_changed || row.priceChanged || row.quote_difference || row.quoteDifference || '',
+                newProblems: row.new_problems || row.newProblems || 'No',
+                notes: row.additional_notes || row.notes || '',
+                timestamp: row.repair_date || row.created_at || row.dateAdded || row.timestamp || ''
             }));
 
             liveDataset = normalizedLive;
 
             // Re-render with the combined dataset now available
             processingPipeAndRender();
-
+            
             const suburbList = document.getElementById('suburbSuggestions');
             if (suburbList) {
                 const uniqueSuburbs = [...new Set(normalizedLive.map(r => r.suburb).filter(Boolean))].sort();
@@ -86,6 +86,9 @@ function initPriceListingFilters() {
             element.addEventListener('change', processingPipeAndRender);
         }
     });
+
+    // Execute absolute initial display draw
+    processingPipeAndRender();
 }
 
 /**
@@ -101,7 +104,7 @@ function processingPipeAndRender() {
     const queryRepair = document.getElementById('filterRepair').value;
     const queryRating = document.getElementById('filterRating').value;
   const sortingToken = document.getElementById('sortBy').value;
-
+   
 const repairAverages = {};
     liveDataset.filter(i => i.status === 'Approved').forEach(i => {
         if (!repairAverages[i.repairType]) repairAverages[i.repairType] = { total: 0, count: 0 };
@@ -114,7 +117,7 @@ const repairAverages = {};
 
    if (querySuburb && !(item.suburb || '').toLowerCase().includes(querySuburb)) return false;
 if (queryMake !== "All" && item.carMake !== queryMake) return false;
-if (queryRepair !== "All" && item.repairType !== queryRepair) return false;
+if (queryRepair !== "All" && item.repairType !== queryRepair) return false;  
 
         if (queryRating !== "All") {
                    const floorLimit = parseInt(queryRating, 10);
@@ -153,11 +156,11 @@ container.innerHTML = `
     container.innerHTML = analyticalOutput.map(entry => {
         // String converters for South African Currency Formatting standards
         const formattedCost = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(entry.amountPaid);
-
+        
         // Evaluates internal flags to draw respective markup badges
         const quoteDeltaMarkup = parseQuoteDifferenceBadge(entry.priceChanged);
-        const cascadingDefectsMarkup = entry.newProblems === "Yes"
-            ? `<span class="badge badge-danger">New Problems Appeared</span>`
+        const cascadingDefectsMarkup = entry.newProblems === "Yes" 
+            ? `<span class="badge badge-danger">New Problems Appeared</span>` 
             : `<span class="badge badge-neutral">No Post-Repair Issues</span>`;
 
         // Render graphical star configurations safely
@@ -174,11 +177,11 @@ container.innerHTML = `
                 <div class="card-header">
                     <div>
                         <h3 class="workshop-title">${escapeHTML(entry.workshopName)}</h3>
-                        <span class="suburb-label">${escapeHTML(entry.suburb)}, ${escapeHTML(entry.city)}</span>
+                        <span class="suburb-label">${entry.suburb ? escapeHTML(entry.suburb) + ', ' : ''}${escapeHTML(entry.city)}</span>
                     </div>
                     <span class="badge badge-success">${entry.status}</span>
                 </div>
-
+                
                 <div>
                   ${(entry.carMake === 'Unknown' && (entry.carModel === 'Unknown' || entry.carModel === '')) ? '' : `<div class="car-details"><span style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem; margin-right: 0.3rem;">Vehicle</span> ${escapeHTML(entry.carMake)} ${escapeHTML(entry.carModel)}</div>`}
                     <div class="repair-type"><span style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem; margin-right: 0.3rem;">Repair</span> ${escapeHTML(entry.repairType)} — <span style="color: var(--text-secondary); font-size: 0.95rem;">${escapeHTML(entry.partDescription)}</span></div>
@@ -195,7 +198,7 @@ container.innerHTML = `
                 </div>
 
                 ${entry.notes ? `<p class="card-notes">${escapeHTML(entry.notes)}</p>` : ''}
-
+                
              ${(() => {
                     const avg = repairAverages[entry.repairType];
                     if (!avg || avg.count < 2) return '';
@@ -213,9 +216,6 @@ container.innerHTML = `
  * Contextual Badge styling assignments
  */
 function parseQuoteDifferenceBadge(statusValue) {
-    if (!statusValue || typeof statusValue !== 'string') {
-        return '<span class="badge">No Quote Data</span>';
-    }
     if (statusValue.includes("higher")) {
         return `<span class="badge badge-danger">Price Changed (Higher)</span>`;
     } else if (statusValue.includes("lower")) {
@@ -241,9 +241,8 @@ function convertToMonthYearFormat(isoDateString) {
  * XSS Deflection Mechanism
  */
 function escapeHTML(unsafeString) {
-    if (unsafeString == null) return '';
-    return String(unsafeString)
-         .replace(/&/g, '&amp;')
+    return unsafeString
+         .replace(/&/g, "&amp;")
          .replace(/</g, "&lt;")
          .replace(/>/g, "&gt;")
          .replace(/"/g, "&quot;")
