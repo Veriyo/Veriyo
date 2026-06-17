@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">f
     <title>Report a Repair - Veriyo</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -40,16 +40,31 @@
                     <label for="workshopName">Workshop Name *</label>
                     <input type="text" id="workshopName" class="form-control" required placeholder="e.g. Randburg Auto Clinic">
                 </div>
-
-                <div class="form-group-row">
+<div class="form-group-row">
                     <div class="form-group">
                         <label for="suburb">Suburb *</label>
                         <input type="text" id="suburb" class="form-control" required placeholder="e.g. Ferndale">
                     </div>
                     <div class="form-group">
                         <label for="city">City *</label>
-                      <input type="text" id="city" class="form-control" placeholder="e.g. Cape Town" required>
+                        <input type="text" id="city" class="form-control" placeholder="e.g. Cape Town" required>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="province">Province *</label>
+                    <select id="province" class="form-control" required>
+                        <option value="" disabled selected>Select your province</option>
+                        <option value="Gauteng">Gauteng</option>
+                        <option value="Western Cape">Western Cape</option>
+                        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                        <option value="Eastern Cape">Eastern Cape</option>
+                        <option value="Limpopo">Limpopo</option>
+                        <option value="Mpumalanga">Mpumalanga</option>
+                        <option value="North West">North West</option>
+                        <option value="Free State">Free State</option>
+                        <option value="Northern Cape">Northern Cape</option>
+                    </select>
                 </div>
   <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border-color);">Repair Details</p>
    <div class="form-group-row">
@@ -109,54 +124,53 @@
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="partDescription">Part or Service Description *</label>
-                    <span class="label-desc">Specify exactly what was replaced or checked (e.g. "Front brake pads and discs machining").</span>
+         <div class="form-group">
+                    <label for="partDescription">What Was Done *</label>
+                    <span class="label-desc">e.g. Front brake pads replaced, oil and filter change.</span>
                     <input type="text" id="partDescription" class="form-control" required placeholder="e.g. LUK Clutch Kit replacement">
+                </div> 
+
+<div class="form-group">
+                    <label for="amountPaid">Total Amount Paid (Rands) *</label>
+                    <span class="label-desc">The final number on your invoice — not an estimate.</span>
+                    <input type="number" id="amountPaid" class="form-control" required placeholder="e.g. 4850">
                 </div>
 
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label for="amountQuoted">Amount Quoted (Rands)</label>
-                        <span class="label-desc">What were you quoted upfront?</span>
-                        <input type="number" id="amountQuoted" class="form-control" placeholder="e.g. 4500">
+      <div class="form-group">
+                    <label>Did you feel the price was fair? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
+                    <span class="label-desc">Based on what was done to your car, did the amount feel reasonable?</span>
+                    <div class="radio-checkbox-group">
+                        <label class="radio-label">
+                            <input type="radio" name="feltOvercharged" value="false"> ✅ Yes, it was fair
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="feltOvercharged" value="true"> ❌ No, I felt overcharged
+                        </label>
                     </div>
-                    <div class="form-group">
-                        <label for="amountPaid">Amount Paid (Rands) *</label>
-                        <span class="label-desc">Absolute final invoice cost.</span>
-                        <input type="number" id="amountPaid" class="form-control" required placeholder="e.g. 4850">
+                </div>
+
+                <div id="feltOverchargedReasonContainer" class="form-group conditional-container hidden">
+                    <label for="feltOverchargedReason">What made you feel that way? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
+                    <textarea id="feltOverchargedReason" class="form-control" rows="3" maxlength="300" placeholder="e.g. They charged for parts I didn't ask for, or the price doubled without explanation."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>How did the staff treat you? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
+                    <span class="label-desc">Did the people at the workshop speak to you with respect?</span>
+                    <div class="radio-checkbox-group">
+                        <label class="radio-label">
+                            <input type="radio" name="staffTreatment" value="helpful"> 👍 They were helpful and respectful
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="staffTreatment" value="unhelpful"> 👎 They were rude or dismissive
+                        </label>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label for="priceChanged">Did the final price differ from the quote? *</label>
-                    <select id="priceChanged" class="form-control" required>
-                        <option value="No it matched" selected>No, it matched exactly</option>
-                        <option value="Yes it was higher">Yes, it was higher than quoted</option>
-                        <option value="Yes it was lower">Yes, it was lower than quoted</option>
-                        <option value="No quote was given">No upfront quote was given</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="pricingExplained">Was pricing explained clearly? *</label>
-                    <select id="pricingExplained" class="form-control" required>
-                        <option value="Yes itemized receipt">Yes, full breakdown with an itemized receipt</option>
-                        <option value="Partial explanation">Partial explanation provided verbally</option>
-                        <option value="Just a total">Nothing itemized, just presented a total balance</option>
-                        <option value="Nothing explained">Nothing explained and zero visibility provided</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label bit="newProblems">Did new problems appear after the repair? *</label>
-                    <select id="newProblems" class="form-control" required>
-                        <option value="No">No, car runs perfectly</option>
-                        <option value="Yes">Yes, immediate tracking operational issues emerged</option>
-                        <option value="Not sure yet">Uncertain / tracking performance currently</option>
-                    </select>
-                </div>
-
+                <div id="staffTreatmentReasonContainer" class="form-group conditional-container hidden">
+                    <label for="staffTreatmentReason">Tell us more <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
+                    <textarea id="staffTreatmentReason" class="form-control" rows="3" maxlength="300" placeholder="e.g. The mechanic explained everything clearly, or no one bothered to update me for hours."></textarea>
+                </div>        
                 <div class="form-group">
                     <label>Overall Rating *</label>
                     <div class="star-rating-picker" id="starRatingSelector" role="radiogroup" aria-label="Select your service score out of 5 stars">
@@ -168,13 +182,12 @@
                     </div>
                     <input type="hidden" id="overallRatingValue" value="0" required>
                 </div>
-
-                <div class="form-group">
+<div class="form-group">
                     <div class="counter-container">
-                        <label for="additionalNotes">Additional Notes</label>
+                        <label for="additionalNotes">Anything else to add? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
                         <span id="charCount" class="char-counter">0 / 500 characters</span>
                     </div>
-                    <textarea id="additionalNotes" class="form-control" rows="4" maxlength="500" placeholder="Elaborate on turnaround timing, staff interactions, or physical outcomes contextually..."></textarea>
+                    <textarea id="additionalNotes" class="form-control" rows="4" maxlength="500" placeholder="e.g. Waiting time, whether they called to update you, anything that stands out."></textarea>
                 </div>
 
                 <div class="form-group">
