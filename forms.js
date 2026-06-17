@@ -54,6 +54,23 @@ function initRepairReportingModules(formNode) {
             counterDisplay.textContent = `${dynamicLength} / 500 characters`;
         });
     }
+// Conditional reveal: felt overcharged reason textarea
+    document.querySelectorAll('input[name="feltOvercharged"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const container = document.getElementById('feltOverchargedReasonContainer');
+            if (container) {
+                container.classList.toggle('hidden', radio.value !== 'true' || !radio.checked);
+            }
+        });
+    });
+
+    // Conditional reveal: staff treatment reason textarea
+    document.querySelectorAll('input[name="staffTreatment"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const container = document.getElementById('staffTreatmentReasonContainer');
+            if (container) container.classList.remove('hidden');
+        });
+    });
 
     // Toggle logic evaluating radio states to show upload field
     structuralReceiptToggle.forEach(radioElement => {
@@ -123,24 +140,27 @@ submitBtnElement.textContent = 'Submitting...';
             }
         }
 
+const feltOverchargedRadio = document.querySelector('input[name="feltOvercharged"]:checked');
+        const staffTreatmentRadio = document.querySelector('input[name="staffTreatment"]:checked');
 
         const submission = {
             workshop_name: document.getElementById('workshopName')?.value.trim() || '',
             suburb: document.getElementById('suburb')?.value.trim() || '',
             city: document.getElementById('city')?.value.trim() || '',
-            car_brand: document.getElementById('carMake')?.value || '',
+            province: document.getElementById('province')?.value || '',
+            car_make: document.getElementById('carMake')?.value || '',
             car_model: document.getElementById('carModel')?.value.trim() || '',
             car_year: parseInt(document.getElementById('carYear')?.value, 10) || null,
             repair_date: document.getElementById('repairDate')?.value || null,
             repair_type: document.getElementById('repairType')?.value || '',
             part_description: document.getElementById('partDescription')?.value.trim() || '',
-            amount_quoted: parseInt(document.getElementById('amountQuoted')?.value, 10) || 0,
             amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
-            price_changed: document.getElementById('priceChanged')?.value || '',
-            pricing_explained: document.getElementById('pricingExplained')?.value || '',
-            new_problems: document.getElementById('newProblems')?.value || '',
             rating: parseInt(internalRatingStorage.value, 10),
             notes: document.getElementById('additionalNotes')?.value.trim() || '',
+            felt_overcharged: feltOverchargedRadio ? (feltOverchargedRadio.value === 'true') : null,
+            felt_overcharged_reason: document.getElementById('feltOverchargedReason')?.value.trim() || null,
+            staff_treatment: staffTreatmentRadio ? staffTreatmentRadio.value : null,
+            staff_treatment_reason: document.getElementById('staffTreatmentReason')?.value.trim() || null,
             status: 'Pending',
         };
 const { data, error } = await _supabase
