@@ -21,24 +21,26 @@ if (document.getElementById('pricesContainer')) {
 
         if (!error && data && data.length > 0) {
             // Normalize Supabase snake_case fields to match hardcoded array format
-            const normalizedLive = data.map(row => ({
+const normalizedLive = data.map(row => ({
                 id: row.id,
                 status: 'Approved',
-                carMake: row.car_make || row.carMake || '',
-                carModel: row.car_model || row.carModel || '',
-                year: row.year || '',
-                repairType: row.repair_type || row.repairType || row.service_type || row.serviceType || '',
-                partDescription: row.part_description || row.partDescription || '',
-                amountPaid: parseFloat(row.amount_paid || row.amountPaid) || 0,
-                workshopName: row.workshop_name || row.workshopName || '',
+                carMake: row.car_make || '',
+                carModel: row.car_model || '',
+                year: row.car_year || '',
+                repairType: row.repair_type || '',
+                partDescription: row.part_description || '',
+                amountPaid: parseFloat(row.amount_paid) || 0,
+                workshopName: row.workshop_name || '',
                 suburb: row.suburb || '',
                 city: row.city || '',
                 province: row.province || '',
                 rating: parseInt(row.rating) || 0,
-                priceChanged: row.price_changed || row.priceChanged || row.quote_difference || row.quoteDifference || '',
-                newProblems: row.new_problems || row.newProblems || 'No',
-                notes: row.additional_notes || row.notes || '',
-                timestamp: row.repair_date || row.created_at || row.dateAdded || row.timestamp || ''
+                feltOvercharged: row.felt_overcharged ?? null,
+                feltOverchargedReason: row.felt_overcharged_reason || '',
+                staffTreatment: row.staff_treatment || null,
+                staffTreatmentReason: row.staff_treatment_reason || '',
+                notes: row.notes || '',
+                timestamp: row.repair_date || ''
             }));
 
             liveDataset = normalizedLive;
@@ -158,11 +160,17 @@ container.innerHTML = `
         const formattedCost = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(entry.amountPaid);
         
         // Evaluates internal flags to draw respective markup badges
-        const quoteDeltaMarkup = parseQuoteDifferenceBadge(entry.priceChanged);
-        const cascadingDefectsMarkup = entry.newProblems === "Yes" 
-            ? `<span class="badge badge-danger">New Problems Appeared</span>` 
-            : `<span class="badge badge-neutral">No Post-Repair Issues</span>`;
+const pricingFairnessMarkup = entry.feltOvercharged === true
+            ? `<span class="badge badge-danger">Driver felt overcharged</span>`
+            : entry.feltOvercharged === false
+            ? `<span class="badge badge-success">Driver felt fairly priced</span>`
+            : '';
 
+        const staffMarkup = entry.staffTreatment === 'helpful'
+            ? `<span class="badge badge-success">Staff were helpful</span>`
+            : entry.staffTreatment === 'unhelpful'
+            ? `<span class="badge badge-danger">Staff were unhelpful</span>`
+            : '';
         // Render graphical star configurations safely
         let starsElement = "";
         for (let idx = 1; idx <= 5; idx++) {
@@ -192,11 +200,10 @@ container.innerHTML = `
                     <div class="rating-stars" title="Rating: ${entry.rating}/5">${starsElement}</div>
                 </div>
 
-                <div class="card-meta-row">
-                    ${quoteDeltaMarkup}
-                    ${cascadingDefectsMarkup}
+<div class="card-meta-row">
+                    ${pricingFairnessMarkup}
+                    ${staffMarkup}
                 </div>
-
                 ${entry.notes ? `<p class="card-notes">${escapeHTML(entry.notes)}</p>` : ''}
                 
              ${(() => {
@@ -214,17 +221,12 @@ container.innerHTML = `
 
 /**
  * Contextual Badge styling assignments
+ * Quote difference badges removed — field dropped from submissions.
+ * Experience badges are now rendered inline in the card template.
  */
-function parseQuoteDifferenceBadge(statusValue) {
-    if (statusValue.includes("higher")) {
-        return `<span class="badge badge-danger">Price Changed (Higher)</span>`;
-    } else if (statusValue.includes("lower")) {
-        return `<span class="badge badge-success">Price Changed (Lower)</span>`;
-    } else if (statusValue.includes("matched")) {
-        return `<span class="badge badge-success">Matched Quote Exactly</span>`;
-    } else {
-        return `<span class="badge badge-neutral">No Upfront Quote Given</span>`;
-    }
+function parseBadgePlaceholder() {
+    // Reserved for future badge logic extensions.
+    return '';
 }
 
 /**
