@@ -560,12 +560,23 @@ button, input, select, textarea {
     .nav-links a.active::after { display: none; }
     .nav-links a.active { border-left: 3px solid var(--primary-accent); padding-left: 0.5rem; }
 
-    .hero h1 { font-size: 2rem; }
-    .hero p { font-size: 1rem; }
-    .cta-group { flex-direction: column; width: 100%; }
+.cta-group { flex-direction: column; width: 100%; }
+   
     .btn { width: 100%; }
 
-    .steps-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+.hero { padding: 2rem 1rem; }
+    .hero h1 { font-size: 1.7rem; line-height: 1.25; margin-bottom: 0.75rem; }
+    .hero p { font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+    .container { padding: 1.5rem 1rem; }
+    .section-title { font-size: 1.3rem; margin-bottom: 1rem; }
+
+    .step-card { padding: 1.1rem; }
+    .step-num { font-size: 1.6rem; top: 0.75rem; right: 1rem; }
+    .step-card h3 { font-size: 1rem; margin-bottom: 0.4rem; }
+    .step-card p { font-size: 0.82rem; line-height: 1.4; }
+
+    .steps-grid { grid-template-columns: 1fr; gap: 1rem; }
 .prices-grid { grid-template-columns: 1fr; }
     #filterToggleBtn { display: block !important; }
     #filterGridPanel { display: none; }
