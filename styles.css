@@ -565,11 +565,11 @@ button, input, select, textarea {
     .btn { width: 100%; }
 
 .hero { padding: 2rem 1rem; }
-    .hero h1 { font-size: 1.7rem; line-height: 1.25; margin-bottom: 0.75rem; }
+    .hero h1 { font-size: 1.35rem; line-height: 1.3; margin-bottom: 0.75rem; }
     .hero p { font-size: 0.9rem; margin-bottom: 1.5rem; }
 
     .container { padding: 1.5rem 1rem; }
-    .section-title { font-size: 1.3rem; margin-bottom: 1rem; }
+    .section-title { font-size: 1.05rem; margin-bottom: 1rem; }
 
     .step-card { padding: 1.1rem; }
     .step-num { font-size: 1.6rem; top: 0.75rem; right: 1rem; }
