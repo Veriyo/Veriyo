@@ -596,11 +596,9 @@ button, input, select, textarea {
    Logo Optimization: Scale Tuning & Dark-Surface Blending Fix
    ========================================================================== */
 .nav-logo img {
-    height: 70px;
+    height: 50px;
     width: auto;
     display: block;
-    mix-blend-mode: screen;
-    filter: brightness(1.4) contrast(1.2);
     margin: 0;
 }
 
