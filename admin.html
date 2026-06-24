@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veriyo Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body">
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="login-view">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="logo.png" alt="Veriyo" />
+                <h1>Veriyo Admin</h1>
+            </div>
+            <p class="login-subtitle">Sign in to manage submissions</p>
+
+            <form id="loginForm" class="login-form" autocomplete="on">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required autocomplete="email" placeholder="admin@veriyo.co.za" />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+                </div>
+                <div id="loginError" class="login-error" role="alert"></div>
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="dashboard-view hidden">
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <img src="logo.png" alt="Veriyo" class="admin-logo" />
+                <div>
+                    <h1>Veriyo Admin</h1>
+                    <span class="admin-subtitle">Submission Management</span>
+                </div>
+            </div>
+            <div class="admin-header-right">
+                <div class="pending-count-badge">
+                    <span id="pendingCount">0</span>
+                    <span class="pending-count-label">Pending</span>
+                </div>
+                <button id="logoutBtn" class="btn btn-danger-outline">Log Out</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <div class="dashboard-toolbar">
+                <h2>Pending Submissions</h2>
+                <button id="refreshBtn" class="btn btn-secondary-outline" title="Refresh list">
+                    <span class="refresh-icon">&#8635;</span> Refresh
+                </button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <!-- Desktop table -->
+            <div class="admin-table-wrap">
+                <table class="admin-table" id="submissionsTable">
+                    <thead>
+                        <tr>
+                            <th>Workshop</th>
+                            <th>Suburb</th>
+                            <th>Vehicle</th>
+                            <th>Repair Type</th>
+                            <th>Amount Paid</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsBody"></tbody>
+                </table>
+            </div>
+
+            <!-- Mobile cards -->
+            <div id="submissionsCards" class="admin-cards-mobile"></div>
+
+            <div id="emptyState" class="empty-state hidden">
+                <div class="empty-icon">&#10003;</div>
+                <p>No pending submissions. All caught up.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
