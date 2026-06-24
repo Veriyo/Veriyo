@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veriyo Partner Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="partner-body">
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="partner-login-view">
+        <div class="partner-login-card">
+            <div class="partner-login-logo">
+                <img src="logo.png" alt="Veriyo" />
+                <h1>Partner Dashboard</h1>
+            </div>
+            <p class="partner-login-subtitle">Sign in to view performance metrics</p>
+
+            <form id="loginForm" class="partner-login-form" autocomplete="on">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required autocomplete="email" placeholder="partner@veriyo.co.za" />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+                </div>
+                <div id="loginError" class="partner-login-error" role="alert"></div>
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="partner-dashboard-view hidden">
+        <header class="partner-header">
+            <div class="partner-header-left">
+                <img src="logo.png" alt="Veriyo" class="partner-logo" />
+                <div>
+                    <h1>Veriyo Partner Dashboard</h1>
+                    <span class="partner-header-sub">Read-Only Performance Metrics</span>
+                </div>
+            </div>
+            <div class="partner-header-right">
+                <span class="partner-read-only-badge">Read Only</span>
+                <button id="logoutBtn" class="btn btn-danger-outline">Log Out</button>
+            </div>
+        </header>
+
+        <main class="partner-main">
+            <div id="loadStatus" class="partner-load-status">Loading metrics...</div>
+
+            <!-- Counter Grid -->
+            <section class="partner-counter-grid" id="counterGrid">
+                <article class="partner-counter-card">
+                    <div class="partner-counter-icon">&#128663;</div>
+                    <div class="partner-counter-value" id="totalSubmissions">0</div>
+                    <div class="partner-counter-label">Total Driving Network Submissions</div>
+                </article>
+                <article class="partner-counter-card">
+                    <div class="partner-counter-icon">&#128736;</div>
+                    <div class="partner-counter-value" id="activeWorkshops">0</div>
+                    <div class="partner-counter-label">Active Verified Workshops</div>
+                </article>
+                <article class="partner-counter-card">
+                    <div class="partner-counter-icon">&#128205;</div>
+                    <div class="partner-counter-value" id="regionalReach">0</div>
+                    <div class="partner-counter-label">Regional Reach</div>
+                </article>
+            </section>
+
+            <!-- Top Suburbs -->
+            <section class="partner-suburbs-section">
+                <h2 class="partner-section-title">Top Suburbs by Driver Engagement</h2>
+                <div class="partner-suburbs-list" id="suburbsList"></div>
+            </section>
+
+            <!-- Footer Statement -->
+            <footer class="partner-footer-statement">
+                Data verified live from Veriyo Core Ecosystem. 10% yield structured explicitly via legal agreement.
+            </footer>
+        </main>
+    </div>
+
+    <script src="partner.js"></script>
+</body>
+</html>
