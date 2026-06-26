@@ -80,11 +80,11 @@ async function loadPendingSubmissions() {
     statusMsg.textContent = 'Loading submissions...';
     statusMsg.className = 'status-message status-loading';
 
-    const { data, error } = await supabaseClient
+const { data, error } = await supabaseClient
         .from('Submissions')
         .select('*')
         .or('status.is.null,status.eq.Pending')
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
     if (error) {
         statusMsg.textContent = 'Failed to load submissions. Please try refreshing.';
