@@ -5,6 +5,11 @@
 const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co'
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
 const _supabase = supabase.createClient(supabaseUrl, supabaseKey)
+
+// Capture referral source from URL parameter and store for submission
+const _refParam = new URLSearchParams(window.location.search).get('ref');
+if (_refParam) sessionStorage.setItem('veriyo_ref', _refParam);
+
 document.addEventListener('DOMContentLoaded', () => {
     const reportRepairForm = document.getElementById('reportRepairForm');
     const listWorkshopForm = document.getElementById('listWorkshopForm');
@@ -157,10 +162,11 @@ const feltOverchargedRadio = document.querySelector('input[name="feltOvercharged
             amount_paid: parseInt(document.getElementById('amountPaid')?.value, 10) || 0,
             rating: parseInt(internalRatingStorage.value, 10),
             notes: document.getElementById('additionalNotes')?.value.trim() || '',
-            felt_overcharged: feltOverchargedRadio ? (feltOverchargedRadio.value === 'true') : null,
+felt_overcharged: feltOverchargedRadio ? (feltOverchargedRadio.value === 'true') : null,
             felt_overcharged_reason: document.getElementById('feltOverchargedReason')?.value.trim() || null,
             staff_treatment: staffTreatmentRadio ? staffTreatmentRadio.value : null,
             staff_treatment_reason: document.getElementById('staffTreatmentReason')?.value.trim() || null,
+            referral_source: sessionStorage.getItem('veriyo_ref') || null,
             status: 'Pending',
         };
 const { data, error } = await _supabase
