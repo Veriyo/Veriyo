@@ -252,7 +252,7 @@ const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops')
     }).join('');
 }
 
-/**
+
 
 /**
  * Contextual Badge styling assignments
