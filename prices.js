@@ -39,8 +39,11 @@ const normalizedLive = data.map(row => ({
                 feltOverchargedReason: row.felt_overcharged_reason || '',
                 staffTreatment: row.staff_treatment || null,
                 staffTreatmentReason: row.staff_treatment_reason || '',
-                notes: row.notes || '',
-                timestamp: row.repair_date || ''
+notes: row.notes || '',
+                timestamp: row.repair_date || '',
+                recentlyActive: row.updated_at
+                    ? (new Date() - new Date(row.updated_at)) < 7 * 24 * 60 * 60 * 1000
+                    : false
             }));
 
             liveDataset = normalizedLive;
@@ -184,7 +187,7 @@ const pricingFairnessMarkup = entry.feltOvercharged === true
             <article class="price-card">
                 <div class="card-header">
                     <div>
-                        <h3 class="workshop-title">${escapeHTML(entry.workshopName)}</h3>
+                 <h3 class="workshop-title">${entry.recentlyActive ? '<span style="color:var(--success-color); font-size:0.7rem; margin-right:0.4rem;">●</span>' : ''}${escapeHTML(entry.workshopName)}</h3>
                         <span class="suburb-label">${entry.suburb ? escapeHTML(entry.suburb) + ', ' : ''}${escapeHTML(entry.city)}</span>
                     </div>
                     <span class="badge badge-success">${entry.status}</span>
