@@ -74,10 +74,22 @@ async function loadMetrics() {
     loadStatus.className = 'partner-load-status';
 
     try {
+        // Read referral_source from the logged-in partner's metadata
+        const { data: { user } } = await supabaseClient.auth.getUser();
+        const partnerRef = user?.user_metadata?.referral_source || null;
+
+        // Build submission query — filter by ref if one exists for this partner
+        let submissionQuery = supabaseClient.from('Submissions').select('suburb').eq('status', 'Approved');
+        let suburbQuery = supabaseClient.from('Submissions').select('suburb').not('suburb', 'is', null).neq('suburb', '');
+        if (partnerRef) {
+            submissionQuery = submissionQuery.eq('referral_source', partnerRef);
+            suburbQuery = suburbQuery.eq('referral_source', partnerRef);
+        }
+
         const [submissionsRes, workshopsRes, suburbsRes] = await Promise.all([
-            supabaseClient.from('Submissions').select('suburb').eq('status', 'Approved'),
+            submissionQuery,
             supabaseClient.from('Workshopprofiles').select('status').in('status', ['Active', 'Approved']),
-            supabaseClient.from('Submissions').select('suburb').not('suburb', 'is', null).neq('suburb', ''),
+            suburbQuery,
         ]);
 
         if (submissionsRes.error) throw submissionsRes.error;
