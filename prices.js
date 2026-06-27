@@ -246,12 +246,112 @@ const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops')
                     const formatted = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(avgVal);
                     return `<div style="font-size:0.78rem; color:var(--text-secondary); border-top:1px solid var(--border-color); padding-top:0.5rem;">Avg for ${escapeHTML(entry.repairType)}: ${formatted}</div>`;
                 })()}
-               <div class="card-date">Repaired: ${calculatedDateStr}</div>
+
+<div class="card-date">Repaired: ${calculatedDateStr}</div>
+                <button onclick="openClaimModal('${escapeHTML(entry.workshopName)}')"
+                    style="background:none; border:none; color:var(--text-secondary);
+                    font-size:0.75rem; cursor:pointer; padding:0; margin-top:0.25rem;
+                    text-decoration:underline;">
+                    Is this your workshop? Claim this listing
+                </button>
             </article>
         `;
     }).join('');
+
+    // Inject claim modal if not already present
+    if (!document.getElementById('claimModal')) {
+        const modal = document.createElement('div');
+        modal.id = 'claimModal';
+        modal.style.cssText = `display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+            z-index:9999; align-items:center; justify-content:center;`;
+        modal.innerHTML = `
+            <div style="background:var(--surface-color); border:1px solid var(--border-color);
+                border-radius:var(--radius); padding:2rem; max-width:420px; width:90%; position:relative;">
+                <button onclick="closeClaimModal()" style="position:absolute; top:1rem; right:1rem;
+                    background:none; border:none; color:var(--text-secondary); font-size:1.2rem;
+                    cursor:pointer;">✕</button>
+                <h3 style="margin-bottom:1rem; font-size:1.1rem;">Claim This Workshop</h3>
+                <div class="form-group">
+                    <label style="font-size:0.85rem; font-weight:600;">Workshop Name</label>
+                    <input id="claimWorkshopName" type="text" class="form-control"
+                        style="margin-top:0.4rem;" readonly />
+                </div>
+                <div class="form-group" style="margin-top:0.75rem;">
+                    <label style="font-size:0.85rem; font-weight:600;">Your Email *</label>
+                    <input id="claimEmail" type="email" class="form-control"
+                        style="margin-top:0.4rem;" placeholder="you@example.com" />
+                </div>
+                <div class="form-group" style="margin-top:0.75rem;">
+                    <label style="font-size:0.85rem; font-weight:600;">Brief Message</label>
+                    <textarea id="claimMessage" class="form-control" rows="3"
+                        style="margin-top:0.4rem;" maxlength="200"
+                        placeholder="e.g. I am the owner and would like to manage this listing."></textarea>
+                </div>
+                <p id="claimError" style="display:none; color:var(--danger-color);
+                    font-size:0.82rem; margin-top:0.5rem;"></p>
+                <button onclick="submitClaim()"
+                    id="claimSubmitBtn"
+                    style="margin-top:1rem; width:100%; background:var(--primary-accent);
+                    color:#000; border:none; padding:0.75rem; border-radius:var(--radius);
+                    font-weight:700; cursor:pointer;">
+                    Submit Claim
+                </button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
 }
 
+function openClaimModal(workshopName) {
+    const modal = document.getElementById('claimModal');
+    document.getElementById('claimWorkshopName').value = workshopName;
+    document.getElementById('claimEmail').value = '';
+    document.getElementById('claimMessage').value = '';
+    document.getElementById('claimError').style.display = 'none';
+    document.getElementById('claimSubmitBtn').textContent = 'Submit Claim';
+    document.getElementById('claimSubmitBtn').disabled = false;
+    modal.style.display = 'flex';
+}
+
+function closeClaimModal() {
+    document.getElementById('claimModal').style.display = 'none';
+}
+
+async function submitClaim() {
+    const name = document.getElementById('claimWorkshopName').value;
+    const email = document.getElementById('claimEmail').value.trim();
+    const message = document.getElementById('claimMessage').value.trim();
+    const errorEl = document.getElementById('claimError');
+    const btn = document.getElementById('claimSubmitBtn');
+
+    if (!email) {
+        errorEl.textContent = 'Please enter your email address.';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const { error } = await _supabasePrices
+        .from('workshop_claims')
+        .insert([{
+            workshop_name: name,
+            contact_email: email,
+            message: message || null,
+            status: 'Pending'
+        }]);
+
+    if (error) {
+        errorEl.textContent = 'Submission failed. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Submit Claim';
+    } else {
+        btn.textContent = 'Claim Submitted ✓';
+        setTimeout(() => closeClaimModal(), 1500);
+    }
+}
 
 
 /**
