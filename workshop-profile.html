@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Profile — Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <button class="hamburger" id="hamburgerToggle"
+            aria-label="Toggle Navigation Options Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Browse Prices</a></li>
+            <li><a href="report.html">Report a Repair</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div id="profileLoading" style="text-align:center; padding:4rem 1rem;
+            color:var(--text-secondary);">Loading workshop profile...</div>
+
+        <div id="profileContent" style="display:none;">
+
+            <!-- Workshop Header -->
+            <div style="background:var(--surface-color); border:1px solid var(--border-color);
+                border-radius:var(--radius); padding:2rem; margin-bottom:1.5rem;">
+                <div style="display:flex; justify-content:space-between;
+                    align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+                    <div>
+                        <h1 id="profileName" style="font-size:1.75rem; font-weight:700;
+                            margin-bottom:0.25rem;"></h1>
+                        <p id="profileLocation" style="color:var(--text-secondary);
+                            font-size:0.95rem;"></p>
+                    </div>
+                    <div style="display:flex; flex-direction:column; gap:0.5rem;
+                        align-items:flex-end;">
+                        <span id="profileRmi" class="badge"></span>
+                        <span id="profileQuote" class="badge"></span>
+                    </div>
+                </div>
+
+                <div style="margin-top:1.25rem; display:grid;
+                    grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1rem;">
+                    <div>
+                        <p style="font-size:0.78rem; color:var(--text-secondary);
+                            font-weight:600; text-transform:uppercase;
+                            letter-spacing:0.5px;">Operating Hours</p>
+                        <p id="profileHours" style="font-size:0.92rem;
+                            margin-top:0.25rem;"></p>
+                    </div>
+                    <div>
+                        <p style="font-size:0.78rem; color:var(--text-secondary);
+                            font-weight:600; text-transform:uppercase;
+                            letter-spacing:0.5px;">Years in Operation</p>
+                        <p id="profileYears" style="font-size:0.92rem;
+                            margin-top:0.25rem;"></p>
+                    </div>
+                    <div>
+                        <p style="font-size:0.78rem; color:var(--text-secondary);
+                            font-weight:600; text-transform:uppercase;
+                            letter-spacing:0.5px;">Specialisations</p>
+                        <p id="profileSpec" style="font-size:0.92rem;
+                            margin-top:0.25rem;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Pricing -->
+            <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;
+                color:var(--primary-accent);">Indicative Service Pricing</h2>
+            <div id="profilePricing" style="background:var(--surface-color);
+                border:1px solid var(--border-color); border-radius:var(--radius);
+                padding:1.5rem; margin-bottom:1.5rem; display:grid;
+                grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
+                gap:1rem;"></div>
+
+            <!-- Motorist Submissions -->
+            <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;
+                color:var(--primary-accent);">What Drivers Have Paid Here</h2>
+            <div id="profileSubmissions" class="prices-grid"></div>
+
+            <div id="profileNoSubmissions" style="display:none; text-align:center;
+                padding:2rem; color:var(--text-secondary); font-size:0.9rem;">
+                No approved submissions yet for this workshop.
+            </div>
+        </div>
+
+        <div id="profileError" style="display:none; text-align:center;
+            padding:4rem 1rem; color:var(--danger-color);">
+            Workshop not found.
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Veriyo | Built for South African drivers</p>
+        <p style="margin-top:0.5rem;">
+            <a href="privacy.html" style="color:var(--secondary-accent);
+                text-decoration:underline; font-size:0.85rem;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="main.js"></script>
+    <script src="workshop-profile.js"></script>
+</body>
+</html>
