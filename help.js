@@ -106,6 +106,7 @@ function displayResults(workshops, suburb, repairType) {
     });
 
     resultsHeader.textContent = \`Found ${sortedWorkshops.length} workshop${sortedWorkshops.length !== 1 ? 's' : ''} for ${repairType}`;
+        )
 
     sortedWorkshops.forEach(workshop => {
         const card = createWorkshopCard(workshop);
@@ -121,7 +122,6 @@ function createWorkshopCard(workshop) {
     const rating = workshop.rating || 'N/A';
 
     card.innerHTML = `
-        )
         <div class="workshop-name">${escapeHtml(workshop.workshop_name)}</div>
         <div class="workshop-details">
             <div class="workshop-detail">
@@ -182,6 +182,4 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
-}
-
 }
