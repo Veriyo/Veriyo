@@ -92,6 +92,23 @@ function initPriceListingFilters() {
         }
     });
 
+// Saved workshops toggle button — injected above the prices container
+    const pricesContainer = document.getElementById('pricesContainer');
+    if (pricesContainer) {
+        const savedToggleBtn = document.createElement('button');
+        savedToggleBtn.id = 'savedToggleBtn';
+        savedToggleBtn.className = 'btn btn-secondary';
+        savedToggleBtn.style.cssText = 'margin-bottom:1rem; font-size:0.85rem; padding:0.5rem 1.2rem;';
+        savedToggleBtn.textContent = '🔖 Show Saved Workshops';
+        savedToggleBtn.addEventListener('click', () => {
+            const isShowingSaved = savedToggleBtn.dataset.active === 'true';
+            savedToggleBtn.dataset.active = isShowingSaved ? 'false' : 'true';
+            savedToggleBtn.textContent = isShowingSaved ? '🔖 Show Saved Workshops' : '✕ Show All Workshops';
+            processingPipeAndRender();
+        });
+        pricesContainer.parentElement.insertBefore(savedToggleBtn, pricesContainer);
+    }
+
     // Execute absolute initial display draw
     processingPipeAndRender();
 }
@@ -117,8 +134,13 @@ const repairAverages = {};
         repairAverages[i.repairType].count += 1;
     });
 
+const savedToggleBtn = document.getElementById('savedToggleBtn');
+    const showingSavedOnly = savedToggleBtn?.dataset.active === 'true';
+    const savedIds = JSON.parse(localStorage.getItem('veriyo_saved_workshops') || '[]');
+
     let analyticalOutput = liveDataset.filter(item => {
        if (item.status !== "Approved") return false;
+       if (showingSavedOnly && !savedIds.includes(item.id)) return false;
 
    if (querySuburb && !(item.suburb || '').toLowerCase().includes(querySuburb)) return false;
 if (queryMake !== "All" && item.carMake !== queryMake) return false;
@@ -182,16 +204,24 @@ const pricingFairnessMarkup = entry.feltOvercharged === true
 
         // Extrapolates standard ISO dates to clean localized views
        const calculatedDateStr = entry.timestamp ? convertToMonthYearFormat(entry.timestamp) : 'Date not provided';
+const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops') || '[]');
+        const isSaved = savedWorkshops.includes(entry.id);
 
         return `
             <article class="price-card">
                 <div class="card-header">
                     <div>
-                 <h3 class="workshop-title">${entry.recentlyActive ? '<span style="color:var(--success-color); font-size:0.7rem; margin-right:0.4rem;">●</span>' : ''}${escapeHTML(entry.workshopName)}</h3>
+                        <h3 class="workshop-title">${entry.recentlyActive ? '<span style="color:var(--success-color); font-size:0.7rem; margin-right:0.4rem;">●</span>' : ''}${escapeHTML(entry.workshopName)}</h3>
                         <span class="suburb-label">${entry.suburb ? escapeHTML(entry.suburb) + ', ' : ''}${escapeHTML(entry.city)}</span>
                     </div>
-                    <span class="badge badge-success">${entry.status}</span>
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <button onclick="toggleSavedWorkshop(${entry.id})" style="background:none; border:none; cursor:pointer; font-size:1.1rem; color:${isSaved ? 'var(--primary-accent)' : 'var(--text-secondary)'};" title="${isSaved ? 'Remove from saved' : 'Save this workshop'}">
+                            ${isSaved ? '🔖' : '🔖'}
+                        </button>
+                        <span class="badge badge-success">${entry.status}</span>
+                    </div>
                 </div>
+
                 
                 <div>
                   ${(entry.carMake === 'Unknown' && (entry.carModel === 'Unknown' || entry.carModel === '')) ? '' : `<div class="car-details"><span style="color: var(--text-secondary); font-weight: 400; font-size: 0.9rem; margin-right: 0.3rem;">Vehicle</span> ${escapeHTML(entry.carMake)} ${escapeHTML(entry.carModel)}</div>`}
@@ -223,6 +253,8 @@ const pricingFairnessMarkup = entry.feltOvercharged === true
 }
 
 /**
+
+/**
  * Contextual Badge styling assignments
  * Quote difference badges removed — field dropped from submissions.
  * Experience badges are now rendered inline in the card template.
@@ -232,6 +264,19 @@ function parseBadgePlaceholder() {
     return '';
 }
 
+/**
+ * Saves or removes a workshop ID from localStorage
+ */
+function toggleSavedWorkshop(id) {
+    let saved = JSON.parse(localStorage.getItem('veriyo_saved_workshops') || '[]');
+    if (saved.includes(id)) {
+        saved = saved.filter(s => s !== id);
+    } else {
+        saved.push(id);
+    }
+    localStorage.setItem('veriyo_saved_workshops', JSON.stringify(saved));
+    processingPipeAndRender();
+}
 /**
  * Conversions function for timestamps
  */
