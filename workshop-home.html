@@ -57,12 +57,95 @@
 
     </main>
 
+<section style="max-width:600px; margin:2rem auto; padding:0 1rem;">
+        <button id="suggestionToggleBtn"
+            style="background:none; border:1px solid var(--border-color); color:var(--text-secondary);
+            padding:0.5rem 1.2rem; border-radius:var(--radius); cursor:pointer; font-size:0.85rem;
+            width:100%; text-align:left; transition:var(--transition);"
+            onclick="
+                const box = document.getElementById('suggestionBox');
+                const isOpen = box.style.display !== 'none';
+                box.style.display = isOpen ? 'none' : 'block';
+                this.textContent = isOpen ? '💡 Suggest an Improvement' : '✕ Close';
+            ">
+            💡 Suggest an Improvement
+        </button>
+        <div id="suggestionBox" style="display:none; margin-top:0.75rem;
+            background:var(--surface-color); border:1px solid var(--border-color);
+            border-radius:var(--radius); padding:1.25rem;">
+            <label for="suggestionText"
+                style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.5rem;">
+                What would make Veriyo better for you?
+            </label>
+            <textarea id="suggestionText" maxlength="300" rows="3"
+                placeholder="e.g. Add more car makes, show prices by province..."
+                style="width:100%; background:var(--bg-color); border:1px solid var(--border-color);
+                color:var(--text-primary); padding:0.75rem; border-radius:var(--radius);
+                font-family:inherit; font-size:0.9rem; resize:vertical;"></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
+                <span id="suggestionCharCount" style="font-size:0.75rem; color:var(--text-secondary);">0 / 300</span>
+                <button id="suggestionSubmitBtn" onclick="submitSuggestion()"
+                    style="background:var(--primary-accent); color:#000; border:none;
+                    padding:0.5rem 1.2rem; border-radius:var(--radius); font-weight:600;
+                    font-size:0.85rem; cursor:pointer;">
+                    Submit
+                </button>
+            </div>
+            <p id="suggestionMsg" style="display:none; margin-top:0.75rem; font-size:0.85rem;"></p>
+        </div>
+    </section>
+
     <footer class="footer">
         <p>&copy; Veriyo | Built for South African drivers</p>
         <p style="margin-top: 0.5rem;">
             <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
         </p>
     </footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="main.js"></script>
+    <script>
+        const _supabaseSuggestions = supabase.createClient(
+            'https://xxigkehuqtwaihyxaahk.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
+        );
+
+        document.getElementById('suggestionText').addEventListener('input', function() {
+            document.getElementById('suggestionCharCount').textContent = this.value.length + ' / 300';
+        });
+
+        async function submitSuggestion() {
+            const text = document.getElementById('suggestionText').value.trim();
+            const msgEl = document.getElementById('suggestionMsg');
+            const btn = document.getElementById('suggestionSubmitBtn');
+
+            if (!text) {
+                msgEl.style.display = 'block';
+                msgEl.style.color = 'var(--danger-color)';
+                msgEl.textContent = 'Please write something before submitting.';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+
+            const { error } = await _supabaseSuggestions
+                .from('suggestions')
+                .insert([{ suggestion_text: text }]);
+
+            msgEl.style.display = 'block';
+            if (error) {
+                msgEl.style.color = 'var(--danger-color)';
+                msgEl.textContent = 'Something went wrong. Please try again.';
+                btn.disabled = false;
+                btn.textContent = 'Submit';
+            } else {
+                msgEl.style.color = 'var(--success-color)';
+                msgEl.textContent = 'Thank you — your suggestion has been noted.';
+                document.getElementById('suggestionText').value = '';
+                document.getElementById('suggestionCharCount').textContent = '0 / 300';
+                btn.textContent = 'Submitted ✓';
+            }
+        }
+    </script>
 </body>
 </html>
