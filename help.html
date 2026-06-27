@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Repair Help - Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .urgent-header {
+            background: linear-gradient(135deg, var(--danger-color, #dc3545) 0%, #c82333 100%);
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+
+        .urgent-header h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .urgent-header .urgent-icon {
+            font-size: 2rem;
+        }
+
+        .help-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .help-form {
+            background: var(--card-bg, #fff);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary, #333);
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--input-bg, #fff);
+            color: var(--text-primary, #333);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color, #007bff);
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .btn-search {
+            background: var(--primary-color, #007bff);
+            color: white;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .btn-search:hover {
+            background: var(--primary-dark, #0056b3);
+            transform: translateY(-1px);
+        }
+
+        .btn-search:active {
+            transform: translateY(0);
+        }
+
+        .btn-search:disabled {
+            background: var(--muted-color, #6c757d);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            margin-top: 2rem;
+        }
+
+        .results-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary, #333);
+        }
+
+        .workshop-card {
+            background: var(--card-bg, #fff);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: box-shadow 0.2s;
+        }
+
+        .workshop-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+
+        .workshop-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary, #333);
+            margin-bottom: 0.5rem;
+        }
+
+        .workshop-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .workshop-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary, #666);
+            font-size: 0.9rem;
+        }
+
+        .workshop-rating {
+            background: var(--warning-color, #ffc107);
+            color: #333;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .btn-chat {
+            display: inline-block;
+            background: var(--success-color, #28a745);
+            color: white;
+            padding: 0.625rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }
+
+        .btn-chat:hover {
+            background: var(--success-dark, #218838);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--card-bg, #fff);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .no-results h3 {
+            color: var(--text-primary, #333);
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results p {
+            color: var(--text-secondary, #666);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-spinner {
+            border: 3px solid var(--border-color, #f3f3f3);
+            border-top: 3px solid var(--primary-color, #007bff);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="urgent-header">
+        <h1>
+            <span class="urgent-icon">&#9888;</span>
+            Emergency Repair Help
+        </h1>
+        <p>Find workshops near you for urgent repairs</p>
+    </header>
+
+    <main class="help-container">
+        <form id="helpForm" class="help-form">
+            <div class="form-group">
+                <label for="repairType">Repair Type</label>
+                <select id="repairType" required>
+                    <option value="">Select repair type...</option>
+                    <option value="Oil Change">Oil Change</option>
+                    <option value="Minor Service">Minor Service</option>
+                    <option value="Major Service">Major Service</option>
+                    <option value="Wheel Alignment">Wheel Alignment</option>
+                    <option value="Brake Pads">Brake Pads</option>
+                    <option value="Diagnostics">Diagnostics</option>
+                    <option value="Engine Repair">Engine Repair</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Towing">Towing</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="problemDescription">Problem Description</label>
+                <textarea id="problemDescription" placeholder="Briefly describe your vehicle problem..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="suburb">Your Suburb</label>
+                <input type="text" id="suburb" placeholder="Enter your suburb..." required>
+            </div>
+
+            <button type="submit" class="btn-search">Find Workshops</button>
+        </form>
+
+        <section id="resultsSection" class="results-section hidden">
+            <h2 id="resultsHeader" class="results-header"></h2>
+            <div id="resultsContainer"></div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="help.js"></script>
+</body>
+</html>
