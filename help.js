@@ -1,14 +1,7 @@
 // Initialize Supabase client
-// Credentials should be available via window.__SUPABASE_CONFIG__ or config.js
-const SUPABASE_URL = window.__SUPABASE_CONFIG__?.url || window.SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = window.__SUPABASE_CONFIG__?.anonKey || window.SUPABASE_ANON_KEY || '';
-
-let supabase = null;
-
-if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-}
-
+const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // DOM Elements
 const helpForm = document.getElementById('helpForm');
 const repairTypeSelect = document.getElementById('repairType');
@@ -59,9 +52,9 @@ async function searchWorkshops(repairType, suburb) {
         .from('Workshopprofiles')
         .select('id, workshop_name, suburb, city, province, specialisation, contact_number, operating_hours')
         .or(`suburb.ilike.%${suburbLower}%,suburb.ilike.%${suburbCapitalized}%,city.ilike.%${suburbLower}%,city.ilike.%${suburbCapitalized}%`)
-        .ilike('specialisation', `%${repairType}%')
-        .eq('status', 'Approved');
 
+.ilike('specialisation', `%${repairType}%`)
+        .eq('status', 'Approved');
     if (error) {
         console.error('Supabase query error:', error);
         throw error;
@@ -104,10 +97,8 @@ function displayResults(workshops, suburb, repairType) {
         const bSuburbMatch = b.suburb?.toLowerCase().includes(suburb.toLowerCase()) ? 0 : 1;
         return aSuburbMatch - bSuburbMatch;
     });
-
-    resultsHeader.textContent = \`Found ${sortedWorkshops.length} workshop${sortedWorkshops.length !== 1 ? 's' : ''} for ${repairType}`;
-        )
-
+resultsHeader.textContent = `Found ${sortedWorkshops.length} workshop${sortedWorkshops.length !== 1 ? 's' : ''} for ${repairType}`;
+   
     sortedWorkshops.forEach(workshop => {
         const card = createWorkshopCard(workshop);
         resultsContainer.appendChild(card);
