@@ -3,13 +3,12 @@
  * Allows motorists to track repair progress and workshop managers to update status
  */
 
-// Supabase Configuration
-const SUPABASE_URL = 'https://lsgytftfdezysxdzvxaq.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZ3l0ZnRmZGV6eXN4ZHp2eGFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMjA1NTYsImV4cCI6MjA5Nzg5NjU1Nn0.b1DXp6w_pC3ygDKqmW4YIRWCAVVBNjq-ZkUcOdLJTGM';
+// Supabase Configuration — matches the rest of the Veriyo project
+const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
 
 // Initialize Supabase client
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 // DOM Elements
 const jobReferenceInput = document.getElementById('jobReference');
 const lookupBtn = document.getElementById('lookupBtn');
