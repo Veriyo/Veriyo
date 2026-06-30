@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Your Workshop — Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <!-- Top Navbar -->
+    <nav class="navbar">
+        <a href="motorist-home.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
+            <li><a href="list-workshop.html" class="active">List Your Workshop</a></li>
+        </ul>
+    </nav>
+
+    <!-- Secondary Plan Tab Navbar -->
+    <div class="plan-tabs-nav">
+        <button class="plan-tab-btn plan-tab-btn--active" data-plan="Visible" data-price="199">
+            Visible <span class="plan-tab-price">R199/month</span>
+        </button>
+        <button class="plan-tab-btn" data-plan="Trusted" data-price="499">
+            Trusted <span class="plan-tab-price">R499/month</span>
+        </button>
+        <button class="plan-tab-btn plan-tab-btn--dominant" data-plan="Dominant" data-price="999">
+            Dominant <span class="plan-tab-price">R999/month</span>
+        </button>
+    </div>
+
+    <main class="container lw-main">
+
+        <!-- Sub-section toggle links -->
+        <div class="plan-subnav">
+            <a href="#" class="plan-subnav-link plan-subnav-link--active" data-section="register">Register</a>
+            <a href="#" class="plan-subnav-link" data-section="features">Features</a>
+        </div>
+
+        <!-- REGISTER SECTION -->
+        <div id="lw-register-section">
+            <div class="notice-banner" role="note" id="lwPlanBanner">
+                You are registering for the <strong id="lwPlanNameBanner">Visible</strong> plan at <strong>R<span id="lwPlanPriceBanner">199</span>/month</strong>. Your listing will go live once payment is confirmed.
+            </div>
+
+            <div class="form-container">
+                <div class="form-header">
+                    <h2>Register Your Workshop</h2>
+                    <p>Complete the form below to list your workshop on Veriyo.</p>
+                </div>
+
+                <form id="lwForm" novalidate>
+
+                    <div class="form-group">
+                        <label for="lwName">Workshop Name *</label>
+                        <input type="text" id="lwName" class="form-control" required placeholder="e.g. Cape Town Mechanical Specialists">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lwAddress">Physical Address *</label>
+                        <input type="text" id="lwAddress" class="form-control" required placeholder="e.g. 42 Sir Lowry Rd, Foreshore">
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="lwSuburb">Suburb *</label>
+                            <input type="text" id="lwSuburb" class="form-control" required placeholder="e.g. CBD">
+                        </div>
+                        <div class="form-group">
+                            <label for="lwCity">City *</label>
+                            <input type="text" id="lwCity" class="form-control" required placeholder="e.g. Cape Town">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lwProvince">Province *</label>
+                        <select id="lwProvince" class="form-control" required>
+                            <option value="" disabled selected>Select province</option>
+                            <option value="Gauteng">Gauteng</option>
+                            <option value="Western Cape">Western Cape</option>
+                            <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                            <option value="Eastern Cape">Eastern Cape</option>
+                            <option value="Limpopo">Limpopo</option>
+                            <option value="Mpumalanga">Mpumalanga</option>
+                            <option value="North West">North West</option>
+                            <option value="Free State">Free State</option>
+                            <option value="Northern Cape">Northern Cape</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-row">
+                        <div class="form-group">
+                            <label for="lwContact">Contact Number *</label>
+                            <input type="tel" id="lwContact" class="form-control" required placeholder="e.g. 021 555 1234">
+                        </div>
+                        <div class="form-group">
+                            <label for="lwEmail">Email Address *</label>
+                            <input type="email" id="lwEmail" class="form-control" required placeholder="e.g. info@workshop.co.za">
+                            <span class="auth-field-error" id="lwEmailError"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="lwHours">Operating Hours *</label>
+                        <input type="text" id="lwHours" class="form-control" required
+                            value="Mon–Fri 07:00–17:00, Sat 08:00–13:00"
+                            placeholder="e.g. Mon–Fri 08:00–17:00">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Workshop Specialisation</label>
+                        <span class="label-desc">Select all focus mechanical streams that apply.</span>
+                        <div class="checkbox-grid">
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="General Repairs"> General Repairs</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Electrical"> Electrical</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Tyres"> Tyres</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Panel Beating"> Panel Beating</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Engine Work"> Engine Work</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Gearbox"> Gearbox</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Suspension"> Suspension</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Air Conditioning"> Air Conditioning</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Sound Installation"> Sound Installation</label>
+                            <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Other"> Other</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group-row" style="align-items:center;">
+                        <div class="form-group">
+                            <label for="lwYears">Years in Operation</label>
+                            <input type="number" id="lwYears" class="form-control" min="0" placeholder="e.g. 5">
+                        </div>
+                        <div class="form-group">
+                            <label>RMI Registered?</label>
+                            <span class="label-desc">RMI = Retail Motor Industry Organisation</span>
+                            <div class="radio-checkbox-group">
+                                <label class="radio-label"><input type="radio" name="lwRmi" value="Yes"> Yes</label>
+                                <label class="radio-label"><input type="radio" name="lwRmi" value="No" checked> No</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Do you provide a written quote before starting work?</label>
+                        <div class="radio-checkbox-group">
+                            <label class="radio-label"><input type="radio" name="lwQuote" value="Yes" checked> Yes</label>
+                            <label class="radio-label"><input type="radio" name="lwQuote" value="No"> No</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Do you guarantee your work?</label>
+                        <div class="radio-checkbox-group">
+                            <label class="radio-label"><input type="radio" name="lwGuarantee" value="Yes"> Yes</label>
+                            <label class="radio-label"><input type="radio" name="lwGuarantee" value="No" checked> No</label>
+                        </div>
+                    </div>
+
+                    <div id="lwGuaranteePeriodWrap" class="form-group conditional-container hidden">
+                        <label for="lwGuaranteePeriod">Guarantee Period</label>
+                        <input type="text" id="lwGuaranteePeriod" class="form-control" placeholder="e.g. 6 Months / 10,000 km">
+                    </div>
+
+                    <div style="margin:2.5rem 0; padding-top:1.5rem; border-top:1px solid var(--border-color);">
+                        <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Standard Services Pricing</h3>
+                        <p class="label-desc" style="margin-bottom:1.5rem;">Provide baseline pricing in Rands. Leave blank if not applicable.</p>
+
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="lwPriceOil">Oil Change (R)</label>
+                                <input type="number" id="lwPriceOil" class="form-control" placeholder="e.g. 800">
+                            </div>
+                            <div class="form-group">
+                                <label for="lwPriceMinor">Minor Service (R)</label>
+                                <input type="number" id="lwPriceMinor" class="form-control" placeholder="e.g. 1500">
+                            </div>
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="lwPriceMajor">Major Service (R)</label>
+                                <input type="number" id="lwPriceMajor" class="form-control" placeholder="e.g. 3200">
+                            </div>
+                            <div class="form-group">
+                                <label for="lwPriceAlign">Wheel Alignment (R)</label>
+                                <input type="number" id="lwPriceAlign" class="form-control" placeholder="e.g. 350">
+                            </div>
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="lwPriceBrake">Brake Pads (R)</label>
+                                <input type="number" id="lwPriceBrake" class="form-control" placeholder="e.g. 950">
+                            </div>
+                            <div class="form-group">
+                                <label for="lwPriceDiag">Diagnostic Scan (R)</label>
+                                <input type="number" id="lwPriceDiag" class="form-control" placeholder="e.g. 450">
+                            </div>
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="lwCustomName1">Other Service 1 Name</label>
+                                <input type="text" id="lwCustomName1" class="form-control" placeholder="e.g. Aircon Regas">
+                            </div>
+                            <div class="form-group">
+                                <label for="lwCustomPrice1">Other Service 1 Price (R)</label>
+                                <input type="number" id="lwCustomPrice1" class="form-control" placeholder="e.g. 500">
+                            </div>
+                        </div>
+                        <div class="form-group-row">
+                            <div class="form-group">
+                                <label for="lwCustomName2">Other Service 2 Name</label>
+                                <input type="text" id="lwCustomName2" class="form-control" placeholder="e.g. CV Joint Repair">
+                            </div>
+                            <div class="form-group">
+                                <label for="lwCustomPrice2">Other Service 2 Price (R)</label>
+                                <input type="number" id="lwCustomPrice2" class="form-control" placeholder="e.g. 1200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top:1.5rem;">
+                        <div style="display:flex; align-items:flex-start; gap:8px;">
+                            <input type="checkbox" id="lwConsent" style="margin-top:3px; cursor:pointer;">
+                            <label for="lwConsent" style="font-weight:500; font-size:0.9rem; line-height:1.4;">
+                                I confirm the listed prices and information are accurate and I accept the
+                                <a href="privacy.html" style="color:var(--secondary-accent); text-decoration:underline; font-size:0.85rem;">Privacy Policy</a>.
+                            </label>
+                        </div>
+                        <p id="lwConsentError" style="color:var(--danger-color); display:none; margin:8px 0 0 24px; font-size:0.85rem; font-weight:600;">
+                            Please tick the checkbox to confirm.
+                        </p>
+                    </div>
+
+                    <div id="lwFormError" class="auth-error" style="display:none; margin-bottom:1rem;"></div>
+
+                    <button type="submit" id="lwSubmitBtn" class="btn btn-primary" style="width:100%;">
+                        Proceed to Payment
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- FEATURES SECTION -->
+        <div id="lw-features-section" style="display:none;">
+            <div id="lw-features-visible" class="lw-features-panel"></div>
+            <div id="lw-features-trusted" class="lw-features-panel" style="display:none;"></div>
+            <div id="lw-features-dominant" class="lw-features-panel" style="display:none;"></div>
+        </div>
+
+        <!-- SUCCESS SCREEN -->
+        <div id="lw-success-section" style="display:none;" class="form-container">
+            <div class="thank-you-view">
+                <div class="icon-success">&#10003;</div>
+                <h3>You're on the list!</h3>
+                <p>Your workshop listing has been submitted. Payment instructions have been sent to your registered email address. Your listing will be reviewed and activated once payment is confirmed.</p>
+                <a href="workshops.html" class="btn btn-primary" style="margin-top:1rem;">View Workshop Directory</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Payment Overlay -->
+    <div id="lwPaymentOverlay" class="lw-payment-overlay" style="display:none;" role="dialog" aria-modal="true">
+        <div class="lw-payment-modal">
+            <h2 class="lw-payment-title" id="lwPaymentTitle">Almost there.</h2>
+            <p class="lw-payment-sub" id="lwPaymentSub"></p>
+
+            <div class="lw-payment-options">
+                <div class="lw-payment-card" data-method="EFT Bank Transfer">
+                    <div class="lw-payment-card-icon">&#127970;</div>
+                    <div class="lw-payment-card-name">EFT Bank Transfer</div>
+                    <div class="lw-payment-card-desc">Pay directly from your bank account</div>
+                </div>
+                <div class="lw-payment-card" data-method="PayFast">
+                    <div class="lw-payment-card-icon">&#128179;</div>
+                    <div class="lw-payment-card-name">PayFast</div>
+                    <div class="lw-payment-card-desc">Pay online via card or instant EFT</div>
+                </div>
+                <div class="lw-payment-card" data-method="Yoco">
+                    <div class="lw-payment-card-icon">&#128143;</div>
+                    <div class="lw-payment-card-name">Yoco</div>
+                    <div class="lw-payment-card-desc">Pay via card with Yoco</div>
+                </div>
+            </div>
+
+            <p class="lw-payment-note">
+                Payment instructions will be sent to your registered email address after selection. Your listing will be reviewed and activated once payment is confirmed.
+            </p>
+
+            <div id="lwPaymentError" class="auth-error" style="display:none;"></div>
+
+            <div class="lw-payment-actions">
+                <button id="lwPaymentCancel" class="btn btn-secondary">Go Back</button>
+                <button id="lwPaymentConfirm" class="btn btn-primary" disabled>Confirm &amp; Submit Listing</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; Veriyo | Built for South African drivers</p>
+        <p style="margin-top:0.5rem;">
+            <a href="privacy.html" style="color:var(--secondary-accent); text-decoration:underline; font-size:0.85rem;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script src="list-workshop.js"></script>
+</body>
+</html>

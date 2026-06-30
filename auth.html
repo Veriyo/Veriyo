@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Browse Prices</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <img src="logo.png" alt="Veriyo" style="height:40px;">
+            </div>
+
+            <!-- Sign In Panel -->
+            <div id="signinPanel">
+                <h1 class="auth-title">Welcome back</h1>
+                <p class="auth-subtitle">Sign in to your Veriyo account</p>
+
+                <div id="signinError" class="auth-error" style="display:none;"></div>
+
+                <form id="signinForm" novalidate>
+                    <div class="auth-field">
+                        <label for="signinEmail">Email address</label>
+                        <input type="email" id="signinEmail" class="form-control" required
+                            placeholder="you@example.com" autocomplete="email">
+                        <span class="auth-field-error" id="signinEmailError"></span>
+                    </div>
+                    <div class="auth-field">
+                        <label for="signinPassword">Password</label>
+                        <input type="password" id="signinPassword" class="form-control" required
+                            placeholder="Your password" autocomplete="current-password">
+                    </div>
+                    <button type="submit" id="signinBtn" class="btn btn-primary auth-submit-btn">
+                        Sign In
+                    </button>
+                </form>
+
+                <p class="auth-toggle-text">
+                    Don't have an account?
+                    <a href="#" id="showSignup" class="auth-toggle-link">Create one</a>
+                </p>
+            </div>
+
+            <!-- Sign Up Panel -->
+            <div id="signupPanel" style="display:none;">
+                <h1 class="auth-title">Create your account</h1>
+                <p class="auth-subtitle">Join Veriyo — it's free</p>
+
+                <div id="signupError" class="auth-error" style="display:none;"></div>
+
+                <form id="signupForm" novalidate>
+                    <div class="auth-field">
+                        <label for="signupName">Your name <span class="auth-optional">(optional)</span></label>
+                        <input type="text" id="signupName" class="form-control"
+                            placeholder="Your name — optional" autocomplete="name">
+                    </div>
+                    <div class="auth-field">
+                        <label for="signupEmail">Email address</label>
+                        <input type="email" id="signupEmail" class="form-control" required
+                            placeholder="you@example.com" autocomplete="email">
+                        <span class="auth-field-error" id="signupEmailError"></span>
+                    </div>
+                    <div class="auth-field">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" class="form-control" required
+                            placeholder="At least 8 characters" autocomplete="new-password">
+                    </div>
+                    <div class="auth-field">
+                        <label for="signupConfirm">Confirm password</label>
+                        <input type="password" id="signupConfirm" class="form-control" required
+                            placeholder="Repeat your password" autocomplete="new-password">
+                        <span class="auth-field-error" id="signupConfirmError"></span>
+                    </div>
+                    <button type="submit" id="signupBtn" class="btn btn-primary auth-submit-btn">
+                        Create Account
+                    </button>
+                </form>
+
+                <p class="auth-toggle-text">
+                    Already have an account?
+                    <a href="#" id="showSignin" class="auth-toggle-link">Sign in</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Veriyo | Built for South African drivers</p>
+        <p style="margin-top:0.5rem;">
+            <a href="privacy.html" style="color:var(--secondary-accent); text-decoration:underline; font-size:0.85rem;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+    (function () {
+        const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
+        const _supabaseAuth = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+        function validateEmail(email) {
+            return EMAIL_RE.test(email);
+        }
+
+        function showPanel(name) {
+            document.getElementById('signinPanel').style.display = name === 'signin' ? '' : 'none';
+            document.getElementById('signupPanel').style.display = name === 'signup' ? '' : 'none';
+        }
+
+        function setError(elId, msg) {
+            const el = document.getElementById(elId);
+            el.textContent = msg;
+            el.style.display = msg ? 'block' : 'none';
+        }
+
+        function clearErrors() {
+            ['signinError', 'signinEmailError', 'signupError', 'signupEmailError', 'signupConfirmError'].forEach(id => setError(id, ''));
+        }
+
+        function humaniseError(msg) {
+            if (!msg) return 'Something went wrong. Please try again.';
+            if (msg.includes('User already registered')) return 'An account with this email already exists. Please sign in instead.';
+            if (msg.includes('Invalid login credentials')) return 'Incorrect email or password. Please try again.';
+            return msg;
+        }
+
+        function afterAuthSuccess() {
+            const redirect = sessionStorage.getItem('veriyo_chat_redirect');
+            if (redirect) {
+                sessionStorage.removeItem('veriyo_chat_redirect');
+                window.location.href = redirect;
+            } else {
+                window.location.href = 'motorist-home.html';
+            }
+        }
+
+        document.getElementById('showSignup').addEventListener('click', function (e) {
+            e.preventDefault();
+            clearErrors();
+            showPanel('signup');
+        });
+
+        document.getElementById('showSignin').addEventListener('click', function (e) {
+            e.preventDefault();
+            clearErrors();
+            showPanel('signin');
+        });
+
+        document.getElementById('signinForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearErrors();
+
+            const email = document.getElementById('signinEmail').value.trim();
+            const password = document.getElementById('signinPassword').value;
+
+            if (!validateEmail(email)) {
+                setError('signinEmailError', 'Please enter a valid email address');
+                return;
+            }
+
+            const btn = document.getElementById('signinBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in…';
+
+            const { error } = await _supabaseAuth.auth.signInWithPassword({ email, password });
+
+            if (error) {
+                setError('signinError', humaniseError(error.message));
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+            } else {
+                afterAuthSuccess();
+            }
+        });
+
+        document.getElementById('signupForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            clearErrors();
+
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+            const confirm = document.getElementById('signupConfirm').value;
+
+            if (!validateEmail(email)) {
+                setError('signupEmailError', 'Please enter a valid email address');
+                return;
+            }
+
+            if (password.length < 8) {
+                setError('signupError', 'Password must be at least 8 characters.');
+                return;
+            }
+
+            if (password !== confirm) {
+                setError('signupConfirmError', 'Passwords do not match.');
+                return;
+            }
+
+            const btn = document.getElementById('signupBtn');
+            btn.disabled = true;
+            btn.textContent = 'Creating account…';
+
+            const { error } = await _supabaseAuth.auth.signUp({
+                email,
+                password,
+                options: {
+                    emailRedirectTo: null,
+                    data: { display_name: name || null }
+                }
+            });
+
+            if (error) {
+                setError('signupError', humaniseError(error.message));
+                btn.disabled = false;
+                btn.textContent = 'Create Account';
+            } else {
+                const { error: signinErr } = await _supabaseAuth.auth.signInWithPassword({ email, password });
+                if (signinErr) {
+                    setError('signupError', humaniseError(signinErr.message));
+                    btn.disabled = false;
+                    btn.textContent = 'Create Account';
+                } else {
+                    afterAuthSuccess();
+                }
+            }
+        });
+    })();
+    </script>
+</body>
+</html>

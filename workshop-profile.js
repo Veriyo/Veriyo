@@ -46,6 +46,20 @@ document.addEventListener('DOMContentLoaded', async () => {
         .ilike('workshop_name', workshop.workshop_name);
 
     renderProfile(workshop, submissions || []);
+
+    // Chat button handler
+    const chatBtn = document.getElementById('chatWorkshopBtn');
+    if (chatBtn && workshopId) {
+        chatBtn.addEventListener('click', async function () {
+            const { data: { session } } = await _supabaseProfile.auth.getSession();
+            if (session) {
+                window.location.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
+            } else {
+                sessionStorage.setItem('veriyo_chat_redirect', 'chat.html?workshop_id=' + encodeURIComponent(workshopId));
+                window.location.href = 'auth.html';
+            }
+        });
+    }
 });
 
 function renderProfile(w, submissions) {

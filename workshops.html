@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Directory — Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="motorist-home.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
+            <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Browse Prices</a></li>
+            <li><a href="report.html">Report a Repair</a></li>
+            <li><a href="workshops.html" class="active">Workshops</a></li>
+        </ul>
+    </nav>
+
+    <main class="container">
+        <header style="margin-bottom:2rem;">
+            <h1 style="font-size:2rem; margin-bottom:0.5rem;">Workshop Directory</h1>
+            <p style="color:var(--text-secondary);">Browse verified workshops across South Africa. Real profiles built on driver transparency.</p>
+        </header>
+
+        <div class="wd-controls">
+            <div class="wd-search-wrap">
+                <input type="text" id="wdSearch" class="form-control wd-search-input"
+                    placeholder="Search by workshop name, suburb or city…" autocomplete="off">
+            </div>
+            <div class="wd-province-wrap">
+                <select id="wdProvince" class="form-control wd-province-select">
+                    <option value="">All Provinces</option>
+                    <option value="Gauteng">Gauteng</option>
+                    <option value="Western Cape">Western Cape</option>
+                    <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                    <option value="Eastern Cape">Eastern Cape</option>
+                    <option value="Limpopo">Limpopo</option>
+                    <option value="Mpumalanga">Mpumalanga</option>
+                    <option value="North West">North West</option>
+                    <option value="Free State">Free State</option>
+                    <option value="Northern Cape">Northern Cape</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="wdLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
+            Loading workshops…
+        </div>
+
+        <div id="wdGrid" class="wd-grid" style="display:none;"></div>
+
+        <div id="wdEmpty" class="wd-empty-state" style="display:none;">
+            <p class="wd-empty-msg">No workshops have joined Veriyo in your area yet. Know a workshop that should be here? Share Veriyo with them and help build transparency in your community.</p>
+            <button id="wdShareBtn" class="btn btn-primary wd-share-btn">Share Workshop Link</button>
+            <span id="wdShareConfirm" class="wd-share-confirm" style="display:none;">Link copied to clipboard!</span>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; Veriyo | Built for South African drivers</p>
+        <p style="margin-top:0.5rem;">
+            <a href="privacy.html" style="color:var(--secondary-accent); text-decoration:underline; font-size:0.85rem;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script src="workshops.js"></script>
+</body>
+</html>

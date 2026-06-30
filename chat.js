@@ -1,0 +1,321 @@
+/**
+ * Veriyo | Chat System
+ * Motorist ↔ Workshop real-time messaging via Supabase.
+ */
+(function () {
+    const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
+    const _supabaseChat = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const PHONE_RE = /(\+?(\d[\s\-]?){9,})/;
+    const EMAIL_RE = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+
+    function containsContactDetails(text) {
+        return PHONE_RE.test(text) || EMAIL_RE.test(text);
+    }
+
+    function escapeHtml(str) {
+        return String(str || '')
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function formatTime(ts) {
+        if (!ts) return '';
+        const d = new Date(ts);
+        return d.toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg', hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short' });
+    }
+
+    function scrollToBottom(threadEl) {
+        if (threadEl) threadEl.scrollTop = threadEl.scrollHeight;
+    }
+
+    function buildBubble(msg, currentUserId, mode) {
+        const isMine = mode === 'workshop'
+            ? msg.sender === 'workshop'
+            : msg.sender === 'motorist';
+        const side = isMine ? 'right' : 'left';
+        return `<div class="chat-bubble chat-bubble--${side}">
+            <div class="chat-bubble-text">${escapeHtml(msg.message_text)}</div>
+            <div class="chat-bubble-time">${formatTime(msg.created_at)}</div>
+        </div>`;
+    }
+
+    // ─── MOTORIST VIEW ──────────────────────────────────────────────────────────
+    async function initMotoristView(session, workshopId) {
+        const view = document.getElementById('chatMotivistView');
+        const threadEl = document.getElementById('chatThread');
+        const sendBtn = document.getElementById('chatSendBtn');
+        const inputEl = document.getElementById('chatInput');
+        const sendError = document.getElementById('chatSendError');
+        const workshopNameEl = document.getElementById('chatWorkshopName');
+
+        view.style.display = 'block';
+        document.getElementById('chatLoading').style.display = 'none';
+
+        // Fetch workshop name
+        const { data: workshop } = await _supabaseChat
+            .from('Workshopprofiles')
+            .select('workshop_name')
+            .eq('id', workshopId)
+            .single();
+
+        workshopNameEl.textContent = workshop ? workshop.workshop_name : 'Workshop Chat';
+        document.title = (workshop ? workshop.workshop_name : 'Workshop') + ' — Chat — Veriyo';
+
+        // Load messages
+        async function loadMessages() {
+            const { data: msgs } = await _supabaseChat
+                .from('chats')
+                .select('*')
+                .eq('workshop_id', workshopId)
+                .eq('motorist_id', session.user.id)
+                .order('created_at', { ascending: true });
+
+            threadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'motorist')).join('');
+            scrollToBottom(threadEl);
+        }
+
+        await loadMessages();
+
+        // Realtime subscription
+        _supabaseChat
+            .channel('chats-motorist-' + workshopId + '-' + session.user.id)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'chats',
+                filter: 'workshop_id=eq.' + workshopId
+            }, function (payload) {
+                const msg = payload.new;
+                if (msg.motorist_id !== session.user.id) return;
+                threadEl.innerHTML += buildBubble(msg, session.user.id, 'motorist');
+                scrollToBottom(threadEl);
+            })
+            .subscribe();
+
+        // Send handler
+        async function sendMessage() {
+            const text = inputEl.value.trim();
+            sendError.style.display = 'none';
+            if (!text) return;
+
+            if (containsContactDetails(text)) {
+                sendError.textContent = 'Contact details cannot be shared in chat.';
+                sendError.style.display = 'block';
+                return;
+            }
+
+            sendBtn.disabled = true;
+            const { error } = await _supabaseChat.from('chats').insert({
+                workshop_id: workshopId,
+                motorist_id: session.user.id,
+                sender: 'motorist',
+                message_text: text
+            });
+
+            sendBtn.disabled = false;
+            if (error) {
+                sendError.textContent = 'Failed to send message. Please try again.';
+                sendError.style.display = 'block';
+            } else {
+                inputEl.value = '';
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        inputEl.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+    }
+
+    // ─── WORKSHOP MANAGER VIEW ──────────────────────────────────────────────────
+    async function initWorkshopView(session) {
+        const view = document.getElementById('chatWorkshopView');
+        const convListEl = document.getElementById('chatConvList');
+        const convEmpty = document.getElementById('chatConvEmpty');
+        const activeThreadPanel = document.getElementById('chatActiveThread');
+        const managerThreadEl = document.getElementById('chatManagerThread');
+        const managerInput = document.getElementById('chatManagerInput');
+        const managerSendBtn = document.getElementById('chatManagerSendBtn');
+        const managerSendError = document.getElementById('chatManagerSendError');
+        const activeMotristEl = document.getElementById('chatActiveMotrist');
+        const subtitleEl = document.getElementById('chatManagerSubtitle');
+
+        view.style.display = 'block';
+        document.getElementById('chatLoading').style.display = 'none';
+        document.title = 'Workshop Chat — Veriyo';
+
+        // Find this manager's workshop by email
+        const { data: workshopArr } = await _supabaseChat
+            .from('Workshopprofiles')
+            .select('id, workshop_name')
+            .eq('email_address', session.user.email)
+            .limit(1);
+
+        if (!workshopArr || workshopArr.length === 0) {
+            view.innerHTML = '<p style="color:var(--text-secondary); text-align:center; padding:3rem 1rem;">No workshop linked to your account.</p>';
+            return;
+        }
+
+        const myWorkshop = workshopArr[0];
+        subtitleEl.textContent = myWorkshop.workshop_name;
+
+        // Load all conversations (grouped by motorist)
+        const { data: allMsgs } = await _supabaseChat
+            .from('chats')
+            .select('*')
+            .eq('workshop_id', myWorkshop.id)
+            .order('created_at', { ascending: false });
+
+        if (!allMsgs || allMsgs.length === 0) {
+            convEmpty.style.display = 'block';
+        } else {
+            // Group by motorist_id, pick latest message as preview
+            const byMotorist = {};
+            allMsgs.forEach(function (m) {
+                if (!byMotorist[m.motorist_id]) byMotorist[m.motorist_id] = m;
+            });
+
+            convListEl.innerHTML = '';
+            Object.entries(byMotorist).forEach(function ([motoristId, latestMsg]) {
+                const initial = motoristId[0].toUpperCase();
+                const preview = latestMsg.message_text.length > 60
+                    ? latestMsg.message_text.slice(0, 60) + '…'
+                    : latestMsg.message_text;
+                const convItem = document.createElement('div');
+                convItem.className = 'chat-conv-item';
+                convItem.dataset.motoristId = motoristId;
+                convItem.innerHTML = `
+                    <div class="chat-conv-avatar">${escapeHtml(initial)}</div>
+                    <div class="chat-conv-info">
+                        <div class="chat-conv-id">${escapeHtml(motoristId.slice(0, 8))}…</div>
+                        <div class="chat-conv-preview">${escapeHtml(preview)}</div>
+                    </div>`;
+                convItem.addEventListener('click', function () {
+                    document.querySelectorAll('.chat-conv-item').forEach(el => el.classList.remove('chat-conv-item--active'));
+                    convItem.classList.add('chat-conv-item--active');
+                    openThread(motoristId, myWorkshop.id, session);
+                });
+                convListEl.appendChild(convItem);
+            });
+        }
+
+        let currentRealtimeSub = null;
+
+        function openThread(motoristId, workshopId, session) {
+            activeThreadPanel.style.display = 'flex';
+            activeMotristEl.textContent = 'Motorist: ' + motoristId.slice(0, 8) + '…';
+            managerSendError.style.display = 'none';
+
+            async function loadThread() {
+                const { data: msgs } = await _supabaseChat
+                    .from('chats')
+                    .select('*')
+                    .eq('workshop_id', workshopId)
+                    .eq('motorist_id', motoristId)
+                    .order('created_at', { ascending: true });
+
+                managerThreadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'workshop')).join('');
+                scrollToBottom(managerThreadEl);
+            }
+
+            loadThread();
+
+            // Unsubscribe previous realtime
+            if (currentRealtimeSub) {
+                _supabaseChat.removeChannel(currentRealtimeSub);
+            }
+
+            currentRealtimeSub = _supabaseChat
+                .channel('chats-workshop-' + workshopId + '-' + motoristId)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'chats',
+                    filter: 'workshop_id=eq.' + workshopId
+                }, function (payload) {
+                    const msg = payload.new;
+                    if (msg.motorist_id !== motoristId) return;
+                    managerThreadEl.innerHTML += buildBubble(msg, session.user.id, 'workshop');
+                    scrollToBottom(managerThreadEl);
+                })
+                .subscribe();
+
+            // Wire send for this thread
+            async function sendReply() {
+                const text = managerInput.value.trim();
+                managerSendError.style.display = 'none';
+                if (!text) return;
+
+                if (containsContactDetails(text)) {
+                    managerSendError.textContent = 'Contact details cannot be shared in chat.';
+                    managerSendError.style.display = 'block';
+                    return;
+                }
+
+                managerSendBtn.disabled = true;
+                const { error } = await _supabaseChat.from('chats').insert({
+                    workshop_id: workshopId,
+                    motorist_id: motoristId,
+                    sender: 'workshop',
+                    message_text: text
+                });
+
+                managerSendBtn.disabled = false;
+                if (error) {
+                    managerSendError.textContent = 'Failed to send. Please try again.';
+                    managerSendError.style.display = 'block';
+                } else {
+                    managerInput.value = '';
+                }
+            }
+
+            // Replace old listener by cloning the button
+            const newSendBtn = managerSendBtn.cloneNode(true);
+            managerSendBtn.parentNode.replaceChild(newSendBtn, managerSendBtn);
+            const newInput = managerInput.cloneNode(true);
+            managerInput.parentNode.replaceChild(newInput, managerInput);
+
+            newSendBtn.addEventListener('click', sendReply);
+            newInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(); }
+            });
+        }
+
+        document.getElementById('chatCloseThread').addEventListener('click', function () {
+            activeThreadPanel.style.display = 'none';
+            document.querySelectorAll('.chat-conv-item').forEach(el => el.classList.remove('chat-conv-item--active'));
+            if (currentRealtimeSub) {
+                _supabaseChat.removeChannel(currentRealtimeSub);
+                currentRealtimeSub = null;
+            }
+        });
+    }
+
+    // ─── ENTRY POINT ────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async function () {
+        const { data: { session } } = await _supabaseChat.auth.getSession();
+
+        if (!session) {
+            // Save redirect and bounce to auth
+            const currentUrl = window.location.pathname.split('/').pop() + window.location.search;
+            sessionStorage.setItem('veriyo_chat_redirect', currentUrl);
+            document.getElementById('chatLoading').style.display = 'none';
+            document.getElementById('chatAuthRequired').style.display = 'block';
+            return;
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const mode = params.get('mode');
+        const workshopId = params.get('workshop_id');
+
+        if (mode === 'workshop') {
+            await initWorkshopView(session);
+        } else if (workshopId) {
+            await initMotoristView(session, parseInt(workshopId, 10));
+        } else {
+            document.getElementById('chatLoading').textContent = 'Invalid chat link.';
+        }
+    });
+})();
