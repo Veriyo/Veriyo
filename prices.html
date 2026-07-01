@@ -2,46 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="logo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
     <title>Browse Repair Prices - Veriyo</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <nav class="navbar">
- <a href="welcome.html" class="nav-logo">
-    <img src="logo.png" alt="Veriyo">
-</a>
- <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-  <ul class="nav-links" id="navLinksContainer">
+    <nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <ul class="nav-links nav-links--desktop" id="navLinksContainer">
             <li><a href="motorist-home.html">Home</a></li>
-            <li><a href="prices.html" class="active">Browse Prices</a></li>
-            <li><a href="report.html">Report a Repair</a></li>
+            <li><a href="prices.html" class="active">Prices</a></li>
+            <li><a href="report.html">Report</a></li>
             <li><a href="workshops.html">Workshops</a></li>
         </ul>
     </nav>
 
- 
-    <main class="container">      
-  <header style="margin-bottom: 2rem;">
-    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Approved Repair Benchmarks</h1>
-    <p style="color: var(--text-secondary);">Examine authentic cost indices generated entirely from approved invoices submitted across your region.</p>
-</header>
-<section class="filter-wrapper" aria-label="Data Filter Controls">
+    <main class="container">
+        <header style="margin-bottom: 2rem;">
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Approved Repair Benchmarks</h1>
+            <p style="color: var(--text-secondary);">Examine authentic cost indices generated entirely from approved invoices submitted across your region.</p>
+        </header>
+        <section class="filter-wrapper" aria-label="Data Filter Controls">
             <button id="filterToggleBtn" style="display:none; width:100%; background:var(--surface-color); color:var(--text-primary); border:1px solid var(--border-color); border-radius:var(--radius); padding:0.75rem 1rem; font-size:0.95rem; font-weight:600; cursor:pointer; margin-bottom:0.75rem; text-align:left;">&#9660; Filter &amp; Sort</button>
             <div class="filter-grid" id="filterGridPanel">
-                
                 <div class="filter-group">
                     <label for="filterSuburb">Filter by Suburb</label>
-                   <input type="text" id="filterSuburb" class="form-control" placeholder="e.g. Mayfair, Rosebank..." list="suburbSuggestions" autocomplete="off">
-<datalist id="suburbSuggestions"></datalist>
+                    <input type="text" id="filterSuburb" class="form-control" placeholder="e.g. Mayfair, Rosebank..." list="suburbSuggestions" autocomplete="off">
+                    <datalist id="suburbSuggestions"></datalist>
                 </div>
-
                 <div class="filter-group">
                     <label for="filterMake">Car Make</label>
                     <select id="filterMake" class="form-control">
@@ -60,7 +51,6 @@
                         <option value="Unknown">Unknown/Other</option>
                     </select>
                 </div>
-
                 <div class="filter-group">
                     <label for="filterRepair">Repair Type</label>
                     <select id="filterRepair" class="form-control">
@@ -77,11 +67,9 @@
                         <option value="Body Work">Body Work</option>
                         <option value="Suspension">Suspension</option>
                         <option value="Sound Installation">Sound Installation</option>
-                    <option value="Other">Other</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
-
-            
                 <div class="filter-group">
                     <label for="filterRating">Rating Threshold</label>
                     <select id="filterRating" class="form-control">
@@ -93,7 +81,6 @@
                         <option value="5">5 Stars only</option>
                     </select>
                 </div>
-
                 <div class="filter-group">
                     <label for="sortBy">Sort By</label>
                     <select id="sortBy" class="form-control">
@@ -103,22 +90,38 @@
                         <option value="lowestRated">Lowest Rated</option>
                     </select>
                 </div>
-
             </div>
         </section>
-
-        <section id="pricesContainer" class="prices-grid" aria-live="polite">
-            </section>
-
+        <section id="pricesContainer" class="prices-grid" aria-live="polite"></section>
     </main>
 
-<footer class="footer">
-    <p>&copy; Veriyo | Built for South African drivers</p>
-    <p style="margin-top: 0.5rem;">
-        <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
-    </p>
-</footer>
-<script src="main.js"></script>
+    <footer class="footer" style="margin-bottom: 70px;">
+        <p>&copy; Veriyo | Built for South African drivers</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <nav class="bottom-nav">
+        <a href="motorist-home.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">&#127968;</span>
+            <span class="bottom-nav-label">Home</span>
+        </a>
+        <a href="prices.html" class="bottom-nav-item active">
+            <span class="bottom-nav-icon">&#128176;</span>
+            <span class="bottom-nav-label">Prices</span>
+        </a>
+        <a href="report.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">&#128221;</span>
+            <span class="bottom-nav-label">Report</span>
+        </a>
+        <a href="workshops.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">&#128295;</span>
+            <span class="bottom-nav-label">Workshops</span>
+        </a>
+    </nav>
+
+    <script src="main.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script src="prices.js"></script>
