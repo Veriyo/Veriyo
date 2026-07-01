@@ -2,46 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="logo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
     <title>Report a Repair - Veriyo</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <nav class="navbar">
-     <a href="index.html" class="nav-logo">
-    <img src="logo.png" alt="Veriyo">
-</a>
-<button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links" id="navLinksContainer">
+    <nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <ul class="nav-links nav-links--desktop" id="navLinksContainer">
             <li><a href="motorist-home.html">Home</a></li>
-            <li><a href="prices.html">Browse Prices</a></li>
-            <li><a href="report.html" class="active">Report a Repair</a></li>
+            <li><a href="prices.html">Prices</a></li>
+            <li><a href="report.html" class="active">Report</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
         </ul>
     </nav>
 
     <main class="container">
-        
         <div class="form-container">
             <header class="form-header">
                 <h2>Share Your Experience</h2>
                 <p>Your transparent feedback directly prevents fellow South African motorists from facing predatory invoices. Submission context is kept entirely anonymous.</p>
             </header>
-
-          <form id="reportRepairForm" autocomplete="on">
-
+            <form id="reportRepairForm" autocomplete="on">
                 <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border-color);">Workshop Details</p>
-
                 <div class="form-group">
                     <label for="workshopName">Workshop Name *</label>
                     <input type="text" id="workshopName" class="form-control" required placeholder="e.g. Randburg Auto Clinic">
                 </div>
-<div class="form-group-row">
+                <div class="form-group-row">
                     <div class="form-group">
                         <label for="suburb">Suburb *</label>
                         <input type="text" id="suburb" class="form-control" required placeholder="e.g. Ferndale">
@@ -51,7 +42,6 @@
                         <input type="text" id="city" class="form-control" placeholder="e.g. Cape Town" required>
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label for="province">Province *</label>
                     <select id="province" class="form-control" required>
@@ -67,8 +57,8 @@
                         <option value="Northern Cape">Northern Cape</option>
                     </select>
                 </div>
-  <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border-color);">Repair Details</p>
-   <div class="form-group-row">
+                <p style="font-size:0.8rem; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--text-secondary); margin-bottom:1rem; padding-bottom:0.5rem; border-bottom:1px solid var(--border-color);">Repair Details</p>
+                <div class="form-group-row">
                     <div class="form-group">
                         <label for="carMake">Car Make *</label>
                         <select id="carMake" class="form-control" required>
@@ -92,18 +82,17 @@
                         <input type="text" id="carModel" class="form-control" required placeholder="e.g. Polo, Hilux">
                     </div>
                 </div>
-
                 <div class="form-group-row">
                     <div class="form-group">
-                   <label for="carYear">Year of Vehicle</label>
-<span class="label-desc">Leave blank if unsure.</span>
-<input type="number" id="carYear" class="form-control" min="1990" max="2026" placeholder="e.g. 2018">
+                        <label for="carYear">Year of Vehicle</label>
+                        <span class="label-desc">Leave blank if unsure.</span>
+                        <input type="number" id="carYear" class="form-control" min="1990" max="2026" placeholder="e.g. 2018">
                     </div>
                     <div class="form-group">
-        <label for="repairDate">Date of Repair *</label>
-        <span class="label-desc">When did this repair actually take place?</span>
-        <input type="date" id="repairDate" class="form-control" required>
-    </div>
+                        <label for="repairDate">Date of Repair *</label>
+                        <span class="label-desc">When did this repair actually take place?</span>
+                        <input type="date" id="repairDate" class="form-control" required>
+                    </div>
                     <div class="form-group">
                         <label for="repairType">Type of Repair *</label>
                         <select id="repairType" class="form-control" required>
@@ -124,54 +113,40 @@
                         </select>
                     </div>
                 </div>
-
-         <div class="form-group">
+                <div class="form-group">
                     <label for="partDescription">What Was Done *</label>
                     <span class="label-desc">e.g. Front brake pads replaced, oil and filter change.</span>
                     <input type="text" id="partDescription" class="form-control" required placeholder="e.g. LUK Clutch Kit replacement">
-                </div> 
-
-<div class="form-group">
+                </div>
+                <div class="form-group">
                     <label for="amountPaid">Total Amount Paid (Rands) *</label>
                     <span class="label-desc">The final number on your invoice — not an estimate.</span>
                     <input type="number" id="amountPaid" class="form-control" required placeholder="e.g. 4850">
                 </div>
-
-      <div class="form-group">
+                <div class="form-group">
                     <label>Did you feel the price was fair? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
                     <span class="label-desc">Based on what was done to your car, did the amount feel reasonable?</span>
                     <div class="radio-checkbox-group">
-                        <label class="radio-label">
-                            <input type="radio" name="feltOvercharged" value="false"> ✅ Yes, it was fair
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="feltOvercharged" value="true"> ❌ No, I felt overcharged
-                        </label>
+                        <label class="radio-label"><input type="radio" name="feltOvercharged" value="false"> ✅ Yes, it was fair</label>
+                        <label class="radio-label"><input type="radio" name="feltOvercharged" value="true"> ❌ No, I felt overcharged</label>
                     </div>
                 </div>
-
                 <div id="feltOverchargedReasonContainer" class="form-group conditional-container hidden">
                     <label for="feltOverchargedReason">What made you feel that way? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
                     <textarea id="feltOverchargedReason" class="form-control" rows="3" maxlength="300" placeholder="e.g. They charged for parts I didn't ask for, or the price doubled without explanation."></textarea>
                 </div>
-
                 <div class="form-group">
                     <label>How did the staff treat you? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
                     <span class="label-desc">Did the people at the workshop speak to you with respect?</span>
                     <div class="radio-checkbox-group">
-                        <label class="radio-label">
-                            <input type="radio" name="staffTreatment" value="helpful"> 👍 They were helpful and respectful
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="staffTreatment" value="unhelpful"> 👎 They were rude or dismissive
-                        </label>
+                        <label class="radio-label"><input type="radio" name="staffTreatment" value="helpful"> 👍 They were helpful and respectful</label>
+                        <label class="radio-label"><input type="radio" name="staffTreatment" value="unhelpful"> 👎 They were rude or dismissive</label>
                     </div>
                 </div>
-
                 <div id="staffTreatmentReasonContainer" class="form-group conditional-container hidden">
                     <label for="staffTreatmentReason">Tell us more <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
                     <textarea id="staffTreatmentReason" class="form-control" rows="3" maxlength="300" placeholder="e.g. The mechanic explained everything clearly, or no one bothered to update me for hours."></textarea>
-                </div>        
+                </div>
                 <div class="form-group">
                     <label>Overall Rating *</label>
                     <div class="star-rating-picker" id="starRatingSelector" role="radiogroup" aria-label="Select your service score out of 5 stars">
@@ -183,62 +158,72 @@
                     </div>
                     <input type="hidden" id="overallRatingValue" value="0" required>
                 </div>
-<div class="form-group">
+                <div class="form-group">
                     <div class="counter-container">
                         <label for="additionalNotes">Anything else to add? <span style="font-weight:400; color:var(--text-secondary);">(Optional)</span></label>
                         <span id="charCount" class="char-counter">0 / 500 characters</span>
                     </div>
                     <textarea id="additionalNotes" class="form-control" rows="4" maxlength="500" placeholder="e.g. Waiting time, whether they called to update you, anything that stands out."></textarea>
                 </div>
-
                 <div class="form-group">
                     <label>Did you keep a receipt?</label>
                     <div class="radio-checkbox-group">
-                        <label class="radio-label">
-                            <input type="radio" name="keptReceipt" value="Yes"> Yes, upload proof
-                        </label>
-                        <label class="radio-label">
-                            <input type="radio" name="keptReceipt" value="No" checked> No receipt available
-                        </label>
+                        <label class="radio-label"><input type="radio" name="keptReceipt" value="Yes"> Yes, upload proof</label>
+                        <label class="radio-label"><input type="radio" name="keptReceipt" value="No" checked> No receipt available</label>
                     </div>
                 </div>
-
                 <div id="receiptUploadContainer" class="form-group conditional-container hidden">
                     <label for="receiptImage">Upload Invoice Proof Image</label>
                     <span class="label-desc" style="margin-bottom:0.5rem;">We blur internal identification and license numbers completely. Stripped for auditing.</span>
                     <input type="file" id="receiptImage" class="form-control" accept="image/*">
                 </div>
-
-<div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
-    <div style="display: flex; align-items: flex-start; gap: 8px;">
-        <input type="checkbox" id="privacyConsent" style="margin-top: 3px; cursor: pointer;">
-        <label for="privacyConsent" style="font-weight: 500; font-size: 0.9rem; line-height: 1.2; white-space: nowrap;">
-            I accept the <a href="privacy.html" style="color: var(--secondary-accent); font-size: 0.8rem; text-decoration: underline;">Privacy Policy</a> and Veriyo's storage terms.
-        </label>
-    </div>
-    
-    <p id="privacyErrorMsg" style="color: var(--danger-color); display: none; margin: 8px 0 0 24px; font-size: 0.85rem; font-weight: 600;">
-        Please tick the checkbox to confirm you accept the terms.
-    </p>
-</div>
-
-<button type="submit" id="submitReportBtn" class="btn btn-primary" style="width: 100%; transition: background-color 0.2s, color 0.2s;">
-    Submit My Experience
-</button>
+                <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: flex-start; gap: 8px;">
+                        <input type="checkbox" id="privacyConsent" style="margin-top: 3px; cursor: pointer;">
+                        <label for="privacyConsent" style="font-weight: 500; font-size: 0.9rem; line-height: 1.2; white-space: nowrap;">
+                            I accept the <a href="privacy.html" style="color: var(--secondary-accent); font-size: 0.8rem; text-decoration: underline;">Privacy Policy</a> and Veriyo's storage terms.
+                        </label>
+                    </div>
+                    <p id="privacyErrorMsg" style="color: var(--danger-color); display: none; margin: 8px 0 0 24px; font-size: 0.85rem; font-weight: 600;">
+                        Please tick the checkbox to confirm you accept the terms.
+                    </p>
+                </div>
+                <button type="submit" id="submitReportBtn" class="btn btn-primary" style="width: 100%; transition: background-color 0.2s, color 0.2s;">
+                    Submit My Experience
+                </button>
             </form>
         </div>
-
     </main>
-<footer class="footer">
-    <p>&copy;  Veriyo | Built for South African drivers</p>
-    <p style="margin-top: 0.5rem;">
-        <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
-    </p>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js"></script>
-<script src="main.js"></script>
-<script src="forms.js"></script>
 
+    <footer class="footer" style="margin-bottom: 70px;">
+        <p>&copy; Veriyo | Built for South African drivers</p>
+        <p style="margin-top: 0.5rem;">
+            <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
+        </p>
+    </footer>
+
+    <nav class="bottom-nav">
+        <a href="motorist-home.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">&#127968;</span>
+            <span class="bottom-nav-label">Home</span>
+        </a>
+        <a href="prices.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">&#128176;</span>
+            <span class="bottom-nav-label">Prices</span>
+        </a>
+        <a href="report.html" class="bottom-nav-item active">
+            <span class="bottom-nav-icon">&#128221;</span>
+            <span class="bottom-nav-label">Report</span>
+        </a>
+        <a href="workshops.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">&#128295;</span>
+            <span class="bottom-nav-label">Workshops</span>
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script src="forms.js"></script>
 </body>
 </html>
