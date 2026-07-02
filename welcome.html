@@ -2,13 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="logo.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
     <title>Veriyo — South Africa's Repair Price Transparency Platform</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        /* Welcome page only — scoped to .welcome-page class, touches nothing else */
-.welcome-page {
+        .welcome-page {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -16,7 +15,112 @@
             justify-content: center;
             padding: 2rem 1.5rem;
         }
-
+        .welcome-brand {
+            text-align: center;
+            margin-bottom: 0.75rem;
+        }
+        .welcome-brand h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+        .welcome-tagline {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            max-width: 440px;
+        }
+        .welcome-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            width: 100%;
+            max-width: 420px;
+        }
+        .welcome-card {
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+        .welcome-card:hover {
+            border-color: var(--primary-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .welcome-card-icon {
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--primary-accent);
+        }
+        .welcome-card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .welcome-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-card-motorist .welcome-card-btn {
+            background-color: var(--primary-accent);
+            color: #000000;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            display: block;
+            transition: var(--transition);
+        }
+        .welcome-card-motorist .welcome-card-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+        .welcome-card-manager {
+            background-color: #0f1f2e;
+            border-color: #1a3347;
+        }
+        .welcome-card-manager:hover {
+            border-color: var(--secondary-accent);
+        }
+        .welcome-card-manager .welcome-card-icon {
+            color: var(--secondary-accent);
+        }
+        .welcome-card-manager .welcome-card-btn {
+            background-color: var(--secondary-accent);
+            color: #000000;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            display: block;
+            transition: var(--transition);
+        }
+        .welcome-card-manager .welcome-card-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+        .welcome-footer-note {
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        .welcome-footer-note a {
+            color: var(--secondary-accent);
+            text-decoration: underline;
+        }
         @media (max-width: 768px) {
             .welcome-page {
                 min-height: calc(100vh - 60px);
@@ -34,183 +138,43 @@
             .welcome-card-manager .welcome-card-btn { padding: 0.5rem 1.2rem; font-size: 0.82rem; }
             .welcome-footer-note { margin-top: 1rem; font-size: 0.7rem; }
         }
-
-        .welcome-brand {
-            text-align: center;
-            margin-bottom: 0.75rem;
-        }
-
-        .welcome-brand h1 {
-            font-size: 4rem;
-            font-weight: 700;
-            color: var(--primary-accent);
-            letter-spacing: -1px;
-            line-height: 1;
-        }
-
-        .welcome-tagline {
-            color: var(--text-secondary);
-            font-size: 1.05rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            max-width: 440px;
-        }
-
-        .welcome-cards {
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            width: 100%;
-            max-width: 420px;
-        }
-
-        .welcome-card {
-            background-color: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 2rem 1.75rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            transition: var(--transition);
-        }
-
-        .welcome-card:hover {
-            border-color: var(--primary-accent);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-        }
-
-        .welcome-card-icon {
-            font-size: 2rem;
-            line-height: 1;
-            color: var(--primary-accent);
-        }
-
-        .welcome-card h2 {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--text-primary);
-        }
-
-        .welcome-card p {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Motorist card uses primary gold button */
-        .welcome-card-motorist .welcome-card-btn {
-            background-color: var(--primary-accent);
-            color: #000000;
-            padding: 0.8rem 1.5rem;
-            border-radius: var(--radius);
-            font-weight: 700;
-            font-size: 0.95rem;
-            text-align: center;
-            display: block;
-            transition: var(--transition);
-        }
-
-        .welcome-card-motorist .welcome-card-btn:hover {
-            opacity: 0.85;
-            transform: translateY(-2px);
-        }
-
-        /* Manager card uses a teal/surface variant */
-.welcome-card-manager {
-            background-color: #0f1f2e;
-            border-color: #1a3347;
-        }
-        
-
-        .welcome-card-manager:hover {
-            border-color: var(--secondary-accent);
-        }
-
-        .welcome-card-manager .welcome-card-icon {
-            color: var(--secondary-accent);
-        }
-
-        .welcome-card-manager .welcome-card-btn {
-            background-color: var(--secondary-accent);
-            color: #000000;
-            padding: 0.8rem 1.5rem;
-            border-radius: var(--radius);
-            font-weight: 700;
-            font-size: 0.95rem;
-            text-align: center;
-            display: block;
-            transition: var(--transition);
-        }
-
-        .welcome-card-manager .welcome-card-btn:hover {
-            opacity: 0.85;
-            transform: translateY(-2px);
-        }
-
-        .welcome-footer-note {
-            margin-top: 2.5rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .welcome-footer-note a {
-            color: var(--secondary-accent);
-            text-decoration: underline;
-        }
-
-        @media (max-width: 480px) {
-            .welcome-brand h1 { font-size: 3rem; }
-            .welcome-page { padding-top: 3rem; }
-        }
     </style>
 </head>
 <body>
-
-    <nav class="navbar">
+    <nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
     </nav>
 
     <main class="welcome-page">
-
         <div class="welcome-brand">
             <h1>Veriyo</h1>
         </div>
-
         <p class="welcome-tagline">
-            South Africa's trusted platform for transparent car repair pricing. Welcome — choose how you'd like to continue.
+            South Africa's trusted platform for transparent car repair pricing.
+            Welcome — choose how you'd like to continue.
         </p>
-
         <div class="welcome-cards">
-
-            <!-- Motorist portal -->
             <div class="welcome-card welcome-card-motorist">
                 <div class="welcome-card-icon">&#128663;</div>
                 <h2>I'm a Motorist</h2>
-                <p>Browse real repair prices paid by drivers across South Africa, or report your own experience to help others.</p>
+                <p>Browse real repair prices paid by drivers across South Africa,
+                or report your own experience to help others.</p>
                 <a href="motorist-home.html" class="welcome-card-btn">Continue as Motorist</a>
             </div>
-
-            <!-- Workshop Manager portal -->
             <div class="welcome-card welcome-card-manager">
                 <div class="welcome-card-icon">&#128295;</div>
                 <h2>I'm a Workshop Manager</h2>
-                <p>List your workshop, publish your service pricing, and build credibility with verified South African vehicle owners.</p>
-              <a href="list-workshop.html" class="welcome-card-btn">Continue as Workshop</a>
-</div>
+                <p>List your workshop, publish your service pricing, and build
+                credibility with verified South African vehicle owners.</p>
+                <a href="list-workshop.html" class="welcome-card-btn">Continue as Workshop</a>
+            </div>
         </div>
-
         <p class="welcome-footer-note">
             &copy; Veriyo | Built for South African drivers &nbsp;&middot;&nbsp;
             <a href="privacy.html">Privacy Policy</a>
         </p>
-
     </main>
-
 </body>
 </html>
