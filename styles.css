@@ -610,6 +610,205 @@ button, input, select, textarea {
 }
 
 /* ==========================================================================
+   Top Navbar Restructure — logo left, links centered, auth right
+   ========================================================================== */
+
+.navbar--top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1.5rem;
+    z-index: 1000;
+}
+
+.nav-links--desktop {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    align-items: center;
+}
+
+.nav-links--desktop a {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: var(--transition);
+    padding: 0.4rem 0;
+    position: relative;
+}
+
+.nav-links--desktop a:hover,
+.nav-links--desktop a.active {
+    color: var(--primary-accent);
+}
+
+.nav-links--desktop a.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-accent);
+}
+
+.nav-signin-link {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--primary-accent) !important;
+    border: 1px solid var(--primary-accent);
+    padding: 0.35rem 0.9rem !important;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.nav-signin-link:hover {
+    background: var(--primary-accent);
+    color: #000 !important;
+}
+
+/* ==========================================================================
+   Bottom Navigation Bar
+   ========================================================================== */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: var(--surface-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+}
+
+.bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    flex: 1;
+    height: 100%;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: var(--transition);
+    font-size: 0.65rem;
+    font-weight: 500;
+}
+
+.bottom-nav-item:hover,
+.bottom-nav-item.active {
+    color: var(--primary-accent);
+}
+
+.bottom-nav-icon {
+    font-size: 1.3rem;
+    line-height: 1;
+}
+
+.bottom-nav-label {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+/* Hide bottom nav on desktop, hide desktop links on mobile */
+@media (min-width: 769px) {
+    .bottom-nav { display: none; }
+    body { padding-bottom: 0; }
+}
+
+@media (max-width: 768px) {
+    .nav-links--desktop { display: none; }
+    body {
+        padding-top: 60px;
+        padding-bottom: 70px;
+    }
+    .navbar--top { height: 60px; }
+}
+
+/* ==========================================================================
+   Floating Help Button & Modal
+   ========================================================================== */
+
+.help-float-btn {
+    position: fixed;
+    top: 72px;
+    right: 1rem;
+    z-index: 990;
+    background: var(--danger-color);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: var(--transition);
+}
+
+.help-float-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.help-float-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 5000;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.help-float-modal.hidden {
+    display: none !important;
+}
+
+.help-float-modal-inner {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 2rem;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+}
+
+.help-float-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.15s;
+}
+
+.help-float-close:hover {
+    color: var(--text-primary);
+}
+/* ==========================================================================
    Admin Dashboard
    ========================================================================== */
 
