@@ -1,0 +1,103 @@
+You are working on an existing production web platform called Veriyo. Read every file carefully before touching anything. Follow these rules without exception: do not modify any file not explicitly listed below. Do not rename any file. Do not change any Supabase queries, table names, or column names. Do not change any existing CSS classes or rules. Only append new CSS — never delete existing CSS. Do not change any form logic. If you are unsure whether a change is permitted, do not make it.
+Make exactly these changes:
+CHANGE 1 — Fix avatar, bell, and sign-in button positioning in auth.js
+Find this line in auth.js:
+javascriptnavLinks.appendChild(li);
+The li element being appended contains the bell and avatar. Currently it sits inside the nav-links list alongside the page navigation tabs which looks unclean. Instead of appending to navLinksContainer, inject it directly into the navbar element itself as a fixed right-side element. Delete:
+javascriptconst navLinks = document.getElementById('navLinksContainer');
+if (!navLinks) return;
+Replace with:
+javascriptconst navbar = document.querySelector('.navbar--top');
+if (!navbar) return;
+Delete:
+javascriptnavLinks.appendChild(li);
+Replace with:
+javascriptli.style.cssText = 'position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:0.75rem; list-style:none;';
+navbar.appendChild(li);
+Do the same for the logged-out sign-in link injection — find:
+javascriptconst li = document.createElement('li');
+li.className = 'nav-auth-item';
+li.innerHTML = '<a href="auth.html" class="nav-signin-link">Sign In</a>';
+navLinks.appendChild(li);
+Replace with:
+javascriptconst li = document.createElement('li');
+li.className = 'nav-auth-item';
+li.style.cssText = 'position:absolute; right:1.5rem; top:50%; transform:translateY(-50%); list-style:none;';
+li.innerHTML = '<a href="auth.html" class="nav-signin-link">Sign In</a>';
+navbar.appendChild(li);
+CHANGE 2 — Make the bell open a slide-in notification panel instead of doing nothing
+In auth.js, find:
+javascriptconst bellEl = document.getElementById('navBell');
+After the avatar click listener and the document click listener are set up, find where bellEl is used in checkUnreadBell and add a click listener on bellEl. After this block:
+javascriptdocument.addEventListener('click', function () {
+    closeAllDropdowns();
+});
+Add:
+javascriptif (bellEl) {
+    bellEl.style.cursor = 'pointer';
+    bellEl.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const existing = document.getElementById('veNotifPanel');
+        if (existing) {
+            existing.remove();
+            return;
+        }
+        const panel = document.createElement('div');
+        panel.id = 'veNotifPanel';
+        panel.style.cssText = [
+            'position:fixed',
+            'top:60px',
+            'right:0',
+            'width:min(360px,100vw)',
+            'height:calc(100vh - 60px)',
+            'background:var(--surface-color)',
+            'border-left:1px solid var(--border-color)',
+            'z-index:3000',
+            'display:flex',
+            'flex-direction:column',
+            'padding:1.5rem',
+            'gap:1rem',
+            'animation:slideInRight 0.25s ease',
+            'overflow-y:auto'
+        ].join(';');
+        panel.innerHTML = [
+            '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">',
+            '  <h2 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);">Notifications</h2>',
+            '  <button id="veNotifClose" style="background:none;border:none;color:var(--text-secondary);font-size:1.2rem;cursor:pointer;">&#10005;</button>',
+            '</div>',
+            '<div style="border-bottom:1px solid var(--border-color);margin-bottom:0.5rem;"></div>',
+            '<div style="text-align:center;padding:2rem 1rem;color:var(--text-secondary);">',
+            '  <div style="font-size:2rem;margin-bottom:0.75rem;">&#128172;</div>',
+            '  <p style="font-size:0.9rem;line-height:1.6;margin-bottom:1.25rem;">No messages yet. Start a conversation with a workshop to get replies here.</p>',
+            '  <a href="workshops.html" style="display:inline-block;background:var(--primary-accent);color:#000;padding:0.6rem 1.4rem;border-radius:var(--radius);font-weight:700;font-size:0.88rem;text-decoration:none;">Browse Workshops</a>',
+            '</div>'
+        ].join('');
+        document.body.appendChild(panel);
+        document.getElementById('veNotifClose').addEventListener('click', function () {
+            panel.remove();
+        });
+        document.addEventListener('click', function closePanel(ev) {
+            if (!panel.contains(ev.target) && ev.target !== bellEl) {
+                panel.remove();
+                document.removeEventListener('click', closePanel);
+            }
+        });
+    });
+}
+Then append this keyframe to the bottom of styles.css only — do not touch anything else in that file:
+css@keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+CHANGE 3 — Create a new workshop home page workshop-home.html
+Create one new file called workshop-home.html. Do not modify any existing file for this change. The page must use the existing styles.css. The navbar must use navbar--top class and contain only the logo linking to welcome.html and the auth injection point. The page has three tabs: Overview, My Listing, List My Workshop. Tab switching is handled with inline JavaScript — no new JS file. The active tab is underlined in --primary-accent.
+Overview tab content: heading "Welcome to Veriyo for Workshops" and three step cards using the existing .step-card and .steps-grid CSS classes already in styles.css. Step 1: "Register your workshop" — submit your details and choose a plan. Step 2: "We review your listing" — our team verifies and activates your profile once payment is confirmed. Step 3: "Drivers find you" — verified South African motorists see your workshop when searching for repairs in your area.
+My Listing tab: check Supabase Workshopprofiles table for a row where email_address matches the logged-in user email using the same Supabase credentials present throughout the project. If a listing is found, display the workshop name, suburb, city, province, status badge, and plan badge using existing .badge, .badge-success, .badge-neutral CSS classes. If no listing is found, show a message: "You do not have a listing yet." with a button linking to list-workshop.html. If the user is not logged in, show: "Sign in to view your listing." with a link to auth.html. The My Listing tab only appears when the user is logged in — when logged out, hide it entirely.
+List My Workshop tab: simply renders a full-width link button to list-workshop.html with text "Choose a Plan and List Your Workshop". Style using existing .btn.btn-primary classes.
+Tab visibility rule: when logged out, show only Overview and List My Workshop tabs. When logged in, show Overview, My Listing, and List My Workshop.
+CHANGE 4 — Update welcome.html workshop button to point to the new page
+In welcome.html find:
+html<a href="list-workshop.html" class="welcome-card-btn">Continue as Workshop</a>
+Replace with:
+html<a href="workshop-home.html" class="welcome-card-btn">Continue as Workshop</a>
+That is all four changes. Do not make any other modifications to any file. When done, list every file you modified and every file you created so I can verify nothing unexpected was changed
