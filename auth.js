@@ -1,6 +1,6 @@
 /**
  * Veriyo | Auth Navbar Injection
- * Checks Supabase session and injects avatar + bell into navbar on every page.
+ * Checks Supabase session and injects avatar + bell or sign-in link.
  */
 (function () {
     const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
@@ -9,7 +9,8 @@
     const _supabaseAuthNav = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     function getInitials(session) {
-        const displayName = session.user.user_metadata && session.user.user_metadata.display_name;
+        const displayName = session.user.user_metadata &&
+            session.user.user_metadata.display_name;
         if (displayName && displayName.trim().length > 0) {
             return displayName.trim()[0].toUpperCase();
         }
@@ -42,10 +43,17 @@
 
     document.addEventListener('DOMContentLoaded', async function () {
         const { data: { session } } = await _supabaseAuthNav.auth.getSession();
-        if (!session) return;
-
         const navLinks = document.getElementById('navLinksContainer');
         if (!navLinks) return;
+
+        if (!session) {
+            // Inject sign-in link into top navbar
+            const li = document.createElement('li');
+            li.className = 'nav-auth-item';
+            li.innerHTML = '<a href="auth.html" class="nav-signin-link">Sign In</a>';
+            navLinks.appendChild(li);
+            return;
+        }
 
         const initials = getInitials(session);
         const userEmail = session.user.email;
@@ -58,8 +66,9 @@
             '  <div id="navAvatar" class="nav-avatar" title="Account">' + initials + '</div>',
             '  <div class="nav-avatar-dropdown" id="navAvatarDropdown" style="display:none;">',
             '    <div class="nav-dropdown-email">' + escapeHtml(userEmail) + '</div>',
-            '    <a href="workshop-home.html" class="nav-dropdown-item">My Profile</a>',
-            '    <button class="nav-dropdown-item nav-dropdown-signout" id="navSignOutBtn">Sign Out</button>',
+            '    <a href="auth.html" class="nav-dropdown-item">My Profile</a>',
+            '    <button class="nav-dropdown-item nav-dropdown-signout"',
+            '        id="navSignOutBtn">Sign Out</button>',
             '  </div>',
             '</div>'
         ].join('');
@@ -81,12 +90,13 @@
             closeAllDropdowns();
         });
 
-        document.getElementById('navSignOutBtn').addEventListener('click', async function () {
-            await _supabaseAuthNav.auth.signOut();
-            window.location.reload();
-        });
+        document.getElementById('navSignOutBtn').addEventListener('click',
+            async function () {
+                await _supabaseAuthNav.auth.signOut();
+                window.location.reload();
+            }
+        );
 
-        // Check if this user is a workshop manager and show unread notification
         const { data: workshopData } = await _supabaseAuthNav
             .from('Workshopprofiles')
             .select('id')
