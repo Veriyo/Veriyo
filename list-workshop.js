@@ -7,13 +7,13 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
     const _supabaseLW = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
     let activePlan = 'Visible';
     let activePlanPrice = 199;
     let activeSection = 'register';
     let selectedPaymentMethod = null;
     let pendingFormData = null;
+    let lwSession = null;
+    let addedServices = [];
 
     // ─── FEATURES CONTENT ───────────────────────────────────────────────────────
 
@@ -143,6 +143,7 @@
         document.getElementById('lwPlanNameBanner').textContent = plan;
         document.getElementById('lwPlanPriceBanner').textContent = price;
 
+        updateServiceLimitDisplay();
         renderFeaturesForActivePlan();
     }
 
@@ -178,6 +179,140 @@
         document.getElementById('lw-features-section').style.display = section === 'features' ? 'block' : 'none';
     }
 
+    // ─── SERVICES MANAGEMENT ─────────────────────────────────────────────────────
+
+    function getServiceLimit() {
+        if (activePlan === 'Visible') return 3;
+        return 8;
+    }
+
+    function updateServiceLimitDisplay() {
+        const limitEl = document.getElementById('lwServiceLimitNum');
+        if (limitEl) limitEl.textContent = getServiceLimit();
+        renderServiceCards();
+    }
+
+    function renderServiceCards() {
+        const container = document.getElementById('lwServiceCards');
+        if (!container) return;
+        const limit = getServiceLimit();
+        container.innerHTML = '';
+
+        addedServices.forEach(function (svc, idx) {
+            const card = document.createElement('div');
+            card.className = 'lw-service-card';
+            card.innerHTML =
+                '<span class="lw-service-card-name">' + escapeHtml(svc.service) + '</span>' +
+                '<span class="lw-service-card-price">R' + Number(svc.price).toLocaleString() + '</span>' +
+                '<button type="button" class="lw-service-card-remove" data-idx="' + idx + '" aria-label="Remove service">&#10005;</button>';
+            container.appendChild(card);
+        });
+
+        container.querySelectorAll('.lw-service-card-remove').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                addedServices.splice(parseInt(btn.dataset.idx), 1);
+                renderServiceCards();
+            });
+        });
+
+        const addRow = document.getElementById('lwServiceAddRow');
+        const limitMsg = document.getElementById('lwServiceLimitMsg');
+        if (addedServices.length >= limit) {
+            if (addRow) addRow.style.display = 'none';
+            if (limitMsg) limitMsg.style.display = 'block';
+        } else {
+            if (addRow) addRow.style.display = 'flex';
+            if (limitMsg) limitMsg.style.display = 'none';
+        }
+    }
+
+    function addService() {
+        const selectEl = document.getElementById('lwServiceSelect');
+        const customEl = document.getElementById('lwServiceCustom');
+        const priceEl = document.getElementById('lwServicePrice');
+        if (!selectEl || !priceEl) return;
+
+        let serviceName = selectEl.value;
+        if (!serviceName) { selectEl.focus(); return; }
+        if (serviceName === 'custom') {
+            serviceName = customEl ? customEl.value.trim() : '';
+            if (!serviceName) { if (customEl) customEl.focus(); return; }
+        }
+
+        const price = parseInt(priceEl.value);
+        if (!price || price <= 0) { priceEl.focus(); return; }
+        if (addedServices.length >= getServiceLimit()) return;
+
+        addedServices.push({ service: serviceName, price: price });
+        renderServiceCards();
+
+        priceEl.value = '';
+        if (selectEl.value === 'custom' && customEl) customEl.value = '';
+    }
+
+    // ─── LOCATION AUTO-FILL ───────────────────────────────────────────────────────
+
+    function initLocationButton() {
+        const btn = document.getElementById('lwUseLocation');
+        const statusEl = document.getElementById('lwLocationStatus');
+        if (!btn) return;
+
+        btn.addEventListener('click', function () {
+            if (!navigator.geolocation) {
+                statusEl.textContent = 'Geolocation is not supported by your browser.';
+                statusEl.style.display = 'block';
+                return;
+            }
+            btn.disabled = true;
+            btn.textContent = 'Locating…';
+            statusEl.textContent = 'Getting your location…';
+            statusEl.style.display = 'block';
+
+            navigator.geolocation.getCurrentPosition(
+                function (pos) {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    fetch(
+                        'https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=' + lat + '&lon=' + lng,
+                        { headers: { 'User-Agent': 'Veriyo/1.0' } }
+                    )
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        const addr = data.address || {};
+                        const suburb = addr.suburb || addr.village || addr.neighbourhood || '';
+                        const city = addr.city || addr.town || addr.municipality || '';
+                        const province = addr.state || '';
+
+                        if (suburb) document.getElementById('lwSuburb').value = suburb;
+                        if (city) document.getElementById('lwCity').value = city;
+                        if (province) {
+                            const sel = document.getElementById('lwProvince');
+                            for (let i = 0; i < sel.options.length; i++) {
+                                if (sel.options[i].value.toLowerCase() === province.toLowerCase()) {
+                                    sel.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        statusEl.textContent = 'Location filled. You can edit the fields above.';
+                        btn.disabled = false;
+                        btn.textContent = '&#127759; Use My Location';
+                    })
+                    .catch(function () {
+                        statusEl.textContent = 'Could not fetch address. Please fill in manually.';
+                        btn.disabled = false;
+                        btn.textContent = '&#127759; Use My Location';
+                    });
+                },
+                function () {
+                    statusEl.textContent = 'Location access denied. Please fill in manually.';
+                    btn.disabled = false;
+                    btn.textContent = '&#127759; Use My Location';
+                }
+            );
+        });
+    }
+
     // ─── FORM VALIDATION & SUBMISSION ───────────────────────────────────────────
 
     function collectFormData() {
@@ -189,7 +324,8 @@
             city: document.getElementById('lwCity').value.trim(),
             province: document.getElementById('lwProvince').value,
             contact_number: document.getElementById('lwContact').value.trim(),
-            email_address: document.getElementById('lwEmail').value.trim(),
+            email_address: lwSession ? lwSession.user.email : '',
+            user_id: lwSession ? lwSession.user.id : null,
             operating_hours: document.getElementById('lwHours').value.trim(),
             specialisation: specs.join(', '),
             years_operation: parseInt(document.getElementById('lwYears').value) || 0,
@@ -197,16 +333,7 @@
             written_quote: document.querySelector('input[name="lwQuote"]:checked')?.value || 'No',
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
             guarantee_period: document.getElementById('lwGuaranteePeriod').value.trim() || null,
-            price_oil_change: parseInt(document.getElementById('lwPriceOil').value) || 0,
-            price_minor_service: parseInt(document.getElementById('lwPriceMinor').value) || 0,
-            price_major_service: parseInt(document.getElementById('lwPriceMajor').value) || 0,
-            price_alignment: parseInt(document.getElementById('lwPriceAlign').value) || 0,
-            price_brake_pads: parseInt(document.getElementById('lwPriceBrake').value) || 0,
-            price_diagnostic: parseInt(document.getElementById('lwPriceDiag').value) || 0,
-            custom_service_name_1: document.getElementById('lwCustomName1').value.trim() || null,
-            custom_service_price_1: parseInt(document.getElementById('lwCustomPrice1').value) || 0,
-            custom_service_name_2: document.getElementById('lwCustomName2').value.trim() || null,
-            custom_service_price_2: parseInt(document.getElementById('lwCustomPrice2').value) || 0,
+            services: JSON.stringify(addedServices),
             plan: activePlan,
             plan_price: activePlanPrice,
             status: 'Payment Pending'
@@ -215,9 +342,7 @@
 
     function validateForm(data) {
         const errorEl = document.getElementById('lwFormError');
-        const emailErrorEl = document.getElementById('lwEmailError');
         errorEl.style.display = 'none';
-        emailErrorEl.textContent = '';
 
         if (!data.workshop_name) { showFormError('Workshop name is required.'); return false; }
         if (!data.physical_address) { showFormError('Physical address is required.'); return false; }
@@ -225,12 +350,6 @@
         if (!data.city) { showFormError('City is required.'); return false; }
         if (!data.province) { showFormError('Please select a province.'); return false; }
         if (!data.contact_number) { showFormError('Contact number is required.'); return false; }
-        if (!data.email_address) { showFormError('Email address is required.'); return false; }
-        if (!EMAIL_RE.test(data.email_address)) {
-            emailErrorEl.textContent = 'Please enter a valid email address';
-            showFormError('Please enter a valid email address.');
-            return false;
-        }
         if (!data.operating_hours) { showFormError('Operating hours are required.'); return false; }
 
         const consent = document.getElementById('lwConsent');
@@ -303,9 +422,23 @@
 
     // ─── INIT ────────────────────────────────────────────────────────────────────
 
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', async function () {
+
+        // Auth check — redirect to sign-in if not logged in
+        const { data: { session } } = await _supabaseLW.auth.getSession();
+        if (!session) {
+            window.location.href = 'auth.html';
+            return;
+        }
+        lwSession = session;
+
+        // Populate email display
+        const emailDisplay = document.getElementById('lwEmailDisplay');
+        if (emailDisplay) emailDisplay.textContent = session.user.email;
+
         // Build initial features panels
         renderFeaturesForActivePlan();
+        updateServiceLimitDisplay();
 
         // Plan tab clicks
         document.querySelectorAll('.plan-tab-btn').forEach(function (btn) {
@@ -336,6 +469,26 @@
                 }
             });
         });
+
+        // Service select toggle custom input
+        const serviceSelect = document.getElementById('lwServiceSelect');
+        if (serviceSelect) {
+            serviceSelect.addEventListener('change', function () {
+                const customWrap = document.getElementById('lwServiceCustomWrap');
+                if (customWrap) {
+                    customWrap.style.display = this.value === 'custom' ? 'block' : 'none';
+                }
+            });
+        }
+
+        // Add service button
+        const addServiceBtn = document.getElementById('lwAddServiceBtn');
+        if (addServiceBtn) {
+            addServiceBtn.addEventListener('click', addService);
+        }
+
+        // Location button
+        initLocationButton();
 
         // Form submit
         document.getElementById('lwForm').addEventListener('submit', function (e) {

@@ -1,0 +1,72 @@
+You are working on an existing production web platform called Veriyo. Read every file carefully before touching anything. This is live. Mistakes break real users.
+ABSOLUTE RULES: Do not modify any file not listed below. Do not change any existing Supabase queries that already work. Do not delete any existing CSS rules. Do not change script load order. Do not install packages. Do not use external libraries. If unsure, do not do it.
+FILES YOU MAY MODIFY: workshop-home.html, list-workshop.html, list-workshop.js, styles.css (append only at the bottom), auth.js, icons.svg.
+FILES YOU MUST NOT TOUCH: forms.js, prices.js, workshops.js, workshop-profile.js, chat.js, help.js, tracker.js, partner.js, admin.js, main.js, welcome.html, motorist-home.html, prices.html, report.html, workshops.html, workshop-profile.html, tracker.html, index.html, privacy.html, auth.html, _redirects.
+
+TASK 1 — Fix SVG icons showing on mobile only, missing on desktop
+The bottom nav SVG icons are not appearing on desktop. The cause is that .nav-links--desktop is hidden on mobile via CSS but the .bottom-nav is set to display:none on desktop. The SVG <use href="icons.svg#..."> references are failing on desktop because the sprite file is not being loaded inline — external SVG sprite references via <use href> require the SVG file to be fetched. Fix this by adding a hidden inline SVG loader to every motorist page that loads the sprite. In styles.css append only:
+css.svg-sprite-loader { display: none; position: absolute; }
+In workshop-home.html only, add this immediately after the opening <body> tag:
+html<div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
+<script>
+    fetch('icons.svg')
+        .then(r => r.text())
+        .then(svg => {
+            document.getElementById('svgSpriteLoader').innerHTML = svg;
+        });
+</script>
+Also add the exact same block to list-workshop.html immediately after its opening <body> tag. Do not add it to any other file.
+IMPORTANT: The bottom nav must also be visible on desktop. In styles.css find this block that was previously appended:
+css@media (min-width: 769px) {
+    .bottom-nav { display: none; }
+    body { padding-bottom: 0; }
+}
+Delete that entire block and replace with:
+css@media (min-width: 769px) {
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 56px;
+        background-color: var(--surface-color);
+        border-top: 1px solid var(--border-color);
+        justify-content: center;
+        gap: 3rem;
+        z-index: 1000;
+    }
+    .bottom-nav-item {
+        flex-direction: row;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+    body { padding-bottom: 70px; }
+}
+
+TASK 2 — Fix workshop-home.html completely
+The current file is the original Bolt version with a hamburger navbar. Make these exact changes:
+Change 1 — Find and delete the entire <nav> block. Replace with:
+html<nav class="navbar navbar--top">
+    <a href="welcome.html" class="nav-logo">
+        <img src="logo.png" alt="Veriyo">
+    </a>
+    <ul class="nav-links nav-links--desktop" id="navLinksContainer">
+    </ul>
+</nav>
+Change 2 — The page currently shows tabs as plain text or emojis. Replace the tab icons with SVG use references. Overview tab icon: <svg width="22" height="22"><use href="#icon-overview"></use></svg>. My Listing tab icon: <svg width="22" height="22"><use href="#icon-listing"></use></svg>. List My Workshop tab icon: <svg width="22" height="22"><use href="#icon-addlisting"></use></svg>.
+Change 3 — Tab visibility rules. My Listing tab must only appear when the user is logged in. When logged out, only Overview and List My Workshop tabs are visible. Implement this by checking Supabase auth session on page load. Use these exact Supabase credentials already present throughout the project: URL https://xxigkehuqtwaihyxaahk.supabase.co, key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc. On page load call supabase.auth.getSession(). If session exists show all three tabs. If no session hide My Listing tab entirely.
+Change 4 — My Listing tab content. When the logged-in manager has an existing listing in Workshopprofiles where user_id = auth.uid(), show their listing details (workshop name, suburb, city, province, status badge, plan badge). When no listing exists show: "You do not have a listing yet." with a button linking to list-workshop.html. When not logged in show: "Sign in to view your listing." with a link to auth.html.
+Change 5 — List My Workshop tab. When the logged-in manager already has a listing (query returns a row), hide the List My Workshop tab entirely and redirect that tab content to show their existing listing instead. When no listing exists show a prominent button linking to list-workshop.html with text "Choose a Plan and List Your Workshop".
+Change 6 — Find every href="workshop.html" anywhere in the file and replace with href="list-workshop.html".
+
+TASK 3 — Fix list-workshop.html and list-workshop.js
+The listing form must now require login before submitting. The form collects: workshop name, physical address (with location auto-fill via browser geolocation + Nominatim API), specialisations (checkboxes), services (dynamic dropdown — manager selects a service from a predefined list OR types a custom one, then enters a price, clicks Add, it appears as a removable card, maximum 3 services for Visible plan, 8 for Trusted), operating hours, RMI registered (yes/no), written quotes (yes/no), guarantee work (yes/no). Remove entirely: contact number field. Do not add any other fields.
+Location auto-fill: add a button "Use My Location" that calls navigator.geolocation.getCurrentPosition(), takes the lat/lng, calls https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=LAT&lon=LNG with header User-Agent: Veriyo/1.0, then auto-populates suburb from address.suburb or address.village, city from address.city or address.town, province from address.state. The manager can manually edit any auto-filled field.
+On form submission: check supabase.auth.getSession() first. If no session redirect to auth.html. If session exists, get the user email and user id from the session. Insert to Workshopprofiles including user_id: session.user.id and email_address: session.user.email. Do not collect email or password in the form — take them from the session.
+Services must be stored as a JSON array in the services column: [{"service":"Oil Change","price":850},{"service":"Custom name","price":1200}].
+Payment overlay stays exactly as it is — do not change it.
+Do not change any existing CSS classes used in the form. Do not change the plan tab structure. Do not change the secondary navbar.
+
+When finished list every file modified and every file created. Confirm nothing outside that list was touched."
+Claude is AI and ca

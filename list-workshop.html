@@ -8,6 +8,16 @@
     <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
+
+<div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
+<script>
+    fetch('icons.svg')
+        .then(r => r.text())
+        .then(svg => {
+            document.getElementById('svgSpriteLoader').innerHTML = svg;
+        });
+</script>
+
     <!-- Top Navbar -->
 <nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
@@ -61,6 +71,11 @@
                     <div class="form-group">
                         <label for="lwAddress">Physical Address *</label>
                         <input type="text" id="lwAddress" class="form-control" required placeholder="e.g. 42 Sir Lowry Rd, Foreshore">
+                        <button type="button" id="lwUseLocation" class="btn btn-secondary"
+                            style="margin-top:0.5rem; font-size:0.85rem; padding:0.4rem 0.9rem;">
+                            &#127759; Use My Location
+                        </button>
+                        <p id="lwLocationStatus" style="display:none; font-size:0.8rem; margin-top:0.35rem; color:var(--text-secondary);"></p>
                     </div>
 
                     <div class="form-group-row">
@@ -96,9 +111,9 @@
                             <input type="tel" id="lwContact" class="form-control" required placeholder="e.g. 021 555 1234">
                         </div>
                         <div class="form-group">
-                            <label for="lwEmail">Email Address *</label>
-                            <input type="email" id="lwEmail" class="form-control" required placeholder="e.g. info@workshop.co.za">
-                            <span class="auth-field-error" id="lwEmailError"></span>
+                            <label>Email Address</label>
+                            <div class="lw-email-display" id="lwEmailDisplay">Loading…</div>
+                            <span class="label-desc">Pre-filled from your account.</span>
                         </div>
                     </div>
 
@@ -162,60 +177,56 @@
                         <input type="text" id="lwGuaranteePeriod" class="form-control" placeholder="e.g. 6 Months / 10,000 km">
                     </div>
 
+                    <!-- Dynamic Services Pricing -->
                     <div style="margin:2.5rem 0; padding-top:1.5rem; border-top:1px solid var(--border-color);">
-                        <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Standard Services Pricing</h3>
-                        <p class="label-desc" style="margin-bottom:1.5rem;">Provide baseline pricing in Rands. Leave blank if not applicable.</p>
+                        <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Service Pricing</h3>
+                        <p class="label-desc" style="margin-bottom:1.5rem;">
+                            Add up to <span id="lwServiceLimitNum">3</span> services for your plan.
+                            Select a service and enter its price in Rands, then click Add.
+                        </p>
 
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label for="lwPriceOil">Oil Change (R)</label>
-                                <input type="number" id="lwPriceOil" class="form-control" placeholder="e.g. 800">
+                        <div id="lwServiceCards" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem;"></div>
+
+                        <div id="lwServiceAddRow" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end;">
+                            <div class="form-group" style="flex:2; min-width:160px; margin-bottom:0;">
+                                <label for="lwServiceSelect">Service</label>
+                                <select id="lwServiceSelect" class="form-control">
+                                    <option value="">— select a service —</option>
+                                    <option value="Oil Change">Oil Change</option>
+                                    <option value="Minor Service">Minor Service</option>
+                                    <option value="Major Service">Major Service</option>
+                                    <option value="Wheel Alignment">Wheel Alignment</option>
+                                    <option value="Brake Pads (Front)">Brake Pads (Front)</option>
+                                    <option value="Brake Pads (Rear)">Brake Pads (Rear)</option>
+                                    <option value="Diagnostic Scan">Diagnostic Scan</option>
+                                    <option value="Aircon Regas">Aircon Regas</option>
+                                    <option value="Gearbox Service">Gearbox Service</option>
+                                    <option value="CV Joint Repair">CV Joint Repair</option>
+                                    <option value="Timing Belt Replacement">Timing Belt Replacement</option>
+                                    <option value="Clutch Replacement">Clutch Replacement</option>
+                                    <option value="Battery Replacement">Battery Replacement</option>
+                                    <option value="Tyre Fitting">Tyre Fitting</option>
+                                    <option value="Suspension Service">Suspension Service</option>
+                                    <option value="custom">Custom…</option>
+                                </select>
                             </div>
-                            <div class="form-group">
-                                <label for="lwPriceMinor">Minor Service (R)</label>
-                                <input type="number" id="lwPriceMinor" class="form-control" placeholder="e.g. 1500">
+                            <div class="form-group" id="lwServiceCustomWrap" style="flex:2; min-width:140px; margin-bottom:0; display:none;">
+                                <label for="lwServiceCustom">Custom Service Name</label>
+                                <input type="text" id="lwServiceCustom" class="form-control" placeholder="e.g. Turbo Replacement">
                             </div>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label for="lwPriceMajor">Major Service (R)</label>
-                                <input type="number" id="lwPriceMajor" class="form-control" placeholder="e.g. 3200">
+                            <div class="form-group" style="flex:1; min-width:100px; margin-bottom:0;">
+                                <label for="lwServicePrice">Price (R)</label>
+                                <input type="number" id="lwServicePrice" class="form-control" min="1" placeholder="e.g. 800">
                             </div>
-                            <div class="form-group">
-                                <label for="lwPriceAlign">Wheel Alignment (R)</label>
-                                <input type="number" id="lwPriceAlign" class="form-control" placeholder="e.g. 350">
-                            </div>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label for="lwPriceBrake">Brake Pads (R)</label>
-                                <input type="number" id="lwPriceBrake" class="form-control" placeholder="e.g. 950">
-                            </div>
-                            <div class="form-group">
-                                <label for="lwPriceDiag">Diagnostic Scan (R)</label>
-                                <input type="number" id="lwPriceDiag" class="form-control" placeholder="e.g. 450">
-                            </div>
-                        </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label for="lwCustomName1">Other Service 1 Name</label>
-                                <input type="text" id="lwCustomName1" class="form-control" placeholder="e.g. Aircon Regas">
-                            </div>
-                            <div class="form-group">
-                                <label for="lwCustomPrice1">Other Service 1 Price (R)</label>
-                                <input type="number" id="lwCustomPrice1" class="form-control" placeholder="e.g. 500">
+                            <div class="form-group" style="margin-bottom:0;">
+                                <label style="visibility:hidden; display:block;">Add</label>
+                                <button type="button" id="lwAddServiceBtn" class="btn btn-secondary">Add</button>
                             </div>
                         </div>
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label for="lwCustomName2">Other Service 2 Name</label>
-                                <input type="text" id="lwCustomName2" class="form-control" placeholder="e.g. CV Joint Repair">
-                            </div>
-                            <div class="form-group">
-                                <label for="lwCustomPrice2">Other Service 2 Price (R)</label>
-                                <input type="number" id="lwCustomPrice2" class="form-control" placeholder="e.g. 1200">
-                            </div>
-                        </div>
+                        <p id="lwServiceLimitMsg" class="label-desc"
+                            style="display:none; color:var(--text-secondary); margin-top:0.5rem;">
+                            Maximum services reached for your plan. Remove one to add another.
+                        </p>
                     </div>
 
                     <div class="form-group" style="margin-top:1.5rem;">

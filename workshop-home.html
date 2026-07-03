@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="icon" href="logo.png" type="image/png">
-    <title>Veriyo - For Workshop Managers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
+    <title>Workshop Home — Veriyo</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
+<script>
+    fetch('icons.svg')
+        .then(r => r.text())
+        .then(svg => {
+            document.getElementById('svgSpriteLoader').innerHTML = svg;
+        });
+</script>
 
     <nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
@@ -17,76 +26,84 @@
         </ul>
     </nav>
 
-    <main class="container">
+    <main class="container" style="max-width:860px; padding-top:2rem;">
 
-        <header class="hero">
-            <h1>List Your Workshop on Veriyo</h1>
-            <p>Join South Africa's transparency directory. Let drivers in your area find you before they decide where to take their car.</p>
-            <div class="cta-group">
-                <a href="list-workshop.html" class="btn btn-primary">List My Workshop</a>
-            </div>
-        </header>
+        <nav class="wh-tab-nav" id="whTabNav" aria-label="Workshop portal tabs">
+            <button class="wh-tab-btn wh-tab-btn--active" data-tab="overview">
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-overview"></use></svg>
+                Overview
+            </button>
+            <button class="wh-tab-btn" id="tabMyListing" data-tab="my-listing" style="display:none;">
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
+                My Listing
+            </button>
+            <button class="wh-tab-btn" id="tabListWorkshop" data-tab="list">
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-addlisting"></use></svg>
+                List My Workshop
+            </button>
+        </nav>
 
-        <section style="margin-top: 4rem;">
-            <h2 class="section-title">How It Works</h2>
+        <!-- OVERVIEW TAB -->
+        <div id="tab-overview" class="wh-tab-panel">
+            <h1 style="font-size:1.75rem; font-weight:700; margin-bottom:0.5rem;">Welcome to Veriyo for Workshops</h1>
+            <p class="wh-panel-sub">Build trust with South African motorists through verified, transparent pricing.</p>
             <div class="steps-grid">
                 <div class="step-card">
                     <div class="step-num">01</div>
-                    <h3>List your workshop</h3>
-                    <p>Register your business details, specialisations, and baseline service pricing. Your profile goes live as a verified point of contact for vehicle owners in your area.</p>
+                    <h3>Register your workshop</h3>
+                    <p>Submit your details and choose a plan that fits your business size.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-num">02</div>
-                    <h3>We publish it</h3>
-                    <p>Our team reviews your listing for completeness and consistency before it goes live. This keeps the directory credible and protects your business from being listed alongside unverified entries.</p>
+                    <h3>We review your listing</h3>
+                    <p>Our team verifies and activates your profile once payment is confirmed.</p>
                 </div>
                 <div class="step-card">
                     <div class="step-num">03</div>
                     <h3>Drivers find you</h3>
-                    <p>Vehicle owners searching for transparent, accountable workshops in your suburb see your profile before they decide where to take their car. Your pricing is already visible — no surprises, no back and forth.</p>
+                    <p>Verified South African motorists see your workshop when searching for repairs in your area.</p>
                 </div>
             </div>
-        </section>
+        </div>
+
+        <!-- MY LISTING TAB -->
+        <div id="tab-my-listing" class="wh-tab-panel" style="display:none;">
+            <div id="whListingLoading" style="text-align:center; padding:3rem 1rem; color:var(--text-secondary);">
+                Loading your listing…
+            </div>
+            <div id="whListingFound" style="display:none;">
+                <div class="wh-listing-card">
+                    <h2 class="wh-listing-name" id="whLName"></h2>
+                    <p class="wh-listing-location" id="whLLocation"></p>
+                    <div class="wh-listing-badges" id="whLBadges"></div>
+                    <div class="wh-listing-actions">
+                        <a href="list-workshop.html" class="btn btn-secondary" style="font-size:0.9rem;">Update Listing</a>
+                        <a id="whLViewBtn" href="#" class="btn btn-primary" style="font-size:0.9rem;">View Public Profile</a>
+                    </div>
+                </div>
+            </div>
+            <div id="whListingNone" class="wh-no-listing" style="display:none;">
+                <p>You do not have a listing yet. Join the directory to reach verified South African motorists.</p>
+                <a href="list-workshop.html" class="btn btn-primary">Create a Listing</a>
+            </div>
+            <div id="whListingSignIn" class="wh-no-listing" style="display:none;">
+                <p>Sign in to view your listing.</p>
+                <a href="auth.html" class="btn btn-primary">Sign In</a>
+            </div>
+        </div>
+
+        <!-- LIST MY WORKSHOP TAB -->
+        <div id="tab-list" class="wh-tab-panel" style="display:none;">
+            <div id="whListCta">
+                <a href="list-workshop.html" class="btn btn-primary"
+                    style="display:block; text-align:center; width:100%; padding:1rem 1.5rem; font-size:1rem;">
+                    Choose a Plan and List Your Workshop
+                </a>
+            </div>
+            <div id="whListHasListing" class="wh-listing-card" style="display:none;"></div>
+        </div>
 
     </main>
-
-<section style="max-width:600px; margin:2rem auto; padding:0 1rem;">
-        <button id="suggestionToggleBtn"
-            style="background:none; border:1px solid var(--border-color); color:var(--text-secondary);
-            padding:0.5rem 1.2rem; border-radius:var(--radius); cursor:pointer; font-size:0.85rem;
-            width:100%; text-align:left; transition:var(--transition);"
-            onclick="
-                const box = document.getElementById('suggestionBox');
-                const isOpen = box.style.display !== 'none';
-                box.style.display = isOpen ? 'none' : 'block';
-                this.textContent = isOpen ? '💡 Suggest an Improvement' : '✕ Close';
-            ">
-            💡 Suggest an Improvement
-        </button>
-        <div id="suggestionBox" style="display:none; margin-top:0.75rem;
-            background:var(--surface-color); border:1px solid var(--border-color);
-            border-radius:var(--radius); padding:1.25rem;">
-            <label for="suggestionText"
-                style="font-size:0.85rem; font-weight:600; display:block; margin-bottom:0.5rem;">
-                What would make Veriyo better for you?
-            </label>
-            <textarea id="suggestionText" maxlength="300" rows="3"
-                placeholder="e.g. Add more car makes, show prices by province..."
-                style="width:100%; background:var(--bg-color); border:1px solid var(--border-color);
-                color:var(--text-primary); padding:0.75rem; border-radius:var(--radius);
-                font-family:inherit; font-size:0.9rem; resize:vertical;"></textarea>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:0.5rem;">
-                <span id="suggestionCharCount" style="font-size:0.75rem; color:var(--text-secondary);">0 / 300</span>
-                <button id="suggestionSubmitBtn" onclick="submitSuggestion()"
-                    style="background:var(--primary-accent); color:#000; border:none;
-                    padding:0.5rem 1.2rem; border-radius:var(--radius); font-weight:600;
-                    font-size:0.85rem; cursor:pointer;">
-                    Submit
-                </button>
-            </div>
-            <p id="suggestionMsg" style="display:none; margin-top:0.75rem; font-size:0.85rem;"></p>
-        </div>
-    </section>
 
     <footer class="footer" style="margin-bottom: 70px;">
         <p>&copy; Veriyo | Built for South African drivers</p>
@@ -94,72 +111,157 @@
             <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
         </p>
     </footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="main.js"></script>
-    <script>
-        const _supabaseSuggestions = supabase.createClient(
-            'https://xxigkehuqtwaihyxaahk.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
-        );
-
-        document.getElementById('suggestionText').addEventListener('input', function() {
-            document.getElementById('suggestionCharCount').textContent = this.value.length + ' / 300';
-        });
-
-        async function submitSuggestion() {
-            const text = document.getElementById('suggestionText').value.trim();
-            const msgEl = document.getElementById('suggestionMsg');
-            const btn = document.getElementById('suggestionSubmitBtn');
-
-            if (!text) {
-                msgEl.style.display = 'block';
-                msgEl.style.color = 'var(--danger-color)';
-                msgEl.textContent = 'Please write something before submitting.';
-                return;
-            }
-
-            btn.disabled = true;
-            btn.textContent = 'Sending...';
-
-            const { error } = await _supabaseSuggestions
-                .from('suggestions')
-                .insert([{ suggestion_text: text }]);
-
-            msgEl.style.display = 'block';
-            if (error) {
-                msgEl.style.color = 'var(--danger-color)';
-                msgEl.textContent = 'Something went wrong. Please try again.';
-                btn.disabled = false;
-                btn.textContent = 'Submit';
-            } else {
-                msgEl.style.color = 'var(--success-color)';
-                msgEl.textContent = 'Thank you — your suggestion has been noted.';
-                document.getElementById('suggestionText').value = '';
-                document.getElementById('suggestionCharCount').textContent = '0 / 300';
-                btn.textContent = 'Submitted ✓';
-            }
-        }
-    </script>
 
     <nav class="bottom-nav">
         <a href="workshop-home.html" class="bottom-nav-item active">
             <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-overview"></use></svg>
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-overview"></use></svg>
             </span>
             <span class="bottom-nav-label">Overview</span>
         </a>
-        <a href="workshop-home.html#my-listing" class="bottom-nav-item">
+        <a href="workshop-home.html" class="bottom-nav-item" id="bottomNavMyListing">
             <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
             </span>
             <span class="bottom-nav-label">My Listing</span>
         </a>
         <a href="list-workshop.html" class="bottom-nav-item">
             <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-addlisting"></use></svg>
             </span>
             <span class="bottom-nav-label">List My Workshop</span>
         </a>
     </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script>
+    (function () {
+        var WH_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
+        var WH_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
+        var _sb = supabase.createClient(WH_URL, WH_KEY);
+
+        var activeTab = 'overview';
+        var listingLoaded = false;
+        var currentSession = null;
+
+        function escHtml(s) {
+            return String(s || '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll('.wh-tab-panel').forEach(function (p) {
+                p.style.display = 'none';
+            });
+            var target = document.getElementById('tab-' + tabId);
+            if (target) target.style.display = 'block';
+            document.querySelectorAll('.wh-tab-btn').forEach(function (btn) {
+                btn.classList.toggle('wh-tab-btn--active', btn.dataset.tab === tabId);
+            });
+            activeTab = tabId;
+            if ((tabId === 'my-listing' || tabId === 'list') && !listingLoaded && currentSession) {
+                loadListing();
+            }
+        }
+
+        function statusBadgeClass(status) {
+            if (!status) return 'badge-neutral';
+            var s = status.toLowerCase();
+            if (s === 'approved') return 'badge-success';
+            if (s === 'rejected') return 'badge-danger';
+            return 'badge-neutral';
+        }
+
+        function renderListingData(w) {
+            document.getElementById('whListingLoading').style.display = 'none';
+            document.getElementById('whLName').textContent = w.workshop_name || 'Your Workshop';
+            document.getElementById('whLLocation').textContent =
+                [w.suburb, w.city, w.province].filter(Boolean).join(', ');
+
+            var statusCls = statusBadgeClass(w.status);
+            var badgesHtml = '<span class="badge ' + statusCls + '">' + escHtml(w.status || 'Pending') + '</span>';
+            if (w.plan) {
+                badgesHtml += ' <span class="badge badge-neutral">' + escHtml(w.plan) + ' Plan</span>';
+            }
+            document.getElementById('whLBadges').innerHTML = badgesHtml;
+            document.getElementById('whLViewBtn').href = 'workshop-profile.html?id=' + encodeURIComponent(w.id);
+            document.getElementById('whListingFound').style.display = 'block';
+
+            // List tab: hide CTA, show existing listing summary, hide tab button
+            document.getElementById('whListCta').style.display = 'none';
+            var hasEl = document.getElementById('whListHasListing');
+            hasEl.innerHTML =
+                '<p style="margin-bottom:0.75rem;color:var(--text-secondary);font-size:0.9rem;">' +
+                'You already have a listing. <a href="list-workshop.html" style="color:var(--secondary-accent);text-decoration:underline;">Update it here.</a>' +
+                '</p>' +
+                '<p class="wh-listing-name">' + escHtml(w.workshop_name || '') + '</p>' +
+                '<p class="wh-listing-location">' + escHtml([w.suburb, w.city, w.province].filter(Boolean).join(', ')) + '</p>';
+            hasEl.style.display = 'block';
+
+            var listTab = document.getElementById('tabListWorkshop');
+            if (listTab) listTab.style.display = 'none';
+        }
+
+        async function loadListing() {
+            listingLoaded = true;
+            document.getElementById('whListingLoading').style.display = 'block';
+            document.getElementById('whListingFound').style.display = 'none';
+            document.getElementById('whListingNone').style.display = 'none';
+
+            var result = await _sb
+                .from('Workshopprofiles')
+                .select('id, workshop_name, suburb, city, province, status, plan')
+                .eq('user_id', currentSession.user.id)
+                .limit(1);
+
+            var data = result.data;
+            var error = result.error;
+
+            document.getElementById('whListingLoading').style.display = 'none';
+
+            if (error || !data || data.length === 0) {
+                document.getElementById('whListingNone').style.display = 'block';
+                return;
+            }
+            renderListingData(data[0]);
+        }
+
+        document.querySelectorAll('.wh-tab-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                showTab(btn.dataset.tab);
+            });
+        });
+
+        // Bottom nav My Listing link — switch to that tab instead of navigating
+        var bottomMyListingBtn = document.getElementById('bottomNavMyListing');
+        if (bottomMyListingBtn) {
+            bottomMyListingBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                var tab = document.getElementById('tabMyListing');
+                if (tab && tab.style.display !== 'none') {
+                    showTab('my-listing');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            var result = await _sb.auth.getSession();
+            var session = result.data.session;
+            currentSession = session;
+
+            var myListingTab = document.getElementById('tabMyListing');
+            if (session) {
+                if (myListingTab) myListingTab.style.display = '';
+            } else {
+                if (myListingTab) myListingTab.style.display = 'none';
+                document.getElementById('whListingLoading').style.display = 'none';
+                document.getElementById('whListingSignIn').style.display = 'block';
+            }
+        });
+    })();
+    </script>
 </body>
 </html>
