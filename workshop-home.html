@@ -9,18 +9,11 @@
 </head>
 <body>
 
-    <nav class="navbar">
-        <a href="workshop-home.html" class="nav-logo">
+    <nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
-        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle Navigation Options Menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links" id="navLinksContainer">
-            <li><a href="workshop-home.html" class="active">Home</a></li>
-            <li><a href="workshop.html">List Your Workshop</a></li>
+        <ul class="nav-links nav-links--desktop" id="navLinksContainer">
         </ul>
     </nav>
 
@@ -30,7 +23,7 @@
             <h1>List Your Workshop on Veriyo</h1>
             <p>Join South Africa's transparency directory. Let drivers in your area find you before they decide where to take their car.</p>
             <div class="cta-group">
-                <a href="workshop.html" class="btn btn-primary">List My Workshop</a>
+                <a href="list-workshop.html" class="btn btn-primary">List My Workshop</a>
             </div>
         </header>
 
@@ -95,7 +88,7 @@
         </div>
     </section>
 
-    <footer class="footer">
+    <footer class="footer" style="margin-bottom: 70px;">
         <p>&copy; Veriyo | Built for South African drivers</p>
         <p style="margin-top: 0.5rem;">
             <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
@@ -147,5 +140,26 @@
             }
         }
     </script>
+
+    <nav class="bottom-nav">
+        <a href="workshop-home.html" class="bottom-nav-item active">
+            <span class="bottom-nav-icon">
+                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-overview"></use></svg>
+            </span>
+            <span class="bottom-nav-label">Overview</span>
+        </a>
+        <a href="workshop-home.html#my-listing" class="bottom-nav-item">
+            <span class="bottom-nav-icon">
+                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
+            </span>
+            <span class="bottom-nav-label">My Listing</span>
+        </a>
+        <a href="list-workshop.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">
+                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
+            </span>
+            <span class="bottom-nav-label">List My Workshop</span>
+        </a>
+    </nav>
 </body>
 </html>

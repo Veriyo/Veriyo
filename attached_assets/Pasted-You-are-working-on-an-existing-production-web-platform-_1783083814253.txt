@@ -1,0 +1,40 @@
+You are working on an existing production web platform called Veriyo. Read every file carefully before touching anything.
+ABSOLUTE RULES: Do not modify any file not listed below. Do not change any Supabase queries, table names, column names, form logic, or script load order. Do not add any external libraries. Do not delete any existing CSS. If unsure whether a change is permitted, do not make it.
+FILES YOU MAY MODIFY: motorist-home.html, prices.html, report.html, workshops.html, workshop-profile.html, tracker.html, workshop-home.html. Append one block to the bottom of styles.css only.
+FILES YOU MUST NOT TOUCH: forms.js, prices.js, workshops.js, workshop-profile.js, chat.js, help.js, tracker.js, list-workshop.js, partner.js, admin.js, auth.js, main.js, welcome.html, index.html, privacy.html, auth.html, _redirects, list-workshop.html.
+TASK 1 — Replace emoji icons in motorist bottom nav
+A file called icons.svg already exists in the project root. Do not create or modify it.
+In each of these files: motorist-home.html, prices.html, report.html, workshops.html, workshop-profile.html, tracker.html — find the bottom nav block. It looks like this:
+html<nav class="bottom-nav">
+    <a href="motorist-home.html" class="bottom-nav-item">
+        <span class="bottom-nav-icon">&#127968;</span>
+        <span class="bottom-nav-label">Home</span>
+    </a>
+In every bottom nav item across all six files, replace the emoji span with an SVG use reference. The pattern is:
+html<span class="bottom-nav-icon">
+    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
+</span>
+Use these symbol IDs per tab: Home → icon-home, Prices → icon-prices, Report → icon-report, Workshops → icon-workshops. Do not change anything else in these files — not classes, not active states, not links, not scripts.
+TASK 2 — Fix workshop-home.html
+Make exactly three changes to workshop-home.html:
+Change 1 — Find the entire nav block starting with <nav class="navbar"> and ending with </nav>. Delete it entirely. Replace with:
+html<nav class="navbar navbar--top">
+    <a href="welcome.html" class="nav-logo">
+        <img src="logo.png" alt="Veriyo">
+    </a>
+    <ul class="nav-links nav-links--desktop" id="navLinksContainer">
+    </ul>
+</nav>
+Change 2 — Find every occurrence of href="workshop.html" and replace with href="list-workshop.html". Check the entire file — there may be more than one.
+Change 3 — The workshop-home bottom nav uses emoji characters. Replace them with SVG references using the same pattern as Task 1, using these symbol IDs: Overview tab → icon-overview, My Listing tab → icon-listing, List My Workshop tab → icon-addlisting.
+Do not change any JavaScript in workshop-home.html. Do not change tab switching logic. Do not change Supabase queries. Do not change the footer.
+TASK 3 — Append to styles.css
+Add only these lines at the very bottom of styles.css, after the last existing closing brace:
+css/* SVG icon sizing in bottom nav */
+.bottom-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    color: currentColor;
+}
+When finished, list every file you modified. Confirm you did not touch any file outside that list."
