@@ -2748,3 +2748,9 @@ button, input, select, textarea {
     color: var(--text-secondary);
     cursor: not-allowed;
 }
+
+/* Suppress old hamburger nav on navbar--top pages */
+.navbar--top ~ * .nav-links,
+.navbar--top + .nav-links {
+    display: none !important;
+}

@@ -30,7 +30,7 @@
 
         <nav class="wh-tab-nav" id="whTabNav" aria-label="Workshop portal tabs">
             <button class="wh-tab-btn wh-tab-btn--active" data-tab="overview">
-                <svg width="22" height="22" aria-hidden="true"><use href="#icon-overview"></use></svg>
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-home"></use></svg>
                 Home
             </button>
             <button class="wh-tab-btn" id="tabMyListing" data-tab="my-listing" style="display:none;">
@@ -122,11 +122,11 @@
     <nav class="bottom-nav">
         <a href="workshop-home.html" class="bottom-nav-item active">
             <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="#icon-overview"></use></svg>
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-home"></use></svg>
             </span>
             <span class="bottom-nav-label">Home</span>
         </a>
-        <a href="workshop-home.html" class="bottom-nav-item" id="bottomNavMyListing">
+        <a href="workshop-home.html" class="bottom-nav-item" id="bottomNavMyListing" style="display:none;">
             <span class="bottom-nav-icon">
                 <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
             </span>
@@ -260,10 +260,13 @@
             currentSession = session;
 
             var myListingTab = document.getElementById('tabMyListing');
+            var bottomNavMyListing = document.getElementById('bottomNavMyListing');
             if (session) {
                 if (myListingTab) myListingTab.style.display = '';
+                if (bottomNavMyListing) bottomNavMyListing.style.display = '';
             } else {
                 if (myListingTab) myListingTab.style.display = 'none';
+                if (bottomNavMyListing) bottomNavMyListing.style.display = 'none';
                 document.getElementById('whListingLoading').style.display = 'none';
                 document.getElementById('whListingSignIn').style.display = 'block';
             }
