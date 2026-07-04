@@ -738,24 +738,38 @@ button, input, select, textarea {
         background-color: var(--surface-color);
         border-top: 1px solid var(--border-color);
         justify-content: center;
-        gap: 3rem;
+        align-items: center;
+        gap: 4rem;
         z-index: 1000;
     }
     .bottom-nav-item {
         flex-direction: row;
         gap: 0.5rem;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
+        height: 100%;
+        padding: 0 0.5rem;
     }
-    body { padding-bottom: 70px; }
+    .bottom-nav-icon svg {
+        width: 20px;
+        height: 20px;
+    }
 }
 
+.nav-links--desktop { display: none !important; }
+
 @media (max-width: 768px) {
-    .nav-links--desktop { display: none; }
     body {
         padding-top: 60px;
         padding-bottom: 70px;
     }
     .navbar--top { height: 60px; }
+}
+
+@media (min-width: 769px) {
+    body {
+        padding-top: 60px;
+        padding-bottom: 70px;
+    }
 }
 
 /* ==========================================================================
