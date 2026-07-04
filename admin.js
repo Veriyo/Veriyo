@@ -1,6 +1,7 @@
 /**
  * Veriyo Admin Dashboard
  * Supabase Auth + Submission moderation (approve / reject)
+ * Handles both Motorist Reports (Submissions) and Workshop Listings (Workshopprofiles)
  */
 
 const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co';
@@ -8,7 +9,9 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
 const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-let pendingRecords = [];
+let pendingMotoristRecords = [];
+let pendingWorkshopRecords = [];
+let currentTab = 'motorist';
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
@@ -17,16 +20,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loginForm.addEventListener('submit', handleLogin);
     logoutBtn.addEventListener('click', handleLogout);
-    refreshBtn.addEventListener('click', () => loadPendingSubmissions());
+    refreshBtn.addEventListener('click', () => loadAllPending());
+
+    // Tab switching
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
 
     checkSession();
 });
+
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        const isActive = btn.dataset.tab === tab;
+        btn.classList.toggle('admin-tab-btn--active', isActive);
+        btn.style.borderBottomColor = isActive ? 'var(--primary-accent)' : 'transparent';
+        btn.style.color = isActive ? 'var(--primary-accent)' : 'var(--text-secondary)';
+    });
+
+    document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
+    document.getElementById('workshopPanel').style.display = tab === 'workshop' ? 'block' : 'none';
+    document.getElementById('sectionTitle').textContent = tab === 'motorist' ? 'Pending Motorist Reports' : 'Pending Workshop Listings';
+}
 
 async function checkSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (session) {
         showDashboard();
-        await loadPendingSubmissions();
+        await loadAllPending();
     }
 }
 
@@ -56,7 +78,7 @@ async function handleLogin(event) {
     loginBtn.disabled = false;
     loginBtn.textContent = 'Sign In';
     showDashboard();
-    await loadPendingSubmissions();
+    await loadAllPending();
 }
 
 async function handleLogout() {
@@ -75,12 +97,24 @@ function showDashboard() {
     document.getElementById('dashboardView').classList.remove('hidden');
 }
 
-async function loadPendingSubmissions() {
+async function loadAllPending() {
+    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings()]);
+    updateTotalPendingCount();
+}
+
+function updateTotalPendingCount() {
+    const total = pendingMotoristRecords.length + pendingWorkshopRecords.length;
+    document.getElementById('pendingCount').textContent = total;
+}
+
+// ─── MOTORIST REPORTS ──────────────────────────────────────────────────────
+
+async function loadPendingMotoristSubmissions() {
     const statusMsg = document.getElementById('statusMessage');
     statusMsg.textContent = 'Loading submissions...';
     statusMsg.className = 'status-message status-loading';
 
-const { data, error } = await supabaseClient
+    const { data, error } = await supabaseClient
         .from('Submissions')
         .select('*')
         .or('status.is.null,status.eq.Pending')
@@ -92,44 +126,44 @@ const { data, error } = await supabaseClient
         return;
     }
 
-    pendingRecords = data || [];
-    statusMsg.textContent = '';
-    statusMsg.className = 'status-message';
-    renderSubmissions();
+    pendingMotoristRecords = data || [];
+    if (currentTab === 'motorist') {
+        statusMsg.textContent = '';
+        statusMsg.className = 'status-message';
+    }
+    renderMotoristSubmissions();
 }
 
-function renderSubmissions() {
+function renderMotoristSubmissions() {
     const tableBody = document.getElementById('submissionsBody');
     const cardsContainer = document.getElementById('submissionsCards');
-    const emptyState = document.getElementById('emptyState');
-    const tableWrap = document.querySelector('.admin-table-wrap');
-    const countEl = document.getElementById('pendingCount');
+    const emptyState = document.getElementById('emptyStateMotorist');
+    const tableWrap = document.querySelector('#motoristPanel .admin-table-wrap');
+    const cardsWrap = document.getElementById('submissionsCards');
 
-    countEl.textContent = pendingRecords.length;
-
-    if (pendingRecords.length === 0) {
-        tableWrap.classList.add('hidden');
-        cardsContainer.classList.add('hidden');
-        emptyState.classList.remove('hidden');
+    if (pendingMotoristRecords.length === 0) {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (cardsWrap) cardsWrap.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
         return;
     }
 
-    emptyState.classList.add('hidden');
-    tableWrap.classList.remove('hidden');
-    cardsContainer.classList.remove('hidden');
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (cardsWrap) cardsWrap.classList.remove('hidden');
 
-    tableBody.innerHTML = pendingRecords.map(record => buildTableRow(record)).join('');
-    cardsContainer.innerHTML = pendingRecords.map(record => buildCard(record)).join('');
+    tableBody.innerHTML = pendingMotoristRecords.map(record => buildMotoristTableRow(record)).join('');
+    cardsContainer.innerHTML = pendingMotoristRecords.map(record => buildMotoristCard(record)).join('');
 
-    pendingRecords.forEach(record => {
-        const approveBtns = document.querySelectorAll(`[data-approve="${record.id}"]`);
-        const rejectBtns = document.querySelectorAll(`[data-reject="${record.id}"]`);
-        approveBtns.forEach(btn => btn.addEventListener('click', () => handleApprove(record.id)));
-        rejectBtns.forEach(btn => btn.addEventListener('click', () => handleReject(record.id)));
+    pendingMotoristRecords.forEach(record => {
+        const approveBtns = document.querySelectorAll(`[data-approve-motorist="${record.id}"]`);
+        const rejectBtns = document.querySelectorAll(`[data-reject-motorist="${record.id}"]`);
+        approveBtns.forEach(btn => btn.addEventListener('click', () => handleMotoristApprove(record.id)));
+        rejectBtns.forEach(btn => btn.addEventListener('click', () => handleMotoristReject(record.id)));
     });
 }
 
-function buildTableRow(record) {
+function buildMotoristTableRow(record) {
     return `
         <tr data-record-id="${record.id}">
             <td data-label="Workshop">${escapeHTML(displayValue(record.workshop_name))}</td>
@@ -140,15 +174,15 @@ function buildTableRow(record) {
             <td data-label="Date">${formatDate(record.repair_date)}</td>
             <td data-label="Actions">
                 <div class="action-buttons">
-                    <button class="btn btn-approve" data-approve="${record.id}">Approve</button>
-                    <button class="btn btn-reject" data-reject="${record.id}">Reject</button>
+                    <button class="btn btn-approve" data-approve-motorist="${record.id}">Approve</button>
+                    <button class="btn btn-reject" data-reject-motorist="${record.id}">Reject</button>
                 </div>
             </td>
         </tr>
     `;
 }
 
-function buildCard(record) {
+function buildMotoristCard(record) {
     return `
         <article class="admin-card" data-record-id="${record.id}">
             <div class="admin-card-header">
@@ -174,23 +208,23 @@ function buildCard(record) {
                 </div>
             </div>
             <div class="action-buttons">
-                <button class="btn btn-approve" data-approve="${record.id}">Approve</button>
-                <button class="btn btn-reject" data-reject="${record.id}">Reject</button>
+                <button class="btn btn-approve" data-approve-motorist="${record.id}">Approve</button>
+                <button class="btn btn-reject" data-reject-motorist="${record.id}">Reject</button>
             </div>
         </article>
     `;
 }
 
-async function handleApprove(id) {
-    await updateStatus(id, 'Approved');
+async function handleMotoristApprove(id) {
+    await updateMotoristStatus(id, 'Approved');
 }
 
-async function handleReject(id) {
-    await updateStatus(id, 'Rejected');
+async function handleMotoristReject(id) {
+    await updateMotoristStatus(id, 'Rejected');
 }
 
-async function updateStatus(id, newStatus) {
-    const buttons = document.querySelectorAll(`[data-approve="${id}"], [data-reject="${id}"]`);
+async function updateMotoristStatus(id, newStatus) {
+    const buttons = document.querySelectorAll(`[data-approve-motorist="${id}"], [data-reject-motorist="${id}"]`);
     buttons.forEach(btn => btn.disabled = true);
 
     const { error } = await supabaseClient
@@ -207,18 +241,186 @@ async function updateStatus(id, newStatus) {
     }
 
     removeRecordFromView(id);
-    pendingRecords = pendingRecords.filter(r => r.id !== id);
-    document.getElementById('pendingCount').textContent = pendingRecords.length;
+    pendingMotoristRecords = pendingMotoristRecords.filter(r => r.id !== id);
+    updateTotalPendingCount();
 
-    if (pendingRecords.length === 0) {
-        document.querySelector('.admin-table-wrap').classList.add('hidden');
+    if (pendingMotoristRecords.length === 0) {
+        document.querySelector('#motoristPanel .admin-table-wrap').classList.add('hidden');
         document.getElementById('submissionsCards').classList.add('hidden');
-        document.getElementById('emptyState').classList.remove('hidden');
+        document.getElementById('emptyStateMotorist').classList.remove('hidden');
     }
 }
 
+// ─── WORKSHOP LISTINGS ──────────────────────────────────────────────────────
+
+async function loadPendingWorkshopListings() {
+    const { data, error } = await supabaseClient
+        .from('Workshopprofiles')
+        .select('*')
+        .eq('status', 'Pending')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error('Failed to load workshop listings:', error);
+        return;
+    }
+
+    pendingWorkshopRecords = data || [];
+    renderWorkshopListings();
+}
+
+function renderWorkshopListings() {
+    const tableBody = document.getElementById('workshopBody');
+    const cardsContainer = document.getElementById('workshopCards');
+    const emptyState = document.getElementById('emptyStateWorkshop');
+    const tableWrap = document.getElementById('workshopTableWrap');
+
+    if (pendingWorkshopRecords.length === 0) {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (cardsContainer) cardsContainer.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (cardsContainer) cardsContainer.classList.remove('hidden');
+
+    tableBody.innerHTML = pendingWorkshopRecords.map(record => buildWorkshopTableRow(record)).join('');
+    cardsContainer.innerHTML = pendingWorkshopRecords.map(record => buildWorkshopCard(record)).join('');
+
+    pendingWorkshopRecords.forEach(record => {
+        const approveBtns = document.querySelectorAll(`[data-approve-workshop="${record.id}"]`);
+        const deleteBtns = document.querySelectorAll(`[data-delete-workshop="${record.id}"]`);
+        approveBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopApprove(record.id)));
+        deleteBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopDelete(record.id)));
+    });
+}
+
+function buildWorkshopTableRow(record) {
+    const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
+    return `
+        <tr data-workshop-id="${record.id}">
+            <td data-label="Workshop">${escapeHTML(displayValue(record.workshop_name))}</td>
+            <td data-label="Location">${escapeHTML(displayValue(location))}</td>
+            <td data-label="Contact">${escapeHTML(displayValue(record.contact_number))}</td>
+            <td data-label="Specialisation">${escapeHTML(displayValue(record.specialisation))}</td>
+            <td data-label="Email">${escapeHTML(displayValue(record.email_address))}</td>
+            <td data-label="Actions">
+                <div class="action-buttons">
+                    <button class="btn btn-approve" data-approve-workshop="${record.id}">Approve</button>
+                    <button class="btn btn-reject" data-delete-workshop="${record.id}">Delete</button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function buildWorkshopCard(record) {
+    const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
+    return `
+        <article class="admin-card" data-workshop-id="${record.id}">
+            <div class="admin-card-header">
+                <h3>${escapeHTML(displayValue(record.workshop_name))}</h3>
+            </div>
+            <div class="admin-card-grid">
+                <div class="admin-card-field">
+                    <span class="field-label">Location</span>
+                    <span class="field-value">${escapeHTML(displayValue(location))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Contact</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.contact_number))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Specialisation</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.specialisation))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Email</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.email_address))}</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-approve" data-approve-workshop="${record.id}">Approve</button>
+                <button class="btn btn-reject" data-delete-workshop="${record.id}">Delete</button>
+            </div>
+        </article>
+    `;
+}
+
+async function handleWorkshopApprove(id) {
+    const buttons = document.querySelectorAll(`[data-approve-workshop="${id}"], [data-delete-workshop="${id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    const { error } = await supabaseClient
+        .from('Workshopprofiles')
+        .update({ status: 'Approved' })
+        .eq('id', id);
+
+    if (error) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to approve workshop. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    removeWorkshopFromView(id);
+    pendingWorkshopRecords = pendingWorkshopRecords.filter(r => r.id !== id);
+    updateTotalPendingCount();
+
+    if (pendingWorkshopRecords.length === 0) {
+        document.getElementById('workshopTableWrap').classList.add('hidden');
+        document.getElementById('workshopCards').classList.add('hidden');
+        document.getElementById('emptyStateWorkshop').classList.remove('hidden');
+    }
+}
+
+async function handleWorkshopDelete(id) {
+    if (!confirm('Are you sure you want to delete this workshop listing? This cannot be undone.')) {
+        return;
+    }
+
+    const buttons = document.querySelectorAll(`[data-approve-workshop="${id}"], [data-delete-workshop="${id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    const { error } = await supabaseClient
+        .from('Workshopprofiles')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to delete workshop. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    removeWorkshopFromView(id);
+    pendingWorkshopRecords = pendingWorkshopRecords.filter(r => r.id !== id);
+    updateTotalPendingCount();
+
+    if (pendingWorkshopRecords.length === 0) {
+        document.getElementById('workshopTableWrap').classList.add('hidden');
+        document.getElementById('workshopCards').classList.add('hidden');
+        document.getElementById('emptyStateWorkshop').classList.remove('hidden');
+    }
+}
+
+// ─── UTILITY FUNCTIONS ──────────────────────────────────────────────────────
+
 function removeRecordFromView(id) {
     const elements = document.querySelectorAll(`[data-record-id="${id}"]`);
+    elements.forEach(el => {
+        el.classList.add('row-removing');
+        setTimeout(() => el.remove(), 300);
+    });
+}
+
+function removeWorkshopFromView(id) {
+    const elements = document.querySelectorAll(`[data-workshop-id="${id}"]`);
     elements.forEach(el => {
         el.classList.add('row-removing');
         setTimeout(() => el.remove(), 300);

@@ -8,90 +8,81 @@
     <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
-    <nav class="navbar">
-        <a href="welcome.html" class="nav-logo">
-            <img src="logo.png" alt="Veriyo">
-        </a>
-        <ul class="nav-links" id="navLinksContainer">
-            <li><a href="motorist-home.html">Home</a></li>
-            <li><a href="prices.html">Browse Prices</a></li>
-        </ul>
-    </nav>
 
-    <main class="container">
-        <div class="auth-card">
-            <div class="auth-logo">
-                <img src="logo.png" alt="Veriyo" style="height:40px;">
+    <main class="container" style="padding-top:2rem;">
+        <div class="auth-card" style="max-width:420px; margin:0 auto;">
+            <div class="auth-logo" style="text-align:center; margin-bottom:1.5rem;">
+                <img src="logo.png" alt="Veriyo" style="height:48px;">
             </div>
 
             <!-- Sign In Panel -->
             <div id="signinPanel">
-                <h1 class="auth-title">Welcome back</h1>
-                <p class="auth-subtitle">Sign in to your Veriyo account</p>
+                <h1 class="auth-title" style="font-size:1.5rem; margin-bottom:0.5rem;">Welcome back</h1>
+                <p class="auth-subtitle" style="color:var(--text-secondary); margin-bottom:1.5rem;">Sign in to your Veriyo account</p>
 
                 <div id="signinError" class="auth-error" style="display:none;"></div>
 
                 <form id="signinForm" novalidate>
-                    <div class="auth-field">
-                        <label for="signinEmail">Email address</label>
+                    <div class="auth-field" style="margin-bottom:1rem;">
+                        <label for="signinEmail" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Email address</label>
                         <input type="email" id="signinEmail" class="form-control" required
                             placeholder="you@example.com" autocomplete="email">
-                        <span class="auth-field-error" id="signinEmailError"></span>
+                        <span class="auth-field-error" id="signinEmailError" style="font-size:0.82rem; color:var(--danger-color); display:none;"></span>
                     </div>
-                    <div class="auth-field">
-                        <label for="signinPassword">Password</label>
+                    <div class="auth-field" style="margin-bottom:1.25rem;">
+                        <label for="signinPassword" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Password</label>
                         <input type="password" id="signinPassword" class="form-control" required
                             placeholder="Your password" autocomplete="current-password">
                     </div>
-                    <button type="submit" id="signinBtn" class="btn btn-primary auth-submit-btn">
+                    <button type="submit" id="signinBtn" class="btn btn-primary auth-submit-btn" style="width:100%; padding:0.85rem; font-size:1rem;">
                         Sign In
                     </button>
                 </form>
 
-                <p class="auth-toggle-text">
+                <p class="auth-toggle-text" style="text-align:center; margin-top:1.25rem; font-size:0.88rem; color:var(--text-secondary);">
                     Don't have an account?
-                    <a href="#" id="showSignup" class="auth-toggle-link">Create one</a>
+                    <a href="#" id="showSignup" class="auth-toggle-link" style="color:var(--primary-accent); font-weight:600; cursor:pointer;">Create one</a>
                 </p>
             </div>
 
             <!-- Sign Up Panel -->
             <div id="signupPanel" style="display:none;">
-                <h1 class="auth-title">Create your account</h1>
-                <p class="auth-subtitle">Join Veriyo — it's free</p>
+                <h1 class="auth-title" style="font-size:1.5rem; margin-bottom:0.5rem;">Create your account</h1>
+                <p class="auth-subtitle" style="color:var(--text-secondary); margin-bottom:1.5rem;">Join Veriyo — it's free</p>
 
                 <div id="signupError" class="auth-error" style="display:none;"></div>
 
                 <form id="signupForm" novalidate>
-                    <div class="auth-field">
-                        <label for="signupName">Your name <span class="auth-optional">(optional)</span></label>
+                    <div class="auth-field" style="margin-bottom:1rem;">
+                        <label for="signupName" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Your name <span style="font-weight:400; color:var(--text-secondary);">(optional)</span></label>
                         <input type="text" id="signupName" class="form-control"
                             placeholder="Your name — optional" autocomplete="name">
                     </div>
-                    <div class="auth-field">
-                        <label for="signupEmail">Email address</label>
+                    <div class="auth-field" style="margin-bottom:1rem;">
+                        <label for="signupEmail" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Email address</label>
                         <input type="email" id="signupEmail" class="form-control" required
                             placeholder="you@example.com" autocomplete="email">
-                        <span class="auth-field-error" id="signupEmailError"></span>
+                        <span class="auth-field-error" id="signupEmailError" style="font-size:0.82rem; color:var(--danger-color); display:none;"></span>
                     </div>
-                    <div class="auth-field">
-                        <label for="signupPassword">Password</label>
+                    <div class="auth-field" style="margin-bottom:1rem;">
+                        <label for="signupPassword" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Password</label>
                         <input type="password" id="signupPassword" class="form-control" required
                             placeholder="At least 8 characters" autocomplete="new-password">
                     </div>
-                    <div class="auth-field">
-                        <label for="signupConfirm">Confirm password</label>
+                    <div class="auth-field" style="margin-bottom:1.25rem;">
+                        <label for="signupConfirm" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Confirm password</label>
                         <input type="password" id="signupConfirm" class="form-control" required
                             placeholder="Repeat your password" autocomplete="new-password">
-                        <span class="auth-field-error" id="signupConfirmError"></span>
+                        <span class="auth-field-error" id="signupConfirmError" style="font-size:0.82rem; color:var(--danger-color); display:none;"></span>
                     </div>
-                    <button type="submit" id="signupBtn" class="btn btn-primary auth-submit-btn">
+                    <button type="submit" id="signupBtn" class="btn btn-primary auth-submit-btn" style="width:100%; padding:0.85rem; font-size:1rem;">
                         Create Account
                     </button>
                 </form>
 
-                <p class="auth-toggle-text">
+                <p class="auth-toggle-text" style="text-align:center; margin-top:1.25rem; font-size:0.88rem; color:var(--text-secondary);">
                     Already have an account?
-                    <a href="#" id="showSignin" class="auth-toggle-link">Sign in</a>
+                    <a href="#" id="showSignin" class="auth-toggle-link" style="color:var(--primary-accent); font-weight:600; cursor:pointer;">Sign in</a>
                 </p>
             </div>
         </div>
@@ -104,6 +95,35 @@
         </p>
     </footer>
 
+    <nav class="bottom-nav">
+        <a href="motorist-home.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-home"></use></svg>
+            </span>
+            <span class="bottom-nav-label">Home</span>
+        </a>
+        <a href="workshops.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
+            </span>
+            <span class="bottom-nav-label">Workshops</span>
+        </a>
+        <a href="list-workshop.html" class="bottom-nav-item">
+            <span class="bottom-nav-icon">
+                <svg width="22" height="22" aria-hidden="true"><use href="#icon-addlisting"></use></svg>
+            </span>
+            <span class="bottom-nav-label">List Workshop</span>
+        </a>
+    </nav>
+
+    <div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
+    <script>
+    fetch('icons.svg')
+        .then(r => r.text())
+        .then(svg => {
+            document.getElementById('svgSpriteLoader').innerHTML = svg;
+        });
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
     (function () {
@@ -139,14 +159,30 @@
             return msg;
         }
 
+        function getRedirectUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const redirect = params.get('redirect');
+            const signup = params.get('signup');
+            if (redirect === 'list-workshop') {
+                return 'list-workshop.html';
+            }
+            return 'motorist-home.html';
+        }
+
         function afterAuthSuccess() {
             const redirect = sessionStorage.getItem('veriyo_chat_redirect');
             if (redirect) {
                 sessionStorage.removeItem('veriyo_chat_redirect');
                 window.location.href = redirect;
             } else {
-                window.location.href = 'motorist-home.html';
+                window.location.href = getRedirectUrl();
             }
+        }
+
+        // Check for signup param to show signup panel
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('signup') === '1') {
+            showPanel('signup');
         }
 
         document.getElementById('showSignup').addEventListener('click', function (e) {

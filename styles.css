@@ -39,7 +39,8 @@ body {
     color: var(--text-primary);
     font-family: var(--font-sans);
     line-height: 1.5;
-    padding-top: 70px; /* Offset for fixed navbar */
+    padding-top: 0;
+    padding-bottom: 80px;
 }
 
 a {
@@ -541,32 +542,8 @@ button, input, select, textarea {
    Responsive Adaptations & Layout Breakpoints
    ========================================================================== */
 @media (max-width: 768px) {
-    body { padding-top: 60px; }
-    .navbar { padding: 0 1rem; height: 60px; }
-    .hamburger { display: flex; }
-    
-    .nav-links {
-        position: fixed;
-        top: 60px;
-        left: -100%;
-        width: 100%;
-        height: calc(100vh - 60px);
-        background-color: var(--surface-color);
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 2rem;
-        gap: 1.5rem;
-        transition: 0.3s ease;
-        border-top: 1px solid var(--border-color);
-    }
-    
-    .nav-links.active { left: 0; }
-    .nav-links a { width: 100%; font-size: 1.1rem; }
-    .nav-links a.active::after { display: none; }
-    .nav-links a.active { border-left: 3px solid var(--primary-accent); padding-left: 0.5rem; }
-
 .cta-group { flex-direction: column; width: 100%; }
-   
+
     .btn { width: 100%; }
 
 .hero { padding: 1.25rem 1rem; }
@@ -587,10 +564,21 @@ button, input, select, textarea {
     #filterToggleBtn { display: block !important; }
     #filterGridPanel { display: none; }
     #filterGridPanel.filter-open { display: grid; }
-    
+
     .form-container { padding: 1.5rem; }
     .form-group-row { grid-template-columns: 1fr; gap: 0; }
     .checkbox-grid { grid-template-columns: 1fr; }
+
+    .bottom-nav {
+        width: calc(100% - 1.5rem);
+        padding: 0.4rem 0.75rem;
+    }
+    .bottom-nav-item {
+        padding: 0.4rem 0.5rem;
+    }
+    .bottom-nav-label {
+        font-size: 0.6rem;
+    }
 }
 /* ==========================================================================
    Logo Optimization: Scale Tuning & Dark-Surface Blending Fix
@@ -602,97 +590,27 @@ button, input, select, textarea {
     margin: 0;
 }
 
-/* Responsive adjustment to keep the larger logo centered in the mobile header */
-@media (max-width: 768px) {
-    .nav-logo img {
-        height: 40px;
-    }
-}
-
 /* ==========================================================================
-   Top Navbar Restructure — logo left, links centered, auth right
-   ========================================================================== */
-
-.navbar--top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: var(--surface-color);
-    border-bottom: 1px solid var(--border-color);
-    padding: 0 1.5rem;
-    z-index: 1000;
-}
-
-.nav-links--desktop {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-    align-items: center;
-}
-
-.nav-links--desktop a {
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--text-secondary);
-    transition: var(--transition);
-    padding: 0.4rem 0;
-    position: relative;
-}
-
-.nav-links--desktop a:hover,
-.nav-links--desktop a.active {
-    color: var(--primary-accent);
-}
-
-.nav-links--desktop a.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--primary-accent);
-}
-
-.nav-signin-link {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--primary-accent) !important;
-    border: 1px solid var(--primary-accent);
-    padding: 0.35rem 0.9rem !important;
-    border-radius: var(--radius);
-    transition: var(--transition);
-}
-
-.nav-signin-link:hover {
-    background: var(--primary-accent);
-    color: #000 !important;
-}
-
-/* ==========================================================================
-   Bottom Navigation Bar
+   Bottom Navigation Bar — Floating Design
    ========================================================================== */
 
 .bottom-nav {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 420px;
+    width: calc(100% - 2rem);
     background-color: var(--surface-color);
-    border-top: 1px solid var(--border-color);
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+    gap: 0.5rem;
     z-index: 1000;
+    padding: 0.5rem 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .bottom-nav-item {
@@ -700,76 +618,49 @@ button, input, select, textarea {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.2rem;
-    flex: 1;
-    height: 100%;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
     color: var(--text-secondary);
     text-decoration: none;
     transition: var(--transition);
-    font-size: 0.65rem;
-    font-weight: 500;
+    border-radius: 12px;
 }
 
 .bottom-nav-item:hover,
 .bottom-nav-item.active {
     color: var(--primary-accent);
+    background: rgba(212, 160, 23, 0.08);
 }
 
 .bottom-nav-icon {
-    font-size: 1.3rem;
-    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.bottom-nav-icon svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    color: currentColor;
 }
 
 .bottom-nav-label {
-    font-size: 0.65rem;
+    font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.01em;
+    text-align: center;
 }
 
-/* Bottom nav visible on both mobile and desktop */
-@media (min-width: 769px) {
-    .bottom-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 56px;
-        background-color: var(--surface-color);
-        border-top: 1px solid var(--border-color);
-        justify-content: center;
-        align-items: center;
-        gap: 4rem;
-        z-index: 1000;
-    }
-    .bottom-nav-item {
-        flex-direction: row;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        height: 100%;
-        padding: 0 0.5rem;
-    }
-    .bottom-nav-icon svg {
-        width: 20px;
-        height: 20px;
-    }
+/* Hide old top navbar */
+.navbar--top {
+    display: none !important;
 }
 
-.nav-links--desktop { display: none !important; }
-
-@media (max-width: 768px) {
-    body {
-        padding-top: 60px;
-        padding-bottom: 70px;
-    }
-    .navbar--top { height: 60px; }
-}
-
-@media (min-width: 769px) {
-    body {
-        padding-top: 60px;
-        padding-bottom: 70px;
-    }
+.navbar {
+    display: none !important;
 }
 
 /* ==========================================================================
