@@ -81,6 +81,15 @@ function renderProfile(w, submissions) {
     quoteEl.textContent = w.written_quote === 'Yes' ? 'Provides Written Quotes' : 'No Written Quotes';
     quoteEl.className = `badge ${w.written_quote === 'Yes' ? 'badge-success' : 'badge-neutral'}`;
 
+    // Show claim banner for unowned workshops (imported by Veriyo, not yet claimed)
+    if (!w.user_id && w.status === 'Approved') {
+        document.getElementById('claimBanner').style.display = 'block';
+        const claimBtn = document.getElementById('claimWorkshopBtn');
+        if (claimBtn) {
+            claimBtn.href = 'claim-workshop.html?id=' + encodeURIComponent(w.id);
+        }
+    }
+
     // Render indicative pricing
     const pricingContainer = document.getElementById('profilePricing');
     const pricingItems = Object.entries(PRICE_LABELS).map(([key, label]) => {

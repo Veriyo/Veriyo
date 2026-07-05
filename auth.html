@@ -9,6 +9,22 @@
 </head>
 <body>
 
+    <nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Prices</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
+        </ul>
+    </nav>
+
     <main class="container" style="padding-top:2rem;">
         <div class="auth-card" style="max-width:420px; margin:0 auto;">
             <div class="auth-logo" style="text-align:center; margin-bottom:1.5rem;">
@@ -132,6 +148,8 @@
         const _supabaseAuth = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        const params = new URLSearchParams(window.location.search);
+        const isWorkshopFlow = params.get('redirect') === 'list-workshop' || params.get('redirect') === 'claim-workshop';
 
         function validateEmail(email) {
             return EMAIL_RE.test(email);
@@ -160,11 +178,16 @@
         }
 
         function getRedirectUrl() {
-            const params = new URLSearchParams(window.location.search);
             const redirect = params.get('redirect');
-            const signup = params.get('signup');
             if (redirect === 'list-workshop') {
                 return 'list-workshop.html';
+            }
+            if (redirect === 'claim-workshop') {
+                const workshopId = params.get('workshop_id');
+                if (workshopId) {
+                    return 'claim-workshop.html?id=' + encodeURIComponent(workshopId);
+                }
+                return 'workshops.html';
             }
             return 'motorist-home.html';
         }
@@ -179,11 +202,22 @@
             }
         }
 
+        // Update UI text for workshop flow
+        function updateUIForWorkshop() {
+            if (isWorkshopFlow) {
+                document.querySelector('#signupPanel h1').textContent = 'Create Workshop Account';
+                document.querySelector('#signupPanel .auth-subtitle').textContent = 'Register your workshop on Veriyo';
+                document.querySelector('label[for="signupName"]').innerHTML = 'Your name <span style="font-weight:400; color:var(--text-secondary);">(optional)</span>';
+                document.getElementById('signupBtn').textContent = 'Create Workshop Account';
+            }
+        }
+
         // Check for signup param to show signup panel
-        const params = new URLSearchParams(window.location.search);
         if (params.get('signup') === '1') {
             showPanel('signup');
         }
+
+        updateUIForWorkshop();
 
         document.getElementById('showSignup').addEventListener('click', function (e) {
             e.preventDefault();
@@ -264,13 +298,13 @@
             if (error) {
                 setError('signupError', humaniseError(error.message));
                 btn.disabled = false;
-                btn.textContent = 'Create Account';
+                btn.textContent = isWorkshopFlow ? 'Create Workshop Account' : 'Create Account';
             } else {
                 const { error: signinErr } = await _supabaseAuth.auth.signInWithPassword({ email, password });
                 if (signinErr) {
                     setError('signupError', humaniseError(signinErr.message));
                     btn.disabled = false;
-                    btn.textContent = 'Create Account';
+                    btn.textContent = isWorkshopFlow ? 'Create Workshop Account' : 'Create Account';
                 } else {
                     afterAuthSuccess();
                 }

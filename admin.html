@@ -55,12 +55,15 @@
 
         <main class="admin-main">
             <!-- Tab Navigation -->
-            <div style="display:flex; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color);">
+            <div style="display:flex; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); flex-wrap:wrap;">
                 <button class="admin-tab-btn admin-tab-btn--active" data-tab="motorist" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid var(--primary-accent); color:var(--primary-accent); font-weight:600; cursor:pointer;">
                     Motorist Reports
                 </button>
                 <button class="admin-tab-btn" data-tab="workshop" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     Workshop Listings
+                </button>
+                <button class="admin-tab-btn" data-tab="claims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Claim Requests
                 </button>
             </div>
 
@@ -127,6 +130,33 @@
                 <div id="emptyStateWorkshop" class="empty-state hidden">
                     <div class="empty-icon">&#10003;</div>
                     <p>No pending workshop listings. All caught up.</p>
+                </div>
+            </div>
+
+            <!-- Claim Requests Panel -->
+            <div id="claimsPanel" style="display:none;">
+                <div class="admin-table-wrap" id="claimsTableWrap">
+                    <table class="admin-table" id="claimsTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop</th>
+                                <th>Claimant</th>
+                                <th>Role</th>
+                                <th>Phone</th>
+                                <th>Evidence</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claimsBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="claimsCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateClaims" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No pending claim requests. All caught up.</p>
                 </div>
             </div>
         </main>

@@ -145,7 +145,23 @@
     </style>
 </head>
 <body>
-    <header class="urgent-header">
+    <nav class="navbar navbar--top" style="background:var(--danger-color);">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="nav-links" id="navLinksContainer">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Prices</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
+        </ul>
+    </nav>
+
+    <header class="urgent-header" style="margin-top:70px;">
         <h1><span class="urgent-icon">&#9888;</span> Emergency Repair Help</h1>
         <p>Find workshops near you for urgent repairs</p>
     </header>

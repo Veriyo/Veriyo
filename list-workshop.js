@@ -1,6 +1,6 @@
 /**
  * Veriyo | List Workshop — Free Launch Registration
- * Handles auth check, form validation, and direct submission (no payment).
+ * Handles auth check, workshop search, form validation, and direct submission.
  */
 (function () {
     const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
@@ -9,12 +9,106 @@
 
     let lwSession = null;
     let addedServices = [];
-    const SERVICE_LIMIT = 8; // All plans get full features during free launch
+    const SERVICE_LIMIT = 8;
+    let searchResultsVisible = false;
 
     function escapeHtml(str) {
         return String(str || '')
             .replace(/&/g, '&amp;').replace(/</g, '&lt;')
             .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // ─── WORKSHOP SEARCH ─────────────────────────────────────────────────────
+
+    async function searchWorkshops() {
+        const query = document.getElementById('workshopSearch').value.trim();
+        const statusEl = document.getElementById('searchStatus');
+        const resultsContainer = document.getElementById('searchResults');
+        const resultsList = document.getElementById('resultsContainer');
+
+        if (!query || query.length < 2) {
+            statusEl.textContent = 'Please enter at least 2 characters.';
+            statusEl.style.display = 'block';
+            statusEl.style.color = 'var(--text-secondary)';
+            return;
+        }
+
+        statusEl.textContent = 'Searching...';
+        statusEl.style.display = 'block';
+        statusEl.style.color = 'var(--text-secondary)';
+
+        const { data, error } = await _supabaseLW
+            .from('Workshopprofiles')
+            .select('id, workshop_name, suburb, city, province, status')
+            .ilike('workshop_name', '%' + query + '%')
+            .limit(5);
+
+        if (error) {
+            statusEl.textContent = 'Search failed. Please try again.';
+            statusEl.style.color = 'var(--danger-color)';
+            return;
+        }
+
+        statusEl.style.display = 'none';
+        searchResultsVisible = true;
+
+        if (!data || data.length === 0) {
+            resultsList.innerHTML = `
+                <div style="text-align:center; padding:1.5rem; color:var(--text-secondary); background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius);">
+                    <p style="margin-bottom:1rem;">No workshops found matching "<strong>${escapeHtml(query)}</strong>"</p>
+                    <button type="button" id="createNewBtn" class="btn btn-primary" style="padding:0.75rem 1.5rem;">
+                        Create New Workshop Listing
+                    </button>
+                </div>
+            `;
+            resultsContainer.style.display = 'block';
+            document.getElementById('createNewBtn').addEventListener('click', showForm);
+            return;
+        }
+
+        // Show matching workshops with claim option
+        resultsList.innerHTML = data.map(w => {
+            const location = [w.suburb, w.city, w.province].filter(Boolean).join(', ');
+            const isApproved = w.status === 'Approved';
+            return `
+                <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem;">
+                        <div>
+                            <h4 style="font-size:1rem; margin-bottom:0.25rem;">${escapeHtml(w.workshop_name)}</h4>
+                            <p style="color:var(--text-secondary); font-size:0.85rem;">${escapeHtml(location) || 'Location not specified'}</p>
+                            ${isApproved ? '<span style="display:inline-block; background:rgba(34,197,94,0.15); color:var(--success-color); padding:0.2rem 0.5rem; border-radius:4px; font-size:0.75rem; font-weight:600; margin-top:0.5rem;">Verified</span>' : ''}
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            ${isApproved ? `
+                                <a href="claim-workshop.html?id=${w.id}" class="btn btn-secondary" style="font-size:0.85rem; padding:0.5rem 1rem;">
+                                    Claim This Workshop
+                                </a>
+                            ` : `
+                                <span style="color:var(--text-secondary); font-size:0.85rem; padding:0.5rem;">Pending review</span>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Add "None of these match" option
+        resultsList.innerHTML += `
+            <div style="text-align:center; margin-top:1rem;">
+                <button type="button" id="createNewBtn" class="btn btn-secondary" style="font-size:0.9rem;">
+                    None of these match – Create New Listing
+                </button>
+            </div>
+        `;
+
+        resultsContainer.style.display = 'block';
+        document.getElementById('createNewBtn').addEventListener('click', showForm);
+    }
+
+    function showForm() {
+        document.getElementById('searchStep').style.display = 'none';
+        document.getElementById('searchResults').style.display = 'none';
+        document.getElementById('formStep').style.display = 'block';
     }
 
     // ─── SERVICES MANAGEMENT ─────────────────────────────────────────────────────
@@ -157,9 +251,10 @@
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
             guarantee_period: document.getElementById('lwGuaranteePeriod').value.trim() || null,
             services: JSON.stringify(addedServices),
-            plan: 'Dominant', // All features during free launch
-            plan_price: 0, // Free during launch
-            status: 'Pending' // Awaiting admin approval
+            plan: 'Dominant',
+            plan_price: 0,
+            status: 'Pending',
+            source: 'Workshop Registered'
         };
     }
 
@@ -207,8 +302,7 @@
             submitBtn.disabled = false;
             submitBtn.textContent = 'Submit Listing for Review';
         } else {
-            // Show success
-            document.querySelector('.form-container').style.display = 'none';
+            document.getElementById('formStep').style.display = 'none';
             document.getElementById('lw-success-section').style.display = 'block';
         }
     }
@@ -228,11 +322,9 @@
     // ─── INIT ────────────────────────────────────────────────────────────────────
 
     document.addEventListener('DOMContentLoaded', async function () {
-        // Check for session
         const { data: { session } } = await _supabaseLW.auth.getSession();
 
         if (!session) {
-            // Show auth required message, hide form
             document.getElementById('authRequiredSection').style.display = 'block';
             document.getElementById('mainContent').style.display = 'none';
             checkSessionForBottomNav();
@@ -241,12 +333,28 @@
 
         lwSession = session;
 
-        // Populate email display
         const emailDisplay = document.getElementById('lwEmailDisplay');
         if (emailDisplay) emailDisplay.textContent = session.user.email;
 
         renderServiceCards();
         checkSessionForBottomNav();
+
+        // Search button
+        const searchBtn = document.getElementById('searchBtn');
+        if (searchBtn) {
+            searchBtn.addEventListener('click', searchWorkshops);
+        }
+
+        // Enter key on search input
+        const searchInput = document.getElementById('workshopSearch');
+        if (searchInput) {
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    searchWorkshops();
+                }
+            });
+        }
 
         // Guarantee period toggle
         document.querySelectorAll('input[name="lwGuarantee"]').forEach(function (radio) {
@@ -280,7 +388,7 @@
         // Location button
         initLocationButton();
 
-        // Form submit - direct submission without payment
+        // Form submit
         document.getElementById('lwForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const data = collectFormData();

@@ -11,6 +11,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 let pendingMotoristRecords = [];
 let pendingWorkshopRecords = [];
+let pendingClaimRecords = [];
 let currentTab = 'motorist';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,7 +42,14 @@ function switchTab(tab) {
 
     document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
     document.getElementById('workshopPanel').style.display = tab === 'workshop' ? 'block' : 'none';
-    document.getElementById('sectionTitle').textContent = tab === 'motorist' ? 'Pending Motorist Reports' : 'Pending Workshop Listings';
+    document.getElementById('claimsPanel').style.display = tab === 'claims' ? 'block' : 'none';
+
+    const titles = {
+        'motorist': 'Pending Motorist Reports',
+        'workshop': 'Pending Workshop Listings',
+        'claims': 'Pending Claim Requests'
+    };
+    document.getElementById('sectionTitle').textContent = titles[tab] || 'Pending';
 }
 
 async function checkSession() {
@@ -98,12 +106,12 @@ function showDashboard() {
 }
 
 async function loadAllPending() {
-    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings()]);
+    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadPendingClaimRequests()]);
     updateTotalPendingCount();
 }
 
 function updateTotalPendingCount() {
-    const total = pendingMotoristRecords.length + pendingWorkshopRecords.length;
+    const total = pendingMotoristRecords.length + pendingWorkshopRecords.length + pendingClaimRecords.length;
     document.getElementById('pendingCount').textContent = total;
 }
 
@@ -407,6 +415,240 @@ async function handleWorkshopDelete(id) {
         document.getElementById('workshopCards').classList.add('hidden');
         document.getElementById('emptyStateWorkshop').classList.remove('hidden');
     }
+}
+
+// ─── CLAIM REQUESTS ──────────────────────────────────────────────────────────
+
+async function loadPendingClaimRequests() {
+    const { data, error } = await supabaseClient
+        .from('claim_requests')
+        .select(`
+            id,
+            created_at,
+            workshop_id,
+            user_id,
+            contact_person,
+            role,
+            business_phone,
+            signboard_photo_url,
+            interior_photo_url,
+            document_url,
+            notes,
+            status,
+            Workshopprofiles ( workshop_name, suburb, city, province )
+        `)
+        .eq('status', 'Pending')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error('Failed to load claim requests:', error);
+        return;
+    }
+
+    pendingClaimRecords = data || [];
+    renderClaimRequests();
+}
+
+function renderClaimRequests() {
+    const tableBody = document.getElementById('claimsBody');
+    const cardsContainer = document.getElementById('claimsCards');
+    const emptyState = document.getElementById('emptyStateClaims');
+    const tableWrap = document.getElementById('claimsTableWrap');
+    const cardsWrap = document.getElementById('claimsCards');
+
+    if (pendingClaimRecords.length === 0) {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (cardsWrap) cardsWrap.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (cardsWrap) cardsWrap.classList.remove('hidden');
+
+    tableBody.innerHTML = pendingClaimRecords.map(record => buildClaimTableRow(record)).join('');
+    cardsContainer.innerHTML = pendingClaimRecords.map(record => buildClaimCard(record)).join('');
+
+    pendingClaimRecords.forEach(record => {
+        const approveBtns = document.querySelectorAll(`[data-approve-claim="${record.id}"]`);
+        const rejectBtns = document.querySelectorAll(`[data-reject-claim="${record.id}"]`);
+        approveBtns.forEach(btn => btn.addEventListener('click', () => handleClaimApprove(record)));
+        rejectBtns.forEach(btn => btn.addEventListener('click', () => handleClaimReject(record)));
+    });
+}
+
+function buildClaimTableRow(record) {
+    const ws = record.Workshopprofiles || {};
+    const workshopName = ws.workshop_name || 'Unknown';
+    const location = [ws.suburb, ws.city].filter(Boolean).join(', ') || 'Location unknown';
+    const evidenceLinks = [];
+    if (record.signboard_photo_url) evidenceLinks.push(`<a href="${escapeHTML(record.signboard_photo_url)}" target="_blank" style="color:var(--primary-accent);text-decoration:underline;">Signboard</a>`);
+    if (record.interior_photo_url) evidenceLinks.push(`<a href="${escapeHTML(record.interior_photo_url)}" target="_blank" style="color:var(--primary-accent);text-decoration:underline;">Interior</a>`);
+    if (record.document_url) evidenceLinks.push(`<a href="${escapeHTML(record.document_url)}" target="_blank" style="color:var(--primary-accent);text-decoration:underline;">Document</a>`);
+    const evidenceHtml = evidenceLinks.length > 0 ? evidenceLinks.join(' | ') : 'None';
+
+    return `
+        <tr data-claim-id="${record.id}">
+            <td data-label="Workshop">
+                <strong>${escapeHTML(workshopName)}</strong><br>
+                <span style="color:var(--text-secondary);font-size:0.85rem;">${escapeHTML(location)}</span>
+            </td>
+            <td data-label="Claimant">${escapeHTML(record.contact_person)}</td>
+            <td data-label="Role">${escapeHTML(record.role || 'Unspecified')}</td>
+            <td data-label="Phone">${escapeHTML(record.business_phone)}</td>
+            <td data-label="Evidence">${evidenceHtml}</td>
+            <td data-label="Submitted">${formatDate(record.created_at)}</td>
+            <td data-label="Actions">
+                <div class="action-buttons">
+                    <button class="btn btn-approve" data-approve-claim="${record.id}">Approve</button>
+                    <button class="btn btn-reject" data-reject-claim="${record.id}">Reject</button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function buildClaimCard(record) {
+    const ws = record.Workshopprofiles || {};
+    const workshopName = ws.workshop_name || 'Unknown';
+    const location = [ws.suburb, ws.city, ws.province].filter(Boolean).join(', ') || 'Location unknown';
+    const evidenceLinks = [];
+    if (record.signboard_photo_url) evidenceLinks.push(`<a href="${escapeHTML(record.signboard_photo_url)}" target="_blank" style="color:var(--primary-accent);text-decoration:underline;">Signboard</a>`);
+    if (record.interior_photo_url) evidenceLinks.push(`<a href="${escapeHTML(record.interior_photo_url)}" target="_blank" style="color:var(--primary-accent);text-decoration:underline;">Interior</a>`);
+    if (record.document_url) evidenceLinks.push(`<a href="${escapeHTML(record.document_url)}" target="_blank" style="color:var(--primary-accent);text-decoration:underline;">Document</a>`);
+    const evidenceHtml = evidenceLinks.length > 0 ? evidenceLinks.join(' | ') : 'None';
+
+    return `
+        <article class="admin-card" data-claim-id="${record.id}">
+            <div class="admin-card-header">
+                <h3>${escapeHTML(workshopName)}</h3>
+                <span class="admin-card-date">${formatDate(record.created_at)}</span>
+            </div>
+            <div class="admin-card-grid">
+                <div class="admin-card-field">
+                    <span class="field-label">Location</span>
+                    <span class="field-value">${escapeHTML(location)}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Claimant</span>
+                    <span class="field-value">${escapeHTML(record.contact_person)}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Role</span>
+                    <span class="field-value">${escapeHTML(record.role || 'Unspecified')}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Phone</span>
+                    <span class="field-value">${escapeHTML(record.business_phone)}</span>
+                </div>
+                <div class="admin-card-field" style="grid-column:1/-1;">
+                    <span class="field-label">Evidence</span>
+                    <span class="field-value">${evidenceHtml}</span>
+                </div>
+                ${record.notes ? `
+                <div class="admin-card-field" style="grid-column:1/-1;">
+                    <span class="field-label">Notes</span>
+                    <span class="field-value">${escapeHTML(record.notes)}</span>
+                </div>
+                ` : ''}
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-approve" data-approve-claim="${record.id}">Approve</button>
+                <button class="btn btn-reject" data-reject-claim="${record.id}">Reject</button>
+            </div>
+        </article>
+    `;
+}
+
+async function handleClaimApprove(record) {
+    const buttons = document.querySelectorAll(`[data-approve-claim="${record.id}"], [data-reject-claim="${record.id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    // Update claim request status
+    const { error: claimError } = await supabaseClient
+        .from('claim_requests')
+        .update({ status: 'Approved' })
+        .eq('id', record.id);
+
+    if (claimError) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to approve claim. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    // Update workshop with user_id and status
+    const { error: workshopError } = await supabaseClient
+        .from('Workshopprofiles')
+        .update({
+            user_id: record.user_id,
+            status: 'Approved',
+            source: 'Claimed by Workshop'
+        })
+        .eq('id', record.workshop_id);
+
+    if (workshopError) {
+        console.error('Failed to update workshop:', workshopError);
+    }
+
+    removeClaimFromView(record.id);
+    pendingClaimRecords = pendingClaimRecords.filter(r => r.id !== record.id);
+    updateTotalPendingCount();
+
+    if (pendingClaimRecords.length === 0) {
+        document.getElementById('claimsTableWrap').classList.add('hidden');
+        document.getElementById('claimsCards').classList.add('hidden');
+        document.getElementById('emptyStateClaims').classList.remove('hidden');
+    }
+}
+
+async function handleClaimReject(record) {
+    if (!confirm('Are you sure you want to reject this claim request?')) {
+        return;
+    }
+
+    const buttons = document.querySelectorAll(`[data-approve-claim="${record.id}"], [data-reject-claim="${record.id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    // Update claim request status
+    const { error } = await supabaseClient
+        .from('claim_requests')
+        .update({ status: 'Rejected' })
+        .eq('id', record.id);
+
+    if (error) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to reject claim. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    // Reset workshop status from Claim Pending back to Approved
+    await supabaseClient
+        .from('Workshopprofiles')
+        .update({ status: 'Approved' })
+        .eq('id', record.workshop_id);
+
+    removeClaimFromView(record.id);
+    pendingClaimRecords = pendingClaimRecords.filter(r => r.id !== record.id);
+    updateTotalPendingCount();
+
+    if (pendingClaimRecords.length === 0) {
+        document.getElementById('claimsTableWrap').classList.add('hidden');
+        document.getElementById('claimsCards').classList.add('hidden');
+        document.getElementById('emptyStateClaims').classList.remove('hidden');
+    }
+}
+
+function removeClaimFromView(id) {
+    const elements = document.querySelectorAll(`[data-claim-id="${id}"]`);
+    elements.forEach(el => {
+        el.classList.add('row-removing');
+        setTimeout(() => el.remove(), 300);
+    });
 }
 
 // ─── UTILITY FUNCTIONS ──────────────────────────────────────────────────────
