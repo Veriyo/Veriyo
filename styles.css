@@ -1746,6 +1746,25 @@ button, input, select, textarea {
    Navbar Auth Avatar & Bell
    ========================================================================== */
 
+.nav-signin-link {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary-accent);
+    border: 2px solid var(--primary-accent);
+    border-radius: var(--radius);
+    background: transparent;
+    text-decoration: none;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.nav-signin-link:hover {
+    background: var(--primary-accent);
+    color: #000;
+}
+
 .nav-auth-item {
     display: flex;
     align-items: center;
