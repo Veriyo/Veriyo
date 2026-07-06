@@ -253,10 +253,8 @@
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
             guarantee_period: gp || null,
             services: addedServices,
-            plan: 'Dominant',
-            plan_price: 0,
-            status: 'Pending',
-            source: 'Workshop Registered'
+            status: 'Pending'
+            
         };
     }
 
