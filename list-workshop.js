@@ -234,6 +234,8 @@
 
     function collectFormData() {
         const specs = Array.from(document.querySelectorAll('input[name="lwSpec"]:checked')).map(function (el) { return el.value; });
+        const gp = document.getElementById('lwGuaranteePeriod').value.trim();
+
         return {
             workshop_name: document.getElementById('lwName').value.trim(),
             physical_address: document.getElementById('lwAddress').value.trim(),
@@ -244,13 +246,13 @@
             email_address: lwSession ? lwSession.user.email : '',
             user_id: lwSession ? lwSession.user.id : null,
             operating_hours: document.getElementById('lwHours').value.trim(),
-            specialisation: specs.join(', '),
+            specialisation: specs.join(', ') || null,
             years_operation: parseInt(document.getElementById('lwYears').value) || 0,
             rmi_registered: document.querySelector('input[name="lwRmi"]:checked')?.value || 'No',
             written_quote: document.querySelector('input[name="lwQuote"]:checked')?.value || 'No',
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
-            guarantee_period: document.getElementById('lwGuaranteePeriod').value.trim() || null,
-            services: JSON.stringify(addedServices),
+            guarantee_period: gp || null,
+            services: addedServices,
             plan: 'Dominant',
             plan_price: 0,
             status: 'Pending',
