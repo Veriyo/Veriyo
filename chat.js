@@ -313,7 +313,7 @@
         if (mode === 'workshop') {
             await initWorkshopView(session);
         } else if (workshopId) {
-            await initMotoristView(session, parseInt(workshopId, 10));
+            await initMotoristView(session, workshopId);
         } else {
             document.getElementById('chatLoading').textContent = 'Invalid chat link.';
         }
