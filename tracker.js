@@ -40,26 +40,28 @@ const statusOrder = [
 
 // Current repair data
 let currentRepair = null;
+let currentSession = null;
 
-// Check for workshop manager session
+// A "workshop manager" is a signed-in user (via the same Supabase auth used
+// across the rest of Veriyo) who owns the Workshopprofile linked to the repair
+// currently being viewed.
 function isWorkshopManager() {
-    const workshopSession = sessionStorage.getItem('workshop_session') || localStorage.getItem('workshop_session');
-    return workshopSession === 'authenticated';
+    if (!currentSession || !currentRepair) return false;
+    const workshop = currentRepair.Workshopprofiles;
+    return !!(workshop && workshop.user_id && workshop.user_id === currentSession.user.id);
 }
 
 // Initialize
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    currentSession = session;
+
     // Check URL params for direct lookup
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref');
     if (refParam) {
         jobReferenceInput.value = refParam;
         lookupRepair();
-    }
-
-    // Show workshop update section if manager is logged in
-    if (isWorkshopManager()) {
-        workshopUpdateSection.classList.remove('hidden');
     }
 });
 
@@ -104,7 +106,7 @@ async function lookupRepair() {
                 notes,
                 updated_at,
                 created_at,
-                "Workshopprofiles" (workshop_name, suburb, city)
+                "Workshopprofiles" (workshop_name, suburb, city, user_id)
             `)
             .eq('id', parseInt(repairId))
             .single();
