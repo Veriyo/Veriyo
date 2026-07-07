@@ -37,12 +37,12 @@
         statusEl.style.display = 'block';
         statusEl.style.color = 'var(--text-secondary)';
 
-        const { data, error } = await _supabaseLW
-            .from('Workshopprofiles')
-            .select('id, workshop_name, suburb, city, province, status')
-            .ilike('workshop_name', '%' + query + '%')
-            .limit(5);
-
+const { data, error } = await _supabaseLW
+    .from('Workshopprofiles')
+    .select('id, workshop_name, suburb, city, province, status')
+    .eq('status', 'Approved')
+    .ilike('workshop_name', '%' + query + '%')
+    .limit(5);
         if (error) {
             statusEl.textContent = 'Search failed. Please try again.';
             statusEl.style.color = 'var(--danger-color)';
