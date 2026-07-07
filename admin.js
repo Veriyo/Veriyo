@@ -361,20 +361,18 @@ async function handleWorkshopApprove(id) {
     const buttons = document.querySelectorAll(`[data-approve-workshop="${id}"], [data-delete-workshop="${id}"]`);
     buttons.forEach(btn => btn.disabled = true);
 
-    const { error } = await supabaseClient
-        .from('Workshopprofiles')
-        .update({ status: 'Approved' })
-        .eq('id', id);
+  const { data, error } = await supabaseClient
+    .from('Workshopprofiles')
+    .update({ status: 'Approved' })
+    .eq('id', id)
+    .select();
 
-    if (error) {
-        const statusMsg = document.getElementById('statusMessage');
-        statusMsg.textContent = 'Failed to approve workshop. Please try again.';
-        statusMsg.className = 'status-message status-error';
-        buttons.forEach(btn => btn.disabled = false);
-        return;
-    }
+if (error || !data || data.length === 0) {
+    alert('Workshop approval failed. No rows were updated.');
+    return;
+}
 
-    removeWorkshopFromView(id);
+removeWorkshopFromView(id);
     pendingWorkshopRecords = pendingWorkshopRecords.filter(r => r.id !== id);
     updateTotalPendingCount();
 
