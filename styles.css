@@ -602,8 +602,9 @@ button, input, select, textarea {
     background-color: var(--surface-color);
     border-top: 1px solid var(--border-color);
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
+    gap: 3rem;
     z-index: 1000;
     padding: 0.5rem 0;
 }
@@ -614,7 +615,6 @@ button, input, select, textarea {
     align-items: center;
     justify-content: center;
     gap: 0.25rem;
-    flex: 1;
     padding: 0.4rem 0;
     color: var(--text-secondary);
     text-decoration: none;
