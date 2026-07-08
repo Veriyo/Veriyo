@@ -65,6 +65,9 @@
                 <button class="admin-tab-btn" data-tab="claims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     Claim Requests
                 </button>
+                <button class="admin-tab-btn" data-tab="quickclaims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Quick Claims
+                </button>
             </div>
 
             <div class="dashboard-toolbar">
@@ -157,6 +160,31 @@
                 <div id="emptyStateClaims" class="empty-state hidden">
                     <div class="empty-icon">&#10003;</div>
                     <p>No pending claim requests. All caught up.</p>
+                </div>
+            </div>
+
+            <!-- Quick Claims Panel -->
+            <div id="quickClaimsPanel" style="display:none;">
+                <div class="admin-table-wrap" id="quickClaimsTableWrap">
+                    <table class="admin-table" id="quickClaimsTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop</th>
+                                <th>Contact Email</th>
+                                <th>Message</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="quickClaimsBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="quickClaimsCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateQuickClaims" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No pending quick claims. All caught up.</p>
                 </div>
             </div>
         </main>
