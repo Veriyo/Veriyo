@@ -230,15 +230,12 @@
             });
         });
 
-        // Bottom nav My Listing link — switch to that tab instead of navigating
+        // Bottom nav My Listing link — switch to that section instead of navigating
         var bottomMyListingBtn = document.getElementById('bottomNavMyListing');
         if (bottomMyListingBtn) {
             bottomMyListingBtn.addEventListener('click', function (e) {
                 e.preventDefault();
-                var tab = document.getElementById('tabMyListing');
-                if (tab && tab.style.display !== 'none') {
-                    showTab('my-listing');
-                }
+                showTab('my-listing');
             });
         }
 
