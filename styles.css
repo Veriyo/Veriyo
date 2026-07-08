@@ -570,11 +570,11 @@ button, input, select, textarea {
     .checkbox-grid { grid-template-columns: 1fr; }
 
     .bottom-nav {
-        width: calc(100% - 1.5rem);
-        padding: 0.4rem 0.75rem;
+        width: 100%;
+        padding: 0.4rem 0;
     }
     .bottom-nav-item {
-        padding: 0.4rem 0.5rem;
+        padding: 0.4rem 0.25rem;
     }
     .bottom-nav-label {
         font-size: 0.6rem;
@@ -596,21 +596,16 @@ button, input, select, textarea {
 
 .bottom-nav {
     position: fixed;
-    bottom: 1rem;
-    left: 50%;
-    transform: translateX(-50%);
-    max-width: 420px;
-    width: calc(100% - 2rem);
+    bottom: 0;
+    left: 0;
+    width: 100%;
     background-color: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 24px;
+    border-top: 1px solid var(--border-color);
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
-    gap: 0.5rem;
     z-index: 1000;
-    padding: 0.5rem 1rem;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 0.5rem 0;
 }
 
 .bottom-nav-item {
@@ -619,17 +614,16 @@ button, input, select, textarea {
     align-items: center;
     justify-content: center;
     gap: 0.25rem;
-    padding: 0.5rem 0.75rem;
+    flex: 1;
+    padding: 0.4rem 0;
     color: var(--text-secondary);
     text-decoration: none;
     transition: var(--transition);
-    border-radius: 12px;
 }
 
 .bottom-nav-item:hover,
 .bottom-nav-item.active {
     color: var(--primary-accent);
-    background: rgba(212, 160, 23, 0.08);
 }
 
 .bottom-nav-icon {
