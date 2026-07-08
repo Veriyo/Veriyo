@@ -12,6 +12,7 @@ const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 let pendingMotoristRecords = [];
 let pendingWorkshopRecords = [];
 let pendingClaimRecords = [];
+let pendingQuickClaimRecords = [];
 let currentTab = 'motorist';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -43,11 +44,13 @@ function switchTab(tab) {
     document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
     document.getElementById('workshopPanel').style.display = tab === 'workshop' ? 'block' : 'none';
     document.getElementById('claimsPanel').style.display = tab === 'claims' ? 'block' : 'none';
+    document.getElementById('quickClaimsPanel').style.display = tab === 'quickclaims' ? 'block' : 'none';
 
     const titles = {
         'motorist': 'Pending Motorist Reports',
         'workshop': 'Pending Workshop Listings',
-        'claims': 'Pending Claim Requests'
+        'claims': 'Pending Claim Requests',
+        'quickclaims': 'Pending Quick Claims'
     };
     document.getElementById('sectionTitle').textContent = titles[tab] || 'Pending';
 }
@@ -106,12 +109,12 @@ function showDashboard() {
 }
 
 async function loadAllPending() {
-    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadPendingClaimRequests()]);
+    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadPendingClaimRequests(), loadPendingWorkshopQuickClaims()]);
     updateTotalPendingCount();
 }
 
 function updateTotalPendingCount() {
-    const total = pendingMotoristRecords.length + pendingWorkshopRecords.length + pendingClaimRecords.length;
+    const total = pendingMotoristRecords.length + pendingWorkshopRecords.length + pendingClaimRecords.length + pendingQuickClaimRecords.length;
     document.getElementById('pendingCount').textContent = total;
 }
 
@@ -643,6 +646,163 @@ async function handleClaimReject(record) {
 
 function removeClaimFromView(id) {
     const elements = document.querySelectorAll(`[data-claim-id="${id}"]`);
+    elements.forEach(el => {
+        el.classList.add('row-removing');
+        setTimeout(() => el.remove(), 300);
+    });
+}
+
+// ─── QUICK CLAIMS (Prices page "Is this your workshop?" modal) ────────────
+
+async function loadPendingWorkshopQuickClaims() {
+    const { data, error } = await supabaseClient
+        .from('workshop_claims')
+        .select('id, created_at, workshop_name, contact_email, message, status')
+        .eq('status', 'Pending')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error('Failed to load quick claims:', error);
+        return;
+    }
+
+    pendingQuickClaimRecords = data || [];
+    renderWorkshopQuickClaims();
+}
+
+function renderWorkshopQuickClaims() {
+    const tableBody = document.getElementById('quickClaimsBody');
+    const cardsContainer = document.getElementById('quickClaimsCards');
+    const emptyState = document.getElementById('emptyStateQuickClaims');
+    const tableWrap = document.getElementById('quickClaimsTableWrap');
+    const cardsWrap = document.getElementById('quickClaimsCards');
+
+    if (pendingQuickClaimRecords.length === 0) {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (cardsWrap) cardsWrap.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (cardsWrap) cardsWrap.classList.remove('hidden');
+
+    tableBody.innerHTML = pendingQuickClaimRecords.map(record => buildQuickClaimTableRow(record)).join('');
+    cardsContainer.innerHTML = pendingQuickClaimRecords.map(record => buildQuickClaimCard(record)).join('');
+
+    pendingQuickClaimRecords.forEach(record => {
+        const approveBtns = document.querySelectorAll(`[data-approve-quickclaim="${record.id}"]`);
+        const rejectBtns = document.querySelectorAll(`[data-reject-quickclaim="${record.id}"]`);
+        approveBtns.forEach(btn => btn.addEventListener('click', () => handleQuickClaimApprove(record)));
+        rejectBtns.forEach(btn => btn.addEventListener('click', () => handleQuickClaimReject(record)));
+    });
+}
+
+function buildQuickClaimTableRow(record) {
+    return `
+        <tr data-quickclaim-id="${record.id}">
+            <td data-label="Workshop"><strong>${escapeHTML(record.workshop_name || 'Unknown')}</strong></td>
+            <td data-label="Contact Email">${escapeHTML(record.contact_email)}</td>
+            <td data-label="Message">${escapeHTML(record.message || 'No message provided')}</td>
+            <td data-label="Submitted">${formatDate(record.created_at)}</td>
+            <td data-label="Actions">
+                <div class="action-buttons">
+                    <button class="btn btn-approve" data-approve-quickclaim="${record.id}">Approve</button>
+                    <button class="btn btn-reject" data-reject-quickclaim="${record.id}">Reject</button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function buildQuickClaimCard(record) {
+    return `
+        <article class="admin-card" data-quickclaim-id="${record.id}">
+            <div class="admin-card-header">
+                <h3>${escapeHTML(record.workshop_name || 'Unknown')}</h3>
+                <span class="admin-card-date">${formatDate(record.created_at)}</span>
+            </div>
+            <div class="admin-card-grid">
+                <div class="admin-card-field" style="grid-column:1/-1;">
+                    <span class="field-label">Contact Email</span>
+                    <span class="field-value">${escapeHTML(record.contact_email)}</span>
+                </div>
+                <div class="admin-card-field" style="grid-column:1/-1;">
+                    <span class="field-label">Message</span>
+                    <span class="field-value">${escapeHTML(record.message || 'No message provided')}</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-approve" data-approve-quickclaim="${record.id}">Approve</button>
+                <button class="btn btn-reject" data-reject-quickclaim="${record.id}">Reject</button>
+            </div>
+        </article>
+    `;
+}
+
+async function handleQuickClaimApprove(record) {
+    const buttons = document.querySelectorAll(`[data-approve-quickclaim="${record.id}"], [data-reject-quickclaim="${record.id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    const { error } = await supabaseClient
+        .from('workshop_claims')
+        .update({ status: 'Approved' })
+        .eq('id', record.id);
+
+    if (error) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to approve quick claim. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    removeQuickClaimFromView(record.id);
+    pendingQuickClaimRecords = pendingQuickClaimRecords.filter(r => r.id !== record.id);
+    updateTotalPendingCount();
+
+    if (pendingQuickClaimRecords.length === 0) {
+        document.getElementById('quickClaimsTableWrap').classList.add('hidden');
+        document.getElementById('quickClaimsCards').classList.add('hidden');
+        document.getElementById('emptyStateQuickClaims').classList.remove('hidden');
+    }
+}
+
+async function handleQuickClaimReject(record) {
+    if (!confirm('Are you sure you want to reject this quick claim?')) {
+        return;
+    }
+
+    const buttons = document.querySelectorAll(`[data-approve-quickclaim="${record.id}"], [data-reject-quickclaim="${record.id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    const { error } = await supabaseClient
+        .from('workshop_claims')
+        .update({ status: 'Rejected' })
+        .eq('id', record.id);
+
+    if (error) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to reject quick claim. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    removeQuickClaimFromView(record.id);
+    pendingQuickClaimRecords = pendingQuickClaimRecords.filter(r => r.id !== record.id);
+    updateTotalPendingCount();
+
+    if (pendingQuickClaimRecords.length === 0) {
+        document.getElementById('quickClaimsTableWrap').classList.add('hidden');
+        document.getElementById('quickClaimsCards').classList.add('hidden');
+        document.getElementById('emptyStateQuickClaims').classList.remove('hidden');
+    }
+}
+
+function removeQuickClaimFromView(id) {
+    const elements = document.querySelectorAll(`[data-quickclaim-id="${id}"]`);
     elements.forEach(el => {
         el.classList.add('row-removing');
         setTimeout(() => el.remove(), 300);
