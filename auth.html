@@ -9,20 +9,10 @@
 </head>
 <body>
 
-    <nav class="navbar navbar--top">
+<nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
-        <button class="hamburger" id="hamburgerToggle" aria-label="Toggle menu">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        <ul class="nav-links" id="navLinksContainer">
-            <li><a href="motorist-home.html">Home</a></li>
-            <li><a href="prices.html">Prices</a></li>
-            <li><a href="workshops.html">Workshops</a></li>
-        </ul>
     </nav>
 
     <main class="container" style="padding-top:2rem;">
@@ -111,27 +101,9 @@
         </p>
     </footer>
 
-    <nav class="bottom-nav">
-        <a href="motorist-home.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="#icon-home"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Home</span>
-        </a>
-        <a href="workshops.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Workshops</span>
-        </a>
-        <a href="list-workshop.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="#icon-addlisting"></use></svg>
-            </span>
-            <span class="bottom-nav-label">List Workshop</span>
-        </a>
+<nav class="bottom-nav bottom-nav--legal-only">
+        <p class="bottom-nav-legal">&copy; Veriyo <a href="privacy.html">Privacy Policy</a></p>
     </nav>
-
     <div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
     <script>
     fetch('icons.svg')
