@@ -40,7 +40,7 @@ body {
     font-family: var(--font-sans);
     line-height: 1.5;
     padding-top: 70px;
-    padding-bottom: 80px;
+    padding-bottom: 48px;
 }
 
 a {
@@ -50,80 +50,6 @@ a {
 
 button, input, select, textarea {
     font-family: inherit;
-}
-
-/* Navigation Bar */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
-    background-color: var(--surface-color);
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 2rem;
-    z-index: 1000;
-}
-
-.nav-logo {
-    display: flex;
-    align-items: center;
-}
-
-.nav-links {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-    align-items: center;
-}
-
-.nav-links a {
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: var(--transition);
-    padding: 0.5rem 0;
-    position: relative;
-}
-
-.nav-links a:hover {
-    color: var(--primary-accent);
-}
-
-.nav-links a.active {
-    color: var(--primary-accent);
-}
-
-.nav-links a.active::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--primary-accent);
-}
-
-/* Hamburger Menu Icon */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-.hamburger span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background-color: var(--text-primary);
-    border-radius: 2px;
-    transition: var(--transition);
 }
 
 /* Main Container Layout */
@@ -569,10 +495,17 @@ button, input, select, textarea {
     .form-group-row { grid-template-columns: 1fr; gap: 0; }
     .checkbox-grid { grid-template-columns: 1fr; }
 
-    .bottom-nav {
+    body {
+        padding-bottom: 80px;
+    }
+    .bottom-nav-links {
+        display: flex;
         width: 100%;
         padding: 0.4rem 0;
         gap: clamp(1rem, 12vw, 2rem);
+    }
+    .bottom-nav-legal {
+        display: none;
     }
     .bottom-nav-item {
         padding: 0.4rem 0.25rem;
@@ -583,17 +516,11 @@ button, input, select, textarea {
     }
 }
 /* ==========================================================================
-   Logo Optimization: Scale Tuning & Dark-Surface Blending Fix
-   ========================================================================== */
-.nav-logo img {
-    height: 50px;
-    width: auto;
-    display: block;
-    margin: 0;
-}
-
-/* ==========================================================================
-   Bottom Navigation Bar — Floating Design
+   Bottom Navigation Bar — fixed shell. On desktop it shows only the legal
+   line; on mobile (see 768px breakpoint above) it shows the nav items
+   instead. Pages that need no nav tabs at all (e.g. the sign-in page) add
+   the bottom-nav--legal-only modifier so the legal line stays visible at
+   every breakpoint.
    ========================================================================== */
 
 .bottom-nav {
@@ -603,12 +530,36 @@ button, input, select, textarea {
     width: 100%;
     background-color: var(--surface-color);
     border-top: 1px solid var(--border-color);
-    display: flex;
+    z-index: 1000;
+}
+
+.bottom-nav-links {
+    display: none;
     justify-content: center;
     align-items: center;
     gap: clamp(1.5rem, 8vw, 4rem);
-    z-index: 1000;
     padding: 0.5rem 0;
+}
+
+.bottom-nav-legal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.bottom-nav-legal a {
+    color: var(--secondary-accent);
+    text-decoration: underline;
+    margin-left: 0.35rem;
+}
+
+.bottom-nav--legal-only .bottom-nav-legal {
+    display: flex !important;
 }
 
 .bottom-nav-item {
@@ -678,7 +629,10 @@ button, input, select, textarea {
 }
 
 .nav-logo img {
-    height: 36px;
+    height: 52px;
+    width: auto;
+    display: block;
+    margin: 0;
 }
 
 .nav-links {
@@ -711,32 +665,9 @@ button, input, select, textarea {
     color: var(--primary-accent);
 }
 
-/* Hamburger for mobile */
-.hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-}
-
-.hamburger span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background-color: var(--text-primary);
-    border-radius: 2px;
-    transition: var(--transition);
-}
-
 @media (max-width: 768px) {
     .nav-links {
         display: none;
-    }
-    .hamburger {
-        display: flex;
     }
     .navbar {
         padding: 0 1rem;
@@ -2739,7 +2670,9 @@ button, input, select, textarea {
     cursor: not-allowed;
 }
 
-/* Suppress old hamburger nav on navbar--top pages */
+/* Legacy safeguard: hide any stray .nav-links that end up as a sibling of
+   .navbar--top rather than nested inside it (should not occur, kept as a
+   guard against duplicate/leftover markup) */
 .navbar--top ~ * .nav-links,
 .navbar--top + .nav-links {
     display: none !important;
