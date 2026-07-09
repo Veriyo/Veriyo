@@ -107,14 +107,14 @@
         </p>
     </footer>
 
-    <nav class="bottom-nav">
-        <a href="workshop-home.html" class="bottom-nav-item active">
+ <nav class="bottom-nav">
+        <a href="workshop-home.html" class="bottom-nav-item active" data-tab="overview">
             <span class="bottom-nav-icon">
                 <svg width="22" height="22" aria-hidden="true"><use href="#icon-home"></use></svg>
             </span>
             <span class="bottom-nav-label">Home</span>
         </a>
-        <a href="workshop-home.html" class="bottom-nav-item" id="bottomNavMyListing" style="display:none;">
+        <a href="workshop-home.html#my-listing" class="bottom-nav-item" id="bottomNavMyListing" data-tab="my-listing" style="display:none;">
             <span class="bottom-nav-icon">
                 <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
             </span>
@@ -156,11 +156,18 @@
             document.querySelectorAll('.wh-tab-btn').forEach(function (btn) {
                 btn.classList.toggle('wh-tab-btn--active', btn.dataset.tab === tabId);
             });
+            document.querySelectorAll('.bottom-nav-item[data-tab]').forEach(function (item) {
+                item.classList.toggle('active', item.dataset.tab === tabId);
+            });
             activeTab = tabId;
             if ((tabId === 'my-listing' || tabId === 'list') && !listingLoaded && currentSession) {
                 loadListing();
             }
+            if (history.replaceState) {
+                history.replaceState(null, '', tabId === 'overview' ? 'workshop-home.html' : 'workshop-home.html#' + tabId);
+            }
         }
+
 
         function statusBadgeClass(status) {
             if (!status) return 'badge-neutral';
@@ -239,7 +246,7 @@
             });
         }
 
-        document.addEventListener('DOMContentLoaded', async function () {
+ document.addEventListener('DOMContentLoaded', async function () {
             var result = await _sb.auth.getSession();
             var session = result.data.session;
             currentSession = session;
@@ -249,6 +256,13 @@
             if (session) {
                 if (myListingTab) myListingTab.style.display = '';
                 if (bottomNavMyListing) bottomNavMyListing.style.display = '';
+
+                var requestedTab = window.location.hash.replace('#', '');
+                if (requestedTab === 'my-listing' || requestedTab === 'list') {
+                    showTab(requestedTab);
+                } else {
+                    showTab('overview');
+                }
             } else {
                 if (myListingTab) myListingTab.style.display = 'none';
                 if (bottomNavMyListing) bottomNavMyListing.style.display = 'none';
