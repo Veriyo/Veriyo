@@ -1,28 +1,11 @@
+
 /**
  * Veriyo | Built for South African drivers
  * Global Framework Architecture & Navigation Operations
  */
 
-// ── Veriyo Alerts via ntfy.sh ──────────────────────────────
-const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1520683709831974952/kFbtGbEcC8-dh2aaox4s3lGUL_pOQ_oKO2Euaq_5T3GS-tXm6a6fcQ5P91sIa2Ov7Jjq';
-function sendAlert(message) {
-    fetch(DISCORD_WEBHOOK, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: message })
-    }).catch(() => {});
-}
-// ───────────────────────────────────────────────────────────
-
 document.addEventListener('DOMContentLoaded', () => {
     initNavigationHandlers();
-
-    // Only fire alert if user stays on page for 4 seconds — filters bots and refreshes
-    setTimeout(() => {
-        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-        const visitTime = new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' });
-        sendAlert(`Visit on ${currentPage} at ${visitTime}`);
-    }, 4000);
 });
 
 /**
@@ -68,4 +51,4 @@ function initNavigationHandlers() {
             linkAnchor.classList.remove('active');
         }
     });
-}      
+}
