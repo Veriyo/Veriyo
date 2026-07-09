@@ -184,7 +184,7 @@ function showPortal() {
     document.getElementById('partnerCodeDisplay').textContent = currentPartner.partner_code;
     document.getElementById('partnerStatusBadge').textContent = currentPartner.status;
 
-    const referralLink = 'https://veriyo.co.za/?ref=' + currentPartner.referral_code;
+const referralLink = 'https://veriyo.co.za/?ref=' + currentPartner.partner_code;
     document.getElementById('referralLinkInput').value = referralLink;
 
     showTab('tasks');
