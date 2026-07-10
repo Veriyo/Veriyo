@@ -47,10 +47,18 @@
   </symbol>
 
   <!-- CLOCK: solid ring with hour/minute hands -->
-  <symbol id="icon-clock" viewBox="0 0 24 24" fill="currentColor">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 22a10 10 0 100-20 10 10 0 000 20zm0-2a8 8 0 110-16 8 8 0 010 16z"/>
-    <path d="M13 7h-2v5.41l4.29 4.3 1.42-1.42L13 11.59V7z"/>
-  </symbol>
+  
+     width="28"
+     height="28"
+     viewBox="0 0 24 24"
+     fill="none"
+     stroke="currentColor"
+     stroke-width="2"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <polyline points="12 6 12 12 16 14"/>
+
 
   <!-- CALENDAR: page with two hanger rings and a 3x2 grid of 6 dots -->
   <symbol id="icon-calendar" viewBox="0 0 24 24" fill="currentColor">
@@ -70,9 +78,11 @@
   </symbol>
 
   <!-- CHAT: solid speech bubble with tail -->
-  <symbol id="icon-chat" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M4 4h16a1 1 0 011 1v11a1 1 0 01-1 1H9l-4.5 3.6A.6.6 0 013.5 20.1V17H4a1 1 0 01-1-1V5a1 1 0 011-1z"/>
-  </symbol>
+     width="22"
+     height="22"
+     viewBox="0 0 24 24"
+     fill="currentColor">
+    <path d="M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4l4 4 4-4h4a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/>
 
   <!-- TAG: solid price tag with hole -->
   <symbol id="icon-tag" viewBox="0 0 24 24" fill="currentColor">
