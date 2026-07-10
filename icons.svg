@@ -47,10 +47,27 @@
   </symbol>
 
   <!-- CLOCK: solid ring with hour/minute hands -->
-    <symbol id="icon-clock" viewBox="0 0 24 24" fill="currentColor">
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 22a10 10 0 100-20 10 10 0 000 20zm0-2a8 8 0 110-16 8 8 0 010 16z"/>
-    <path d="M13 7h-2v5.41l4.29 4.3 1.42-1.42L13 11.59V7z"/>
-  </symbol>
+<symbol id="icon-clock" viewBox="0 0 24 24" fill="none"
+    stroke="currentColor"
+    stroke-width="2.2"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+
+    <!-- Single clock face -->
+    <circle cx="12" cy="12" r="8"/>
+
+    <!-- Hour hand -->
+    <path d="M12 12V8"/>
+
+    <!-- Minute hand -->
+    <path d="M12 12L15.5 14.5"/>
+
+    <!-- Centre pivot -->
+    <circle cx="12" cy="12" r="0.8"
+        fill="currentColor"
+        stroke="none"/>
+
+</symbol>
 
 
   <!-- CALENDAR: page with two hanger rings and a 3x2 grid of 6 dots -->
