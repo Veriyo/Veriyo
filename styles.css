@@ -2684,3 +2684,299 @@ button, input, select, textarea {
 .navbar--top + .nav-links {
     display: none !important;
 }
+/* ==========================================================================
+   Workshop Profile Page (workshop-profile.html / workshop-home.html)
+   Matches the PWC-style profile mockup: photo hero w/ rating badge,
+   icon detail row, chat CTA, collapsible pricing accordion, submissions.
+   ========================================================================== */
+
+.profile-hero {
+    display: flex;
+    gap: 1.5rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.profile-photo-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 260px;
+    max-width: 100%;
+    height: 170px;
+}
+
+.profile-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: calc(var(--radius) + 2px);
+    overflow: hidden;
+    background: radial-gradient(circle at 30% 20%, #1c2838 0%, #0d1420 70%);
+    border: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.profile-rating-badge {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(10, 15, 30, 0.85);
+    backdrop-filter: blur(4px);
+    border-radius: 20px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.profile-rating-badge svg {
+    color: var(--primary-accent);
+    flex-shrink: 0;
+}
+
+.profile-hero-body {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.profile-name {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.profile-location {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+}
+
+.profile-location svg {
+    color: var(--primary-accent);
+    flex-shrink: 0;
+}
+
+.profile-description {
+    color: var(--text-secondary);
+    font-size: 0.92rem;
+    line-height: 1.5;
+    margin-top: 0.15rem;
+}
+
+/* Details row: hours / years / specialisations, each with a circled icon */
+.profile-details-row {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    gap: 1.25rem 0;
+}
+
+.profile-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    flex: 1 1 200px;
+    padding: 0 1.25rem;
+    border-left: 1px solid var(--border-color);
+}
+
+.profile-detail:first-child {
+    border-left: none;
+    padding-left: 0;
+}
+
+.profile-detail-icon {
+    flex-shrink: 0;
+    padding: 8px;
+    box-sizing: content-box;
+    border: 2px solid var(--primary-accent);
+    border-radius: 50%;
+    color: var(--primary-accent);
+}
+
+.profile-detail-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.profile-detail-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+}
+
+/* Chat CTA */
+.profile-chat-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+}
+
+.profile-chat-btn svg {
+    flex-shrink: 0;
+}
+
+/* Collapsible accordion (Indicative Service Pricing) */
+.profile-accordion-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font-family: inherit;
+    transition: var(--transition);
+}
+
+.profile-accordion-header:hover {
+    border-color: var(--primary-accent);
+}
+
+.profile-accordion-header[aria-expanded="true"] {
+    border-radius: var(--radius) var(--radius) 0 0;
+    margin-bottom: 0;
+}
+
+.profile-accordion-icon {
+    flex-shrink: 0;
+    color: var(--primary-accent);
+}
+
+.profile-accordion-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.15rem;
+    min-width: 0;
+}
+
+.profile-accordion-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-accent);
+}
+
+.profile-accordion-subtitle {
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+}
+
+.profile-accordion-chevron {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease-in-out;
+}
+
+.profile-accordion-header[aria-expanded="true"] .profile-accordion-chevron {
+    transform: rotate(180deg);
+}
+
+.profile-accordion-body {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    padding: 1.5rem;
+    margin-top: -1px;
+    margin-bottom: 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1rem;
+}
+
+.profile-accordion-body[hidden] {
+    display: none;
+}
+
+/* "What Drivers Have Paid Here" section header */
+.profile-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.profile-section-header > svg {
+    flex-shrink: 0;
+    color: var(--primary-accent);
+}
+
+.profile-see-all {
+    margin-left: auto;
+    flex-shrink: 0;
+    color: var(--primary-accent);
+    font-weight: 600;
+    font-size: 0.88rem;
+}
+
+.profile-see-all:hover {
+    text-decoration: underline;
+}
+
+.profile-submissions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+    .profile-submissions-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .profile-hero { flex-direction: column; }
+    .profile-photo-wrap { width: 100%; height: 190px; }
+    .profile-detail {
+        flex: 1 1 100%;
+        border-left: none;
+        border-top: 1px solid var(--border-color);
+        padding: 1rem 0 0;
+    }
+    .profile-detail:first-child { border-top: none; padding-top: 0; }
+    .profile-submissions-grid { grid-template-columns: 1fr; }
+}
