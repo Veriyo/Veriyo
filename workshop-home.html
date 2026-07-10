@@ -120,12 +120,21 @@
             </div>
         </div>
 
+<div id="profileSignInRequired" style="display:none; text-align:center; padding:4rem 1rem;">
+            <p style="color:var(--text-secondary); margin-bottom:1.25rem;">Sign in to view your workshop dashboard.</p>
+            <a href="auth.html" class="btn btn-primary">Sign In</a>
+        </div>
+
+        <div id="profileNoListingYet" style="display:none; text-align:center; padding:4rem 1rem;">
+            <p style="color:var(--text-secondary); margin-bottom:1.25rem;">You haven't created a workshop listing yet.</p>
+            <a href="list-workshop.html" class="btn btn-primary">Create My Listing</a>
+        </div>
+
         <div id="profileError" style="display:none; text-align:center;
             padding:4rem 1rem; color:var(--danger-color);">
-            Workshop not found.
+            Something went wrong loading your workshop. Please try again.
         </div>
     </main>
-
 
 
 <nav class="bottom-nav">
@@ -161,6 +170,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script src="main.js"></script>
-    <script src="workshop-profile.js"></script>
+<script src="workshop-home.js"></script>
 </body>
 </html>
