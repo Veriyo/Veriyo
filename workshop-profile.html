@@ -24,48 +24,55 @@
         <div id="profileLoading" style="text-align:center; padding:4rem 1rem;
             color:var(--text-secondary);">Loading workshop profile...</div>
 
-        <div id="profileContent" style="display:none;">
+<div id="profileContent" style="display:none;">
 
-            <!-- Workshop Header -->
-            <div style="background:var(--surface-color); border:1px solid var(--border-color);
-                border-radius:var(--radius); padding:2rem; margin-bottom:1.5rem;">
-                <div style="display:flex; justify-content:space-between;
-                    align-items:flex-start; flex-wrap:wrap; gap:1rem;">
-                    <div>
-                        <h1 id="profileName" style="font-size:1.75rem; font-weight:700;
-                            margin-bottom:0.25rem;"></h1>
-                        <p id="profileLocation" style="color:var(--text-secondary);
-                            font-size:0.95rem;"></p>
+            <!-- Workshop Hero -->
+            <div class="profile-hero">
+                <div class="profile-photo-wrap">
+                    <div class="profile-photo" id="profilePhoto">
+                        <svg width="40" height="40" aria-hidden="true"><use href="icons.svg#icon-tools"></use></svg>
                     </div>
-                    <div style="display:flex; flex-direction:column; gap:0.5rem;
-                        align-items:flex-end;">
+                    <span class="profile-rating-badge" id="profileRatingBadge" style="display:none;">
+                        <svg width="13" height="13" aria-hidden="true"><use href="icons.svg#icon-star"></use></svg>
+                        <span id="profileRatingValue"></span>
+                    </span>
+                </div>
+
+                <div class="profile-hero-body">
+                    <div class="profile-name-row">
+                        <h1 id="profileName" class="profile-name"></h1>
                         <span id="profileRmi" class="badge"></span>
                         <span id="profileQuote" class="badge"></span>
                     </div>
+                    <p class="profile-location">
+                        <svg width="14" height="14" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>
+                        <span id="profileLocation"></span>
+                    </p>
+                    <p id="profileDescription" class="profile-description" style="display:none;"></p>
                 </div>
+            </div>
 
-                <div style="margin-top:1.25rem; display:grid;
-                    grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:1rem;">
+            <!-- Details Row -->
+            <div class="profile-details-row">
+                <div class="profile-detail">
+                    <svg class="profile-detail-icon" width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-clock"></use></svg>
                     <div>
-                        <p style="font-size:0.78rem; color:var(--text-secondary);
-                            font-weight:600; text-transform:uppercase;
-                            letter-spacing:0.5px;">Operating Hours</p>
-                        <p id="profileHours" style="font-size:0.92rem;
-                            margin-top:0.25rem;"></p>
+                        <p class="profile-detail-label">Operating Hours</p>
+                        <p id="profileHours" class="profile-detail-value"></p>
                     </div>
+                </div>
+                <div class="profile-detail">
+                    <svg class="profile-detail-icon" width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-calendar"></use></svg>
                     <div>
-                        <p style="font-size:0.78rem; color:var(--text-secondary);
-                            font-weight:600; text-transform:uppercase;
-                            letter-spacing:0.5px;">Years in Operation</p>
-                        <p id="profileYears" style="font-size:0.92rem;
-                            margin-top:0.25rem;"></p>
+                        <p class="profile-detail-label">Years in Operation</p>
+                        <p id="profileYears" class="profile-detail-value"></p>
                     </div>
+                </div>
+                <div class="profile-detail">
+                    <svg class="profile-detail-icon" width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-tools"></use></svg>
                     <div>
-                        <p style="font-size:0.78rem; color:var(--text-secondary);
-                            font-weight:600; text-transform:uppercase;
-                            letter-spacing:0.5px;">Specialisations</p>
-                        <p id="profileSpec" style="font-size:0.92rem;
-                            margin-top:0.25rem;"></p>
+                        <p class="profile-detail-label">Specialisations</p>
+                        <p id="profileSpec" class="profile-detail-value"></p>
                     </div>
                 </div>
             </div>
@@ -79,22 +86,33 @@
 
             <!-- Chat CTA -->
             <div class="chat-workshop-btn-wrap">
-                <button id="chatWorkshopBtn" class="btn btn-primary">&#128172; Chat with this Workshop</button>
+                <button id="chatWorkshopBtn" class="btn btn-primary profile-chat-btn">
+                    <svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-chat"></use></svg>
+                    Chat with this Workshop
+                </button>
             </div>
 
-            <!-- Service Pricing -->
-            <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;
-                color:var(--primary-accent);">Indicative Service Pricing</h2>
-            <div id="profilePricing" style="background:var(--surface-color);
-                border:1px solid var(--border-color); border-radius:var(--radius);
-                padding:1.5rem; margin-bottom:1.5rem; display:grid;
-                grid-template-columns:repeat(auto-fit, minmax(160px,1fr));
-                gap:1rem;"></div>
+            <!-- Service Pricing (collapsible) -->
+            <button type="button" class="profile-accordion-header" id="pricingAccordionToggle" aria-expanded="false" aria-controls="profilePricing">
+                <svg class="profile-accordion-icon" width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-tag"></use></svg>
+                <span class="profile-accordion-text">
+                    <span class="profile-accordion-title">Indicative Service Pricing</span>
+                    <span class="profile-accordion-subtitle">View typical prices for common services.</span>
+                </span>
+                <svg class="profile-accordion-chevron" width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-chevron-down"></use></svg>
+            </button>
+            <div id="profilePricing" class="profile-accordion-body" hidden></div>
 
             <!-- Motorist Submissions -->
-            <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;
-                color:var(--primary-accent);">What Drivers Have Paid Here</h2>
-            <div id="profileSubmissions" class="prices-grid"></div>
+            <div class="profile-section-header">
+                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-people"></use></svg>
+                <span class="profile-accordion-text">
+                    <span class="profile-accordion-title" style="color:var(--primary-accent);">What Drivers Have Paid Here</span>
+                    <span class="profile-accordion-subtitle">Real prices paid by other drivers.</span>
+                </span>
+                <a id="profileSeeAll" class="profile-see-all" href="prices.html" style="display:none;"></a>
+            </div>
+            <div id="profileSubmissions" class="profile-submissions-grid"></div>
 
             <div id="profileNoSubmissions" style="display:none; text-align:center;
                 padding:2rem; color:var(--text-secondary); font-size:0.9rem;">
