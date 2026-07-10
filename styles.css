@@ -619,6 +619,13 @@ button, input, select, textarea {
     z-index: 1000;
 }
 
+.navbar > .nav-links {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 .navbar--top {
     display: flex !important;
 }
