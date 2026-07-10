@@ -309,30 +309,16 @@
         }
     }
 
-    // ─── AUTH & BOTTOM NAV CHECK ────────────────────────────────────────────────
 
-async function checkSessionForBottomNav() {
-        const { data: { session } } = await _supabaseLW.auth.getSession();
-        const myListingNav = document.getElementById('bottomNavMyListing');
-        const topNavMyListing = document.getElementById('topNavMyListing');
-        if (session) {
-            if (myListingNav) myListingNav.style.display = '';
-            if (topNavMyListing) topNavMyListing.style.display = '';
-        } else {
-            if (myListingNav) myListingNav.style.display = 'none';
-            if (topNavMyListing) topNavMyListing.style.display = 'none';
-        }
-    }
 
     // ─── INIT ────────────────────────────────────────────────────────────────────
 
     document.addEventListener('DOMContentLoaded', async function () {
         const { data: { session } } = await _supabaseLW.auth.getSession();
 
-        if (!session) {
+if (!session) {
             document.getElementById('authRequiredSection').style.display = 'block';
             document.getElementById('mainContent').style.display = 'none';
-            checkSessionForBottomNav();
             return;
         }
 
@@ -342,7 +328,7 @@ async function checkSessionForBottomNav() {
         if (emailDisplay) emailDisplay.textContent = session.user.email;
 
         renderServiceCards();
-        checkSessionForBottomNav();
+
 
         // Search button
         const searchBtn = document.getElementById('searchBtn');
