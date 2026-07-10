@@ -498,14 +498,14 @@ button, input, select, textarea {
     body {
         padding-bottom: 80px;
     }
-    .bottom-nav-links {
-        display: flex;
+.bottom-nav-links {
+        display: flex !important;
         width: 100%;
         padding: 0.4rem 0;
         gap: clamp(1rem, 12vw, 2rem);
     }
     .bottom-nav-legal {
-        display: none;
+        display: none !important;
     }
     .bottom-nav-item {
         padding: 0.4rem 0.25rem;
