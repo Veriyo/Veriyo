@@ -13,6 +13,11 @@
     <a href="welcome.html" class="nav-logo">
         <img src="logo.png" alt="Veriyo">
     </a>
+    <ul class="nav-links">
+        <li><a href="workshop-home.html">Home</a></li>
+        <li id="topNavMyListing" style="display:none;"><a href="workshop-home.html#my-listing">My Listing</a></li>
+        <li><a href="list-workshop.html" class="active">List Workshop</a></li>
+    </ul>
 </nav>
 
 <div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
@@ -283,28 +288,29 @@
         </p>
     </footer>
 
-    <nav class="bottom-nav">
-        <a href="workshop-home.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Home</span>
-        </a>
-        <a href="workshop-home.html#my-listing" class="bottom-nav-item" id="bottomNavMyListing" style="display:none;">
-
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
-            </span>
-            <span class="bottom-nav-label">My Listing</span>
-        </a>
-        <a href="list-workshop.html" class="bottom-nav-item active">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
-            </span>
-            <span class="bottom-nav-label">List Workshop</span>
-        </a>
+<nav class="bottom-nav">
+        <div class="bottom-nav-links">
+            <a href="workshop-home.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Home</span>
+            </a>
+            <a href="workshop-home.html#my-listing" class="bottom-nav-item" id="bottomNavMyListing" style="display:none;">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
+                </span>
+                <span class="bottom-nav-label">My Listing</span>
+            </a>
+            <a href="list-workshop.html" class="bottom-nav-item active">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
+                </span>
+                <span class="bottom-nav-label">List Workshop</span>
+            </a>
+        </div>
+        <p class="bottom-nav-legal">&copy; Veriyo <a href="privacy.html">Privacy Policy</a></p>
     </nav>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script src="list-workshop.js"></script>
