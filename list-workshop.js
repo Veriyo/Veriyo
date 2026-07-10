@@ -311,13 +311,16 @@
 
     // ─── AUTH & BOTTOM NAV CHECK ────────────────────────────────────────────────
 
-    async function checkSessionForBottomNav() {
+async function checkSessionForBottomNav() {
         const { data: { session } } = await _supabaseLW.auth.getSession();
         const myListingNav = document.getElementById('bottomNavMyListing');
-        if (session && myListingNav) {
-            myListingNav.style.display = '';
-        } else if (myListingNav) {
-            myListingNav.style.display = 'none';
+        const topNavMyListing = document.getElementById('topNavMyListing');
+        if (session) {
+            if (myListingNav) myListingNav.style.display = '';
+            if (topNavMyListing) topNavMyListing.style.display = '';
+        } else {
+            if (myListingNav) myListingNav.style.display = 'none';
+            if (topNavMyListing) topNavMyListing.style.display = 'none';
         }
     }
 
