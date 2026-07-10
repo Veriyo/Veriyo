@@ -383,12 +383,18 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar--top">
+
+<nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
+        <ul class="nav-links">
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Prices</a></li>
+            <li><a href="report.html">Report</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
+        </ul>
     </nav>
-
     <main class="tracker-container" style="max-width:800px; margin:0 auto; padding:2rem 1rem;">
         <header class="tracker-header">
             <h1>Repair Status Tracker</h1>
@@ -484,33 +490,36 @@
             <a href="privacy.html" style="color: var(--secondary-accent); text-decoration: underline; font-size: 0.85rem;">Privacy Policy</a>
         </p>
     </footer>
-
-    <nav class="bottom-nav">
-        <a href="motorist-home.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Home</span>
-        </a>
-        <a href="prices.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-prices"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Prices</span>
-        </a>
-        <a href="report.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Report</span>
-        </a>
-        <a href="workshops.html" class="bottom-nav-item">
-            <span class="bottom-nav-icon">
-                <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>
-            </span>
-            <span class="bottom-nav-label">Workshops</span>
-        </a>
+<nav class="bottom-nav">
+        <div class="bottom-nav-links">
+            <a href="motorist-home.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Home</span>
+            </a>
+            <a href="prices.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-prices"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Prices</span>
+            </a>
+            <a href="report.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Report</span>
+            </a>
+            <a href="workshops.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Workshops</span>
+            </a>
+        </div>
+        <p class="bottom-nav-legal">&copy; Veriyo <a href="privacy.html">Privacy Policy</a></p>
     </nav>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="auth.js"></script>
     <script src="main.js"></script>
