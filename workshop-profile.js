@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderProfile(workshop, submissions || []);
 
-    // Chat button handler
+// Chat button handler
     const chatBtn = document.getElementById('chatWorkshopBtn');
     if (chatBtn && workshopId) {
         chatBtn.addEventListener('click', async function () {
@@ -58,6 +58,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 sessionStorage.setItem('veriyo_chat_redirect', 'chat.html?workshop_id=' + encodeURIComponent(workshopId));
                 window.location.href = 'auth.html';
             }
+        });
+    }
+
+    // Pricing accordion toggle
+    const accordionToggle = document.getElementById('pricingAccordionToggle');
+    const accordionBody = document.getElementById('profilePricing');
+    if (accordionToggle && accordionBody) {
+        accordionToggle.addEventListener('click', function () {
+            const isOpen = accordionToggle.getAttribute('aria-expanded') === 'true';
+            accordionToggle.setAttribute('aria-expanded', String(!isOpen));
+            accordionBody.hidden = isOpen;
         });
     }
 });
@@ -80,6 +91,29 @@ function renderProfile(w, submissions) {
     const quoteEl = document.getElementById('profileQuote');
     quoteEl.textContent = w.written_quote === 'Yes' ? 'Provides Written Quotes' : 'No Written Quotes';
     quoteEl.className = `badge ${w.written_quote === 'Yes' ? 'badge-success' : 'badge-neutral'}`;
+
+    // Photo: falls back to the tools icon placeholder already in the markup
+    // until a photo_url column exists on Workshopprofiles.
+    if (w.photo_url) {
+        const photoEl = document.getElementById('profilePhoto');
+        photoEl.innerHTML = `<img src="${escapeP(w.photo_url)}" alt="${escapeP(w.workshop_name || 'Workshop')}">`;
+    }
+
+    // Optional description/tagline, only shown if the workshop has one set.
+    if (w.description) {
+        const descEl = document.getElementById('profileDescription');
+        descEl.textContent = w.description;
+        descEl.style.display = 'block';
+    }
+
+    // Star rating badge, averaged from this workshop's approved submissions.
+    const ratedSubmissions = submissions.filter(s => s.rating && s.rating > 0);
+    if (ratedSubmissions.length > 0) {
+        const avg = ratedSubmissions.reduce((sum, s) => sum + s.rating, 0) / ratedSubmissions.length;
+        document.getElementById('profileRatingValue').textContent =
+            `${avg.toFixed(1)} (${ratedSubmissions.length})`;
+        document.getElementById('profileRatingBadge').style.display = 'flex';
+    }
 
     // Show claim banner for unowned workshops (imported by Veriyo, not yet claimed)
     if (!w.user_id && w.status === 'Approved') {
@@ -110,11 +144,18 @@ function renderProfile(w, submissions) {
     pricingContainer.innerHTML = pricingItems ||
         '<p style="color:var(--text-secondary); font-size:0.9rem;">No pricing listed.</p>';
 
-    // Render submissions
+// Render submissions (capped to 6 cards, with a "See all" link for the rest)
+    const SUBMISSIONS_LIMIT = 6;
     if (submissions.length === 0) {
         document.getElementById('profileNoSubmissions').style.display = 'block';
     } else {
-        document.getElementById('profileSubmissions').innerHTML = submissions.map(row => {
+        const seeAllEl = document.getElementById('profileSeeAll');
+        if (submissions.length > SUBMISSIONS_LIMIT) {
+            seeAllEl.textContent = `See all (${submissions.length})`;
+            seeAllEl.style.display = 'inline';
+        }
+
+        document.getElementById('profileSubmissions').innerHTML = submissions.slice(0, SUBMISSIONS_LIMIT).map(row => {
             const cost = new Intl.NumberFormat('en-ZA', {
                 style: 'currency', currency: 'ZAR', minimumFractionDigits: 0
             }).format(row.amount_paid || 0);
