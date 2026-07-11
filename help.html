@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
+    <title>Emergency Repair Help - Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .urgent-header {
+            background: var(--danger-color);
+            color: #fff;
+            padding: 1.5rem 2rem;
+            text-align: center;
+        }
+        .urgent-header h1 {
+            margin: 0;
+            font-size: 1.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .urgent-header .urgent-icon { font-size: 2rem; }
+        .help-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .help-form {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            margin-bottom: 2rem;
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+        }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .btn-search {
+            background: var(--primary-accent);
+            color: #000;
+            padding: 0.875rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .btn-search:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn-search:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .results-section { margin-top: 2rem; }
+        .results-header {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        .workshop-card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transition: box-shadow 0.2s;
+        }
+        .workshop-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+        .workshop-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+        .workshop-details { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+        .workshop-detail { display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.9rem; }
+        .workshop-rating {
+            background: var(--primary-accent);
+            color: #000;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        .btn-chat {
+            display: inline-block;
+            background: var(--success-color);
+            color: #fff;
+            padding: 0.625rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+        .btn-chat:hover { opacity: 0.85; }
+        .no-results {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+        }
+        .no-results h3 { color: var(--text-primary); margin-bottom: 0.5rem; }
+        .no-results p { color: var(--text-secondary); }
+        .loading { text-align: center; padding: 2rem; }
+        .loading-spinner {
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--primary-accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar--top" style="background:var(--danger-color);">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <ul class="nav-links">
+            <li><a href="motorist-home.html" style="color:rgba(255,255,255,0.85);">Home</a></li>
+            <li><a href="prices.html" style="color:rgba(255,255,255,0.85);">Prices</a></li>
+            <li><a href="report.html" style="color:rgba(255,255,255,0.85);">Report</a></li>
+            <li><a href="workshops.html" style="color:rgba(255,255,255,0.85);">Workshops</a></li>
+        </ul>
+    </nav>
+
+    <header class="urgent-header" style="margin-top:70px;">
+        <h1><span class="urgent-icon">&#9888;</span> Emergency Repair Help</h1>
+        <p>Find workshops near you for urgent repairs</p>
+    </header>
+
+    <main class="help-container">
+        <form id="helpForm" class="help-form">
+            <div class="form-group">
+                <label for="repairType">Repair Type</label>
+                <select id="repairType" required>
+                    <option value="">Select repair type...</option>
+                    <option value="Oil Change">Oil Change</option>
+                    <option value="Minor Service">Minor Service</option>
+                    <option value="Major Service">Major Service</option>
+                    <option value="Wheel Alignment">Wheel Alignment</option>
+                    <option value="Brake Pads">Brake Pads</option>
+                    <option value="Diagnostics">Diagnostics</option>
+                    <option value="Engine Repair">Engine Repair</option>
+                    <option value="Electrical">Electrical</option>
+                    <option value="Towing">Towing</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="problemDescription">Problem Description</label>
+                <textarea id="problemDescription" placeholder="Briefly describe your vehicle problem..." required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="suburb">Your Suburb</label>
+                <input type="text" id="suburb" placeholder="Enter your suburb..." required>
+            </div>
+            <button type="submit" class="btn-search">Find Workshops</button>
+        </form>
+
+        <section id="resultsSection" class="results-section hidden">
+            <h2 id="resultsHeader" class="results-header"></h2>
+            <div id="resultsContainer"></div>
+        </section>
+    </main>
+
+
+<nav class="bottom-nav">
+        <div class="bottom-nav-links">
+<a href="motorist-home.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Home</span>
+            </a>
+            <a href="prices.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-prices"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Prices</span>
+            </a>
+            <a href="report.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Report</span>
+            </a>
+            <a href="workshops.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Workshops</span>
+            </a>
+<p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script src="help.js"></script>
+</body>
+</html>

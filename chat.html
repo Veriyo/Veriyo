@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat — Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+    </nav>
+
+    <main class="container chat-page-container">
+
+        <!-- Motorist view: single thread -->
+        <div id="chatMotivistView" style="display:none;">
+            <div class="chat-header">
+                <a href="javascript:history.back()" class="chat-back-link">&#8592; Back</a>
+                <h1 id="chatWorkshopName" class="chat-workshop-title">Loading…</h1>
+            </div>
+            <div id="chatThread" class="chat-thread" aria-live="polite"></div>
+            <div id="chatSendError" class="chat-send-error" style="display:none;"></div>
+            <div class="chat-input-row">
+                <input type="text" id="chatInput" class="form-control chat-input"
+                    placeholder="Type a message…" autocomplete="off" maxlength="1000">
+                <button id="chatSendBtn" class="btn btn-primary chat-send-btn">Send</button>
+            </div>
+        </div>
+
+        <!-- Workshop manager view: conversation list + active thread -->
+        <div id="chatWorkshopView" style="display:none;">
+            <div class="chat-header">
+                <h1 class="chat-workshop-title">Conversations</h1>
+                <p class="chat-subtitle" id="chatManagerSubtitle"></p>
+            </div>
+            <div class="chat-manager-layout">
+                <div id="chatConvList" class="chat-conv-list">
+                    <div class="chat-conv-empty" id="chatConvEmpty" style="display:none;">No conversations yet.</div>
+                </div>
+                <div id="chatActiveThread" class="chat-active-thread" style="display:none;">
+                    <div class="chat-active-header">
+                        <span id="chatActiveMotrist"></span>
+                        <button class="chat-close-thread" id="chatCloseThread" title="Close">&#10005;</button>
+                    </div>
+                    <div id="chatManagerThread" class="chat-thread" aria-live="polite"></div>
+                    <div id="chatManagerSendError" class="chat-send-error" style="display:none;"></div>
+                    <div class="chat-input-row">
+                        <input type="text" id="chatManagerInput" class="form-control chat-input"
+                            placeholder="Reply…" autocomplete="off" maxlength="1000">
+                        <button id="chatManagerSendBtn" class="btn btn-primary chat-send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Auth required / loading state -->
+        <div id="chatAuthRequired" style="display:none; text-align:center; padding:4rem 1rem;">
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">You need to be signed in to use chat.</p>
+            <a href="auth.html" class="btn btn-primary">Sign In</a>
+        </div>
+
+        <div id="chatLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
+            Loading chat…
+        </div>
+
+    </main>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script src="chat.js"></script>
+</body>
+</html>

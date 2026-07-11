@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veriyo Admin Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="logo.png" type="image/png">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="admin-body" style="padding-bottom:100px;">
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="login-view">
+        <div class="login-card">
+            <div class="login-logo">
+                <img src="logo.png" alt="Veriyo" />
+                <h1>Veriyo Admin</h1>
+            </div>
+            <p class="login-subtitle">Sign in to manage submissions</p>
+
+            <form id="loginForm" class="login-form" autocomplete="on">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" name="email" required autocomplete="email" placeholder="admin@veriyo.co.za" />
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+                </div>
+                <div id="loginError" class="login-error" role="alert"></div>
+                <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="dashboard-view hidden">
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <img src="logo.png" alt="Veriyo" class="admin-logo" />
+                <div>
+                    <h1>Veriyo Admin</h1>
+                    <span class="admin-subtitle">Submission Management</span>
+                </div>
+            </div>
+            <div class="admin-header-right">
+                <div class="pending-count-badge">
+                    <span id="pendingCount">0</span>
+                    <span class="pending-count-label">Pending</span>
+                </div>
+                <button id="logoutBtn" class="btn btn-danger-outline">Log Out</button>
+            </div>
+        </header>
+
+        <main class="admin-main">
+            <!-- Tab Navigation -->
+            <div style="display:flex; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); flex-wrap:wrap;">
+                <button class="admin-tab-btn admin-tab-btn--active" data-tab="motorist" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid var(--primary-accent); color:var(--primary-accent); font-weight:600; cursor:pointer;">
+                    Motorist Reports
+                </button>
+                <button class="admin-tab-btn" data-tab="workshop" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Workshop Listings
+                </button>
+                <button class="admin-tab-btn" data-tab="claims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Claim Requests
+                </button>
+                <button class="admin-tab-btn" data-tab="quickclaims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Quick Claims
+                </button>
+            </div>
+
+            <div class="dashboard-toolbar">
+                <h2 id="sectionTitle">Pending Motorist Reports</h2>
+                <button id="refreshBtn" class="btn btn-secondary-outline" title="Refresh list">
+                    <span class="refresh-icon">&#8635;</span> Refresh
+                </button>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <!-- Motorist Reports Panel -->
+            <div id="motoristPanel">
+                <!-- Desktop table -->
+                <div class="admin-table-wrap">
+                    <table class="admin-table" id="submissionsTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop</th>
+                                <th>Suburb</th>
+                                <th>Vehicle</th>
+                                <th>Repair Type</th>
+                                <th>Amount Paid</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissionsBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile cards -->
+                <div id="submissionsCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateMotorist" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No pending motorist reports. All caught up.</p>
+                </div>
+            </div>
+
+            <!-- Workshop Listings Panel -->
+            <div id="workshopPanel" style="display:none;">
+                <!-- Desktop table -->
+                <div class="admin-table-wrap" id="workshopTableWrap">
+                    <table class="admin-table" id="workshopTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop Name</th>
+                                <th>Location</th>
+                                <th>Contact</th>
+                                <th>Specialisation</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workshopBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile cards -->
+                <div id="workshopCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateWorkshop" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No pending workshop listings. All caught up.</p>
+                </div>
+            </div>
+
+            <!-- Claim Requests Panel -->
+            <div id="claimsPanel" style="display:none;">
+                <div class="admin-table-wrap" id="claimsTableWrap">
+                    <table class="admin-table" id="claimsTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop</th>
+                                <th>Claimant</th>
+                                <th>Role</th>
+                                <th>Phone</th>
+                                <th>Evidence</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="claimsBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="claimsCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateClaims" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No pending claim requests. All caught up.</p>
+                </div>
+            </div>
+
+            <!-- Quick Claims Panel -->
+            <div id="quickClaimsPanel" style="display:none;">
+                <div class="admin-table-wrap" id="quickClaimsTableWrap">
+                    <table class="admin-table" id="quickClaimsTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop</th>
+                                <th>Contact Email</th>
+                                <th>Message</th>
+                                <th>Submitted</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="quickClaimsBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="quickClaimsCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateQuickClaims" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No pending quick claims. All caught up.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

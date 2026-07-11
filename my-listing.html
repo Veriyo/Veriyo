@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
+    <title>My Listing — Veriyo</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="navbar navbar--top">
+    <a href="welcome.html" class="nav-logo">
+        <img src="logo.png" alt="Veriyo">
+    </a>
+    <ul class="nav-links">
+        <li><a href="workshop-home.html">Home</a></li>
+        <li><a href="my-listing.html" class="active">My Listing</a></li>
+        <li><a href="list-workshop.html">List My Workshop</a></li>
+    </ul>
+</nav>
+
+<div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
+<script>
+    fetch('icons.svg')
+        .then(r => r.text())
+        .then(svg => {
+            document.getElementById('svgSpriteLoader').innerHTML = svg;
+        });
+</script>
+
+    <main class="container" style="max-width:860px; padding-top:2rem;">
+        <div style="height:16px;"></div>
+
+        <h1 style="font-size:1.75rem; font-weight:700; margin-bottom:0.5rem;">My Listing</h1>
+        <p class="wh-panel-sub">Your workshop's status and details on Veriyo.</p>
+
+        <div id="whListingLoading" style="text-align:center; padding:3rem 1rem; color:var(--text-secondary);">
+            Loading your listing…
+        </div>
+        <div id="whListingFound" style="display:none;">
+            <div class="wh-listing-card">
+                <h2 class="wh-listing-name" id="whLName"></h2>
+                <p class="wh-listing-location" id="whLLocation"></p>
+                <div class="wh-listing-badges" id="whLBadges"></div>
+                <div class="wh-listing-actions">
+                    <a href="list-workshop.html" class="btn btn-secondary" style="font-size:0.9rem;">Update Listing</a>
+                    <a id="whLViewBtn" href="#" class="btn btn-primary" style="font-size:0.9rem;">View Public Profile</a>
+                </div>
+            </div>
+        </div>
+        <div id="whListingNone" class="wh-no-listing" style="display:none;">
+            <div style="text-align:center; padding:3rem 1rem; background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); max-width:400px; margin:0 auto;">
+                <div style="font-size:3rem; margin-bottom:1rem; opacity:0.5;">&#128295;</div>
+                <h3 style="font-size:1.25rem; margin-bottom:0.5rem; color:var(--text-primary);">No Workshop Listing Yet</h3>
+                <p style="color:var(--text-secondary); font-size:0.95rem; margin-bottom:1.5rem; line-height:1.5;">
+                    You have not created a workshop listing yet. Create one to start building your presence on Veriyo.
+                </p>
+                <a href="list-workshop.html" class="btn btn-primary"
+                    style="display:inline-block; padding:0.75rem 1.5rem; font-weight:700;">
+                    Create My Listing
+                </a>
+            </div>
+        </div>
+        <div id="whListingSignIn" class="wh-no-listing" style="display:none;">
+            <p>Sign in to view your listing.</p>
+            <a href="auth.html" class="btn btn-primary">Sign In</a>
+        </div>
+    </main>
+
+
+
+    <nav class="bottom-nav">
+        <div class="bottom-nav-links">
+            <a href="workshop-home.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="#icon-home"></use></svg>
+                </span>
+                <span class="bottom-nav-label">Home</span>
+            </a>
+            <a href="my-listing.html" class="bottom-nav-item active">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="#icon-listing"></use></svg>
+                </span>
+                <span class="bottom-nav-label">My Listing</span>
+            </a>
+            <a href="list-workshop.html" class="bottom-nav-item">
+                <span class="bottom-nav-icon">
+                    <svg width="22" height="22" aria-hidden="true"><use href="#icon-addlisting"></use></svg>
+                </span>
+                <span class="bottom-nav-label">List My Workshop</span>
+            </a>
+        </div>
+<p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth.js"></script>
+    <script src="main.js"></script>
+    <script>
+    (function () {
+        var ML_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
+        var ML_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
+        var _sb = supabase.createClient(ML_URL, ML_KEY);
+
+        function escHtml(s) {
+            return String(s || '')
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function statusBadgeClass(status) {
+            if (!status) return 'badge-neutral';
+            var s = status.toLowerCase();
+            if (s === 'approved') return 'badge-success';
+            if (s === 'rejected') return 'badge-danger';
+            return 'badge-neutral';
+        }
+
+        function renderListingData(w) {
+            document.getElementById('whListingLoading').style.display = 'none';
+            document.getElementById('whLName').textContent = w.workshop_name || 'Your Workshop';
+            document.getElementById('whLLocation').textContent =
+                [w.suburb, w.city, w.province].filter(Boolean).join(', ');
+
+            var statusCls = statusBadgeClass(w.status);
+            var badgesHtml = '<span class="badge ' + statusCls + '">' + escHtml(w.status || 'Pending') + '</span>';
+            if (w.plan) {
+                badgesHtml += ' <span class="badge badge-neutral">' + escHtml(w.plan) + ' Plan</span>';
+            }
+            document.getElementById('whLBadges').innerHTML = badgesHtml;
+            document.getElementById('whLViewBtn').href = 'workshop-profile.html?id=' + encodeURIComponent(w.id);
+            document.getElementById('whListingFound').style.display = 'block';
+        }
+
+        async function loadListing(session) {
+            document.getElementById('whListingLoading').style.display = 'block';
+            document.getElementById('whListingFound').style.display = 'none';
+            document.getElementById('whListingNone').style.display = 'none';
+
+            var result = await _sb
+                .from('Workshopprofiles')
+                .select('id, workshop_name, suburb, city, province, status, plan')
+                .eq('user_id', session.user.id)
+                .limit(1);
+
+            var data = result.data;
+            var error = result.error;
+
+            document.getElementById('whListingLoading').style.display = 'none';
+
+            if (error || !data || data.length === 0) {
+                document.getElementById('whListingNone').style.display = 'block';
+                return;
+            }
+            renderListingData(data[0]);
+        }
+
+        document.addEventListener('DOMContentLoaded', async function () {
+            var result = await _sb.auth.getSession();
+            var session = result.data.session;
+
+            if (session) {
+                loadListing(session);
+            } else {
+                document.getElementById('whListingLoading').style.display = 'none';
+                sessionStorage.setItem('veriyo_chat_redirect', 'my-listing.html');
+                document.getElementById('whListingSignIn').style.display = 'block';
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
