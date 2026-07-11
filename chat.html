@@ -32,6 +32,20 @@
             </div>
         </div>
 
+        <!-- Motorist view: conversation list (opened via the message icon, no workshop_id in URL) -->
+        <div id="chatMotoristListView" style="display:none;">
+            <div class="chat-header">
+                <h1 class="chat-workshop-title">Messages</h1>
+            </div>
+            <div id="chatMotoristConvList" class="chat-conv-list"></div>
+            <div id="chatMotoristEmpty" class="empty-state" style="display:none;">
+                <div class="empty-icon">&#128172;</div>
+                <p>You have no messages yet.</p>
+                <p style="font-size:0.95rem; margin-top:0.25rem;">Pick a workshop to start a conversation.</p>
+                <a href="workshops.html" class="btn btn-primary" style="margin-top:1.25rem; display:inline-block;">Browse Workshops</a>
+            </div>
+        </div>
+
         <!-- Workshop manager view: conversation list + active thread -->
         <div id="chatWorkshopView" style="display:none;">
             <div class="chat-header">
