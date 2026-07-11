@@ -12,6 +12,7 @@
         <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
+        <ul class="nav-links" id="chatNavLinks"></ul>
     </nav>
 
     <main class="container chat-page-container">
@@ -68,6 +69,56 @@
         </div>
 
     </main>
+
+    <nav class="bottom-nav">
+        <div class="bottom-nav-links" id="chatBottomNavLinks"></div>
+        <p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
+    </nav>
+
+    <script>
+        // Same routing signal chat.js's own entry point uses (mode=workshop param).
+        // Runs independently of auth state, before auth.js runs, so there is only
+        // ever one .navbar--top / .bottom-nav in the DOM at a time — avoids
+        // colliding with auth.js's document.querySelector('.navbar--top').
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const isWorkshopMode = params.get('mode') === 'workshop';
+
+            const topLinks = isWorkshopMode ? [
+                ['workshop-home.html', 'Home'],
+                ['my-listing.html', 'My Listing'],
+                ['list-workshop.html', 'List My Workshop']
+            ] : [
+                ['motorist-home.html', 'Home'],
+                ['prices.html', 'Prices'],
+                ['report.html', 'Report'],
+                ['workshops.html', 'Workshops']
+            ];
+
+            const bottomLinks = isWorkshopMode ? [
+                ['workshop-home.html', 'Home', 'icon-home'],
+                ['my-listing.html', 'My Listing', 'icon-listing'],
+                ['list-workshop.html', 'List My Workshop', 'icon-addlisting']
+            ] : [
+                ['motorist-home.html', 'Home', 'icon-home'],
+                ['prices.html', 'Prices', 'icon-prices'],
+                ['report.html', 'Report', 'icon-report'],
+                ['workshops.html', 'Workshops', 'icon-workshops']
+            ];
+
+            document.getElementById('chatNavLinks').innerHTML = topLinks
+                .map(function (l) { return '<li><a href="' + l[0] + '">' + l[1] + '</a></li>'; })
+                .join('');
+
+            document.getElementById('chatBottomNavLinks').innerHTML = bottomLinks
+                .map(function (l) {
+                    return '<a href="' + l[0] + '" class="bottom-nav-item">' +
+                        '<span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#' + l[2] + '"></use></svg></span>' +
+                        '<span class="bottom-nav-label">' + l[1] + '</span></a>';
+                })
+                .join('');
+        })();
+    </script>
 
 
 
