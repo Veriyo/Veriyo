@@ -129,6 +129,62 @@
         });
     }
 
+    // ─── MOTORIST CONVERSATION LIST ─────────────────────────────────────────────
+    async function initMotoristList(session) {
+        const view = document.getElementById('chatMotoristListView');
+        const listEl = document.getElementById('chatMotoristConvList');
+        const emptyEl = document.getElementById('chatMotoristEmpty');
+
+        view.style.display = 'block';
+        document.getElementById('chatLoading').style.display = 'none';
+        document.title = 'Messages — Veriyo';
+
+        const { data: allMsgs } = await _supabaseChat
+            .from('chats')
+            .select('*')
+            .eq('motorist_id', session.user.id)
+            .order('created_at', { ascending: false });
+
+        if (!allMsgs || allMsgs.length === 0) {
+            emptyEl.style.display = 'block';
+            return;
+        }
+
+        // Group by workshop_id, keep the latest message as the preview.
+        const byWorkshop = {};
+        allMsgs.forEach(function (m) {
+            if (!byWorkshop[m.workshop_id]) byWorkshop[m.workshop_id] = m;
+        });
+        const workshopIds = Object.keys(byWorkshop);
+
+        const { data: workshops } = await _supabaseChat
+            .from('Workshopprofiles')
+            .select('id, workshop_name')
+            .in('id', workshopIds);
+
+        const namesById = {};
+        (workshops || []).forEach(function (w) { namesById[w.id] = w.workshop_name; });
+
+        listEl.innerHTML = '';
+        workshopIds.forEach(function (workshopId) {
+            const latestMsg = byWorkshop[workshopId];
+            const name = namesById[workshopId] || 'Workshop';
+            const preview = latestMsg.message_text.length > 60
+                ? latestMsg.message_text.slice(0, 60) + '…'
+                : latestMsg.message_text;
+            const convItem = document.createElement('a');
+            convItem.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
+            convItem.className = 'chat-conv-item';
+            convItem.innerHTML = `
+                <div class="chat-conv-avatar">${escapeHtml(name[0] || 'W')}</div>
+                <div class="chat-conv-info">
+                    <div class="chat-conv-id">${escapeHtml(name)}</div>
+                    <div class="chat-conv-preview">${escapeHtml(preview)}</div>
+                </div>`;
+            listEl.appendChild(convItem);
+        });
+    }
+
     // ─── WORKSHOP MANAGER VIEW ──────────────────────────────────────────────────
     async function initWorkshopView(session) {
         const view = document.getElementById('chatWorkshopView');
@@ -315,7 +371,7 @@
         } else if (workshopId) {
             await initMotoristView(session, workshopId);
         } else {
-            document.getElementById('chatLoading').textContent = 'Invalid chat link.';
+            await initMotoristList(session);
         }
     });
 })();
