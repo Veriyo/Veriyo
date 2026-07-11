@@ -1713,6 +1713,14 @@ button, input, select, textarea {
     line-height: 1;
 }
 
+.nav-chat-icon {
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    cursor: default;
+    line-height: 1;
+}
+
 .nav-bell-dot {
     position: absolute;
     top: -3px;
@@ -1956,6 +1964,8 @@ button, input, select, textarea {
     cursor: pointer;
     border-bottom: 1px solid var(--border-color);
     transition: background 0.15s;
+    text-decoration: none;
+    color: inherit;
 }
 
 .chat-conv-item:last-child {
