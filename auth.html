@@ -58,12 +58,32 @@
 
                 <div id="signupError" class="auth-error" style="display:none;"></div>
 
+                <div class="auth-type-toggle" style="display:flex; gap:0.5rem; margin-bottom:1.25rem; border:1px solid var(--border-color); border-radius:var(--radius); padding:0.25rem;">
+                    <button type="button" id="typeMotoristBtn" class="auth-type-btn" data-type="motorist" style="flex:1; padding:0.6rem; border:none; border-radius:6px; background:var(--primary-accent); color:var(--bg-color); font-weight:600; cursor:pointer; transition:var(--transition);">Motorist</button>
+                    <button type="button" id="typeWorkshopBtn" class="auth-type-btn" data-type="workshop" style="flex:1; padding:0.6rem; border:none; border-radius:6px; background:transparent; color:var(--text-secondary); font-weight:600; cursor:pointer; transition:var(--transition);">Workshop</button>
+                </div>
+
                 <form id="signupForm" novalidate>
-                    <div class="auth-field" style="margin-bottom:1rem;">
-                        <label for="signupName" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Your name <span style="font-weight:400; color:var(--text-secondary);">(optional)</span></label>
-                        <input type="text" id="signupName" class="form-control"
-                            placeholder="Your name — optional" autocomplete="name">
+                    <div id="motoristNameFields">
+                        <div class="auth-field" style="margin-bottom:1rem;">
+                            <label for="signupFirstName" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">First name</label>
+                            <input type="text" id="signupFirstName" class="form-control" required
+                                placeholder="First name" autocomplete="given-name">
+                        </div>
+                        <div class="auth-field" style="margin-bottom:1rem;">
+                            <label for="signupLastName" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Last name</label>
+                            <input type="text" id="signupLastName" class="form-control" required
+                                placeholder="Last name" autocomplete="family-name">
+                        </div>
                     </div>
+                    <div id="workshopNameField" style="display:none;">
+                        <div class="auth-field" style="margin-bottom:1rem;">
+                            <label for="signupWorkshopName" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Workshop name</label>
+                            <input type="text" id="signupWorkshopName" class="form-control"
+                                placeholder="Your workshop's name" autocomplete="organization">
+                        </div>
+                    </div>
+                    <span class="auth-field-error" id="signupNameError" style="font-size:0.82rem; color:var(--danger-color); display:none; margin-top:-0.5rem; margin-bottom:0.75rem;"></span>
                     <div class="auth-field" style="margin-bottom:1rem;">
                         <label for="signupEmail" style="display:block; font-size:0.85rem; font-weight:500; margin-bottom:0.4rem; color:var(--text-secondary);">Email address</label>
                         <input type="email" id="signupEmail" class="form-control" required
@@ -117,6 +137,7 @@
         const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
         const params = new URLSearchParams(window.location.search);
         const isWorkshopFlow = params.get('redirect') === 'list-workshop' || params.get('redirect') === 'claim-workshop';
+        let selectedType = isWorkshopFlow ? 'workshop' : 'motorist';
 
         function validateEmail(email) {
             return EMAIL_RE.test(email);
@@ -125,6 +146,25 @@
         function showPanel(name) {
             document.getElementById('signinPanel').style.display = name === 'signin' ? '' : 'none';
             document.getElementById('signupPanel').style.display = name === 'signup' ? '' : 'none';
+        }
+
+        function setAccountType(type) {
+            selectedType = type;
+            const motoristBtn = document.getElementById('typeMotoristBtn');
+            const workshopBtn = document.getElementById('typeWorkshopBtn');
+            const motoristFields = document.getElementById('motoristNameFields');
+            const workshopField = document.getElementById('workshopNameField');
+
+            motoristBtn.style.background = type === 'motorist' ? 'var(--primary-accent)' : 'transparent';
+            motoristBtn.style.color = type === 'motorist' ? 'var(--bg-color)' : 'var(--text-secondary)';
+            workshopBtn.style.background = type === 'workshop' ? 'var(--primary-accent)' : 'transparent';
+            workshopBtn.style.color = type === 'workshop' ? 'var(--bg-color)' : 'var(--text-secondary)';
+
+            motoristFields.style.display = type === 'motorist' ? '' : 'none';
+            workshopField.style.display = type === 'workshop' ? '' : 'none';
+
+            document.getElementById('signupFirstName').required = type === 'motorist';
+            document.getElementById('signupLastName').required = type === 'motorist';
         }
 
         function setError(elId, msg) {
@@ -144,37 +184,47 @@
             return msg;
         }
 
-        function getRedirectUrl() {
+        function getRedirectUrl(accountType) {
             const redirect = params.get('redirect');
-            if (redirect === 'list-workshop') {
+            // Deep-link redirects only apply if they match the account's real type —
+            // a motorist account never lands on a workshop-only page, and vice versa (spec 8.5).
+            if (accountType === 'workshop' && redirect === 'list-workshop') {
                 return 'list-workshop.html';
             }
-            if (redirect === 'claim-workshop') {
+            if (accountType === 'motorist' && redirect === 'claim-workshop') {
                 const workshopId = params.get('workshop_id');
                 if (workshopId) {
                     return 'claim-workshop.html?id=' + encodeURIComponent(workshopId);
                 }
                 return 'workshops.html';
             }
-            return 'motorist-home.html';
+            return accountType === 'workshop' ? 'workshop-home.html' : 'motorist-home.html';
         }
 
-        function afterAuthSuccess() {
-            const redirect = sessionStorage.getItem('veriyo_chat_redirect');
-            if (redirect) {
+        async function afterAuthSuccess(userId) {
+            const { data: profile, error } = await _supabaseAuth
+                .from('account_profiles')
+                .select('account_type')
+                .eq('user_id', userId)
+                .single();
+
+            // If we can't read the profile, fail safe to the motorist home rather than guessing.
+            const accountType = (!error && profile) ? profile.account_type : 'motorist';
+
+            const chatRedirect = sessionStorage.getItem('veriyo_chat_redirect');
+            if (chatRedirect) {
                 sessionStorage.removeItem('veriyo_chat_redirect');
-                window.location.href = redirect;
+                window.location.href = chatRedirect;
             } else {
-                window.location.href = getRedirectUrl();
+                window.location.href = getRedirectUrl(accountType);
             }
         }
 
-        // Update UI text for workshop flow
+        // Update UI text for workshop flow (arrived via list-workshop / claim-workshop deep link)
         function updateUIForWorkshop() {
             if (isWorkshopFlow) {
                 document.querySelector('#signupPanel h1').textContent = 'Create Workshop Account';
                 document.querySelector('#signupPanel .auth-subtitle').textContent = 'Register your workshop on Veriyo';
-                document.querySelector('label[for="signupName"]').innerHTML = 'Your name <span style="font-weight:400; color:var(--text-secondary);">(optional)</span>';
                 document.getElementById('signupBtn').textContent = 'Create Workshop Account';
             }
         }
@@ -214,25 +264,37 @@
             btn.disabled = true;
             btn.textContent = 'Signing in…';
 
-            const { error } = await _supabaseAuth.auth.signInWithPassword({ email, password });
+            const { data, error } = await _supabaseAuth.auth.signInWithPassword({ email, password });
 
             if (error) {
                 setError('signinError', humaniseError(error.message));
                 btn.disabled = false;
                 btn.textContent = 'Sign In';
             } else {
-                afterAuthSuccess();
+                await afterAuthSuccess(data.user.id);
             }
         });
 
         document.getElementById('signupForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             clearErrors();
+            setError('signupNameError', '');
 
-            const name = document.getElementById('signupName').value.trim();
+            const firstName = document.getElementById('signupFirstName').value.trim();
+            const lastName = document.getElementById('signupLastName').value.trim();
+            const workshopName = document.getElementById('signupWorkshopName').value.trim();
             const email = document.getElementById('signupEmail').value.trim();
             const password = document.getElementById('signupPassword').value;
             const confirm = document.getElementById('signupConfirm').value;
+
+            if (selectedType === 'motorist' && (!firstName || !lastName)) {
+                setError('signupNameError', 'First and last name are required.');
+                return;
+            }
+            if (selectedType === 'workshop' && !workshopName) {
+                setError('signupNameError', 'Workshop name is required.');
+                return;
+            }
 
             if (!validateEmail(email)) {
                 setError('signupEmailError', 'Please enter a valid email address');
@@ -253,12 +315,14 @@
             btn.disabled = true;
             btn.textContent = 'Creating account…';
 
-            const { error } = await _supabaseAuth.auth.signUp({
+            const displayName = selectedType === 'motorist' ? (firstName + ' ' + lastName) : workshopName;
+
+            const { data: signUpData, error } = await _supabaseAuth.auth.signUp({
                 email,
                 password,
                 options: {
                     emailRedirectTo: null,
-                    data: { display_name: name || null }
+                    data: { display_name: displayName }
                 }
             });
 
@@ -266,17 +330,43 @@
                 setError('signupError', humaniseError(error.message));
                 btn.disabled = false;
                 btn.textContent = isWorkshopFlow ? 'Create Workshop Account' : 'Create Account';
-            } else {
-                const { error: signinErr } = await _supabaseAuth.auth.signInWithPassword({ email, password });
-                if (signinErr) {
-                    setError('signupError', humaniseError(signinErr.message));
-                    btn.disabled = false;
-                    btn.textContent = isWorkshopFlow ? 'Create Workshop Account' : 'Create Account';
-                } else {
-                    afterAuthSuccess();
-                }
+                return;
             }
+
+            const { error: signinErr, data: signinData } = await _supabaseAuth.auth.signInWithPassword({ email, password });
+            if (signinErr) {
+                setError('signupError', humaniseError(signinErr.message));
+                btn.disabled = false;
+                btn.textContent = isWorkshopFlow ? 'Create Workshop Account' : 'Create Account';
+                return;
+            }
+
+            const userId = signinData.user.id;
+            const { error: profileErr } = await _supabaseAuth.from('account_profiles').insert({
+                user_id: userId,
+                account_type: selectedType,
+                first_name: selectedType === 'motorist' ? firstName : null,
+                last_name: selectedType === 'motorist' ? lastName : null,
+                workshop_name: selectedType === 'workshop' ? workshopName : null
+            });
+
+            if (profileErr) {
+                setError('signupError', 'Account created, but we could not save your profile details. Please contact support.');
+                btn.disabled = false;
+                btn.textContent = isWorkshopFlow ? 'Create Workshop Account' : 'Create Account';
+                return;
+            }
+
+            await afterAuthSuccess(userId);
         });
+
+        document.getElementById('typeMotoristBtn').addEventListener('click', function () {
+            setAccountType('motorist');
+        });
+        document.getElementById('typeWorkshopBtn').addEventListener('click', function () {
+            setAccountType('workshop');
+        });
+        setAccountType(selectedType);
     })();
     </script>
 </body>
