@@ -104,8 +104,13 @@
             }).join('');
         }
 
-        // Unread chat count (spec 3.4 "Unread Chat Count").
-        const since = session.user.last_sign_in_at || new Date(0).toISOString();
+        // Unread chat count (spec 3.4 "Unread Chat Count"). Prefers the real
+        // "last viewed workshop chat" marker chat.js sets on every visit to
+        // chat.html?mode=workshop — last_sign_in_at only updates on a fresh
+        // login, so it never reflected messages actually read this session.
+        // Falls back to last_sign_in_at only if chat has never been opened yet.
+        const storedLastViewed = localStorage.getItem('veriyo_workshop_chat_last_viewed_' + myWorkshop.id);
+        const since = storedLastViewed || session.user.last_sign_in_at || new Date(0).toISOString();
         const { data: unread } = await _sb
             .from('chats')
             .select('id')
