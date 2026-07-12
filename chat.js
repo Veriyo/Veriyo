@@ -217,12 +217,6 @@
         const myWorkshop = workshopArr[0];
         subtitleEl.textContent = myWorkshop.workshop_name;
 
-        // Spec 8.10: workshop-home.js's unread badge needs a real "last viewed
-        // this chat view" marker — session.user.last_sign_in_at only updates on
-        // a fresh login, so it never reflects messages actually read this
-        // session. Recording an honest marker here instead.
-        localStorage.setItem('veriyo_workshop_chat_last_viewed_' + myWorkshop.id, new Date().toISOString());
-
         // Load all conversations (grouped by motorist)
         const { data: allMsgs } = await _supabaseChat
             .from('chats')
@@ -238,23 +232,10 @@
             allMsgs.forEach(function (m) {
                 if (!byMotorist[m.motorist_id]) byMotorist[m.motorist_id] = m;
             });
-            const motoristIds = Object.keys(byMotorist);
-
-            // Spec 8.10: show the motorist's real name in the list, not their id.
-            const { data: motoristProfiles } = await _supabaseChat
-                .from('account_profiles')
-                .select('user_id, first_name, last_name')
-                .in('user_id', motoristIds);
-            const namesById = {};
-            (motoristProfiles || []).forEach(function (p) {
-                const full = [p.first_name, p.last_name].filter(Boolean).join(' ').trim();
-                if (full) namesById[p.user_id] = full;
-            });
 
             convListEl.innerHTML = '';
             Object.entries(byMotorist).forEach(function ([motoristId, latestMsg]) {
-                const displayName = namesById[motoristId] || (motoristId.slice(0, 8) + '…');
-                const initial = displayName[0].toUpperCase();
+                const initial = motoristId[0].toUpperCase();
                 const preview = latestMsg.message_text.length > 60
                     ? latestMsg.message_text.slice(0, 60) + '…'
                     : latestMsg.message_text;
@@ -264,13 +245,13 @@
                 convItem.innerHTML = `
                     <div class="chat-conv-avatar">${escapeHtml(initial)}</div>
                     <div class="chat-conv-info">
-                        <div class="chat-conv-id">${escapeHtml(displayName)}</div>
+                        <div class="chat-conv-id">${escapeHtml(motoristId.slice(0, 8))}…</div>
                         <div class="chat-conv-preview">${escapeHtml(preview)}</div>
                     </div>`;
                 convItem.addEventListener('click', function () {
                     document.querySelectorAll('.chat-conv-item').forEach(el => el.classList.remove('chat-conv-item--active'));
                     convItem.classList.add('chat-conv-item--active');
-                    openThread(motoristId, myWorkshop.id, session, displayName);
+                    openThread(motoristId, myWorkshop.id, session);
                 });
                 convListEl.appendChild(convItem);
             });
@@ -278,9 +259,9 @@
 
         let currentRealtimeSub = null;
 
-        function openThread(motoristId, workshopId, session, displayName) {
+        function openThread(motoristId, workshopId, session) {
             activeThreadPanel.style.display = 'flex';
-            activeMotristEl.textContent = displayName || ('Motorist: ' + motoristId.slice(0, 8) + '…');
+            activeMotristEl.textContent = 'Motorist: ' + motoristId.slice(0, 8) + '…';
             managerSendError.style.display = 'none';
 
             async function loadThread() {

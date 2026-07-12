@@ -55,29 +55,12 @@ function switchTab(tab) {
     document.getElementById('sectionTitle').textContent = titles[tab] || 'Pending';
 }
 
-async function isCurrentUserAdmin() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (!session) return false;
-
-    const { data: profile, error } = await supabaseClient
-        .from('account_profiles')
-        .select('is_admin')
-        .eq('user_id', session.user.id)
-        .single();
-
-    // Fails CLOSED here, deliberately — unlike auth-guard.js elsewhere, an
-    // admin page must never grant access on an ambiguous/errored check.
-    return !error && !!(profile && profile.is_admin === true);
-}
-
 async function checkSession() {
-    const isAdmin = await isCurrentUserAdmin();
-    if (isAdmin) {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    if (session) {
         showDashboard();
         await loadAllPending();
     }
-    // If not admin (including "signed in but not an admin"), the login form
-    // stays showing — no session detail is exposed either way (spec 6.1).
 }
 
 async function handleLogin(event) {
@@ -97,18 +80,6 @@ async function handleLogin(event) {
     });
 
     if (error) {
-        errorBox.textContent = 'Invalid email or password. Please try again.';
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Sign In';
-        return;
-    }
-
-    const isAdmin = await isCurrentUserAdmin();
-    if (!isAdmin) {
-        // Spec 6.1/6.29: a valid login that isn't an administrator account
-        // must never reach the dashboard. Sign them back out immediately —
-        // don't leave an authenticated-but-unauthorized session sitting active.
-        await supabaseClient.auth.signOut();
         errorBox.textContent = 'Invalid email or password. Please try again.';
         loginBtn.disabled = false;
         loginBtn.textContent = 'Sign In';

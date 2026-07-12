@@ -23,8 +23,11 @@
         });
     }
 
-    async function checkUnreadBell(workshopId, lastLoginAt, bellEl) {
-        if (!workshopId || !bellEl) return;
+    // Marks the message icon (not the bell) with a dot when a workshop has
+    // an unread motorist message, since unread chat belongs to Messages,
+    // and the bell is reserved for administrator notifications.
+    async function checkUnreadBell(workshopId, lastLoginAt, iconEl) {
+        if (!workshopId || !iconEl) return;
         const since = lastLoginAt || new Date(0).toISOString();
         const { data } = await _supabaseAuthNav
             .from('chats')
@@ -36,8 +39,8 @@
         if (data && data.length > 0) {
             const dot = document.createElement('span');
             dot.className = 'nav-bell-dot';
-            bellEl.style.position = 'relative';
-            bellEl.appendChild(dot);
+            iconEl.style.position = 'relative';
+            iconEl.appendChild(dot);
         }
     }
 
@@ -58,24 +61,21 @@
         const initials = getInitials(session);
         const userEmail = session.user.email;
 
-        // Spec 8.5: a signed-in person's logo returns to their own home area,
-        // not the Welcome Page (which no longer appears for them at all).
-        const { data: accountProfile } = await _supabaseAuthNav
-            .from('account_profiles')
-            .select('account_type')
-            .eq('user_id', session.user.id)
-            .single();
-
-        if (accountProfile) {
-            const homeUrl = accountProfile.account_type === 'workshop' ? 'workshop-home.html' : 'motorist-home.html';
-            document.querySelectorAll('.nav-logo').forEach(function (logoEl) {
-                logoEl.setAttribute('href', homeUrl);
-            });
-        }
+        // Determine account type once so both the message icon (routing) and
+        // the bell (unread-chat dot) can reuse it, instead of each re-deriving it.
+        const { data: workshopData } = await _supabaseAuthNav
+            .from('Workshopprofiles')
+            .select('id')
+            .eq('email_address', userEmail)
+            .limit(1);
+        const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0].id : null;
 
         const li = document.createElement('li');
         li.className = 'nav-auth-item';
         li.innerHTML = [
+            '<span id="navChat" class="nav-chat-icon" title="Messages">',
+            '  <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-chat"></use></svg>',
+            '</span>',
             '<span id="navBell" class="nav-bell" title="Notifications">&#128276;</span>',
             '<div class="nav-avatar-wrap">',
             '  <div id="navAvatar" class="nav-avatar" title="Account">' + initials + '</div>',
@@ -140,9 +140,8 @@
                     '</div>',
                     '<div style="border-bottom:1px solid var(--border-color);margin-bottom:0.5rem;"></div>',
                     '<div style="text-align:center;padding:2rem 1rem;color:var(--text-secondary);">',
-                    '  <div style="font-size:2rem;margin-bottom:0.75rem;">&#128172;</div>',
-                    '  <p style="font-size:0.9rem;line-height:1.6;margin-bottom:1.25rem;">No messages yet. Start a conversation with a workshop to get replies here.</p>',
-                    '  <a href="workshops.html" style="display:inline-block;background:var(--primary-accent);color:#000;padding:0.6rem 1.4rem;border-radius:var(--radius);font-weight:700;font-size:0.88rem;text-decoration:none;">Browse Workshops</a>',
+                    '  <div style="font-size:2rem;margin-bottom:0.75rem;">&#128276;</div>',
+                    '  <p style="font-size:0.9rem;line-height:1.6;">No notifications yet.</p>',
                     '</div>'
                 ].join('');
                 document.body.appendChild(panel);
@@ -165,16 +164,18 @@
             }
         );
 
-        const { data: workshopData } = await _supabaseAuthNav
-            .from('Workshopprofiles')
-            .select('id')
-            .eq('email_address', userEmail)
-            .limit(1);
+        const chatEl = document.getElementById('navChat');
+        if (chatEl) {
+            chatEl.style.cursor = 'pointer';
+            chatEl.addEventListener('click', function (e) {
+                e.stopPropagation();
+                window.location.href = myWorkshopId ? 'chat.html?mode=workshop' : 'chat.html';
+            });
+        }
 
-        if (workshopData && workshopData.length > 0) {
-            const wId = workshopData[0].id;
+        if (myWorkshopId) {
             const lastLogin = session.user.last_sign_in_at;
-            await checkUnreadBell(wId, lastLogin, bellEl);
+            await checkUnreadBell(myWorkshopId, lastLogin, chatEl);
         }
     });
 
