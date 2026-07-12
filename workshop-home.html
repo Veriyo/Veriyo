@@ -3,94 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Home — Veriyo</title>
+    <title>Register Your Workshop — Veriyo</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
+
 <nav class="navbar navbar--top">
-        <a href="welcome.html" class="nav-logo">
-            <img src="logo.png" alt="Veriyo">
-        </a>
-        <ul class="nav-links">
-            <li><a href="workshop-home.html" class="active">Home</a></li>
-            <li><a href="my-listing.html">My Listing</a></li>
-            <li><a href="list-workshop.html">List My Workshop</a></li>
-        </ul>
-    </nav>
+    <a href="welcome.html" class="nav-logo">
+        <img src="logo.png" alt="Veriyo">
+    </a>
+<ul class="nav-links">
+        <li><a href="workshop-home.html">Home</a></li>
+        <li><a href="my-listing.html">My Listing</a></li>
+        <li><a href="list-workshop.html" class="active">List Workshop</a></li>
+    </ul>
+</nav>
 
-    <main class="container" style="max-width:860px; padding-top:2rem;">
+<div class="svg-sprite-loader" id="svgSpriteLoader" aria-hidden="true"></div>
+<script>
+    fetch('icons.svg')
+        .then(r => r.text())
+        .then(svg => {
+            document.getElementById('svgSpriteLoader').innerHTML = svg;
+        });
+</script>
 
-        <div id="whHomeLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
-            Loading your dashboard…
+    <!-- Auth Required Message (shown when not logged in) -->
+    <div id="authRequiredSection" style="display:none; max-width:500px; margin:4rem auto; padding:0 1.5rem;">
+        <div class="auth-card" style="text-align:center;">
+            <img src="logo.png" alt="Veriyo" style="height:48px; margin-bottom:1rem;">
+            <h1 style="font-size:1.5rem; margin-bottom:0.75rem;">Sign in to List Your Workshop</h1>
+            <p style="color:var(--text-secondary); margin-bottom:2rem; line-height:1.6;">
+                Creating a workshop listing requires a Veriyo account. This helps us verify your identity and allows you to manage your listing in the future.
+            </p>
+            <a href="auth.html?redirect=list-workshop" class="btn btn-primary" style="display:block; width:100%; margin-bottom:0.75rem;">Sign In</a>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">
+                Don't have an account? <a href="auth.html?redirect=list-workshop&signup=1" style="color:var(--secondary-accent); text-decoration:underline;">Create Workshop Account</a>
+            </p>
         </div>
+    </div>
 
-        <div id="whHomeSignIn" style="display:none; text-align:center; padding:4rem 1rem;">
-            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Sign in to access your workshop dashboard.</p>
-            <a href="auth.html" class="btn btn-primary">Sign In</a>
-        </div>
+    <main class="container lw-main" id="mainContent" style="padding-top:2rem; max-width:800px;">
 
-        <div id="whHomeContent" style="display:none;">
-
-            <!-- Workshop Welcome Card -->
-            <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; margin-bottom:1.5rem;">
-                <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:0.25rem;">Welcome back, <span id="whWorkshopName">…</span></h1>
-                <p style="color:var(--text-secondary); font-size:0.9rem;">This is your workshop dashboard.</p>
+        <!-- Step 1: Workshop Search -->
+        <div id="searchStep" style="margin-bottom:2rem;">
+            <div class="form-header" style="text-align:center; margin-bottom:2rem;">
+                <h2>List Your Workshop</h2>
+                <p>Before creating a new listing, check if your workshop is already on Veriyo.</p>
             </div>
 
-            <!-- Listing Status -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Listing Status</h2>
-                <div id="whStatusCard" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
+            <!-- Founding Launch Banner -->
+            <div style="background:linear-gradient(135deg, rgba(212,160,23,0.15) 0%, rgba(13,148,136,0.1) 100%); border:1px solid var(--primary-accent); border-radius:var(--radius); padding:1.5rem; margin-bottom:2rem; text-align:center;">
+                <h3 style="font-size:1.1rem; color:var(--primary-accent); margin-bottom:0.5rem;">Become a Founding Workshop</h3>
+                <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.6; margin-bottom:1rem;">
+                    Join Veriyo free during our founding launch. All premium features included. No payment required.
+                </p>
+                <span style="display:inline-block; background:var(--primary-accent); color:#000; padding:0.25rem 0.75rem; border-radius:20px; font-size:0.75rem; font-weight:600;">Founding Workshop</span>
             </div>
 
-            <!-- Quick Actions -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Quick Actions</h2>
-                <div id="whQuickActions" style="display:flex; flex-wrap:wrap; gap:0.75rem;"></div>
-            </div>
-
-            <!-- Recent Notifications -->
-            <div>
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Recent Notifications</h2>
-                <div id="whNotifList" class="chat-conv-list" style="display:none;"></div>
-                <div id="whNotifEmpty" class="empty-state" style="padding:2rem 1rem;">
-                    <p style="font-size:0.95rem;">No notifications yet.</p>
+            <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem;">
+                <label for="workshopSearch" style="display:block; font-size:0.9rem; font-weight:600; margin-bottom:0.75rem;">Is your workshop already on Veriyo?</label>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                    <input type="text" id="workshopSearch" class="form-control" placeholder="Search by workshop name..." style="flex:1; min-width:200px;">
+                    <button type="button" id="searchBtn" class="btn btn-primary" style="padding:0.75rem 1.5rem;">Search</button>
                 </div>
+                <p id="searchStatus" style="display:none; margin-top:0.75rem; font-size:0.85rem;"></p>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div id="searchResults" style="display:none; margin-bottom:2rem;">
+            <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--text-secondary);">Matching Workshops</h3>
+            <div id="resultsContainer" style="display:flex; flex-direction:column; gap:1rem;"></div>
+        </div>
+
+        <!-- Step 2: Registration Form -->
+        <div id="formStep" style="display:none;">
+            <div class="form-header">
+                <h2>Register Your Workshop</h2>
+                <p>Complete the form below to list your workshop on Veriyo. All features are free during our launch period.</p>
             </div>
 
+            <form id="lwForm" novalidate>
+
+                <div class="form-group">
+                    <label for="lwName">Workshop Name *</label>
+                    <input type="text" id="lwName" class="form-control" required placeholder="e.g. Cape Town Mechanical Specialists">
+                </div>
+
+                <div class="form-group">
+                    <label for="lwAddress">Physical Address *</label>
+                    <input type="text" id="lwAddress" class="form-control" required placeholder="e.g. 42 Sir Lowry Rd, Foreshore">
+                    <button type="button" id="lwUseLocation" class="btn btn-secondary"
+                        style="margin-top:0.5rem; font-size:0.85rem; padding:0.4rem 0.9rem;">
+                        &#127759; Use My Location
+                    </button>
+                    <p id="lwLocationStatus" style="display:none; font-size:0.8rem; margin-top:0.35rem; color:var(--text-secondary);"></p>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="lwSuburb">Suburb *</label>
+                        <input type="text" id="lwSuburb" class="form-control" required placeholder="e.g. CBD">
+                    </div>
+                    <div class="form-group">
+                        <label for="lwCity">City *</label>
+                        <input type="text" id="lwCity" class="form-control" required placeholder="e.g. Cape Town">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lwProvince">Province *</label>
+                    <select id="lwProvince" class="form-control" required>
+                        <option value="" disabled selected>Select province</option>
+                        <option value="Gauteng">Gauteng</option>
+                        <option value="Western Cape">Western Cape</option>
+                        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                        <option value="Eastern Cape">Eastern Cape</option>
+                        <option value="Limpopo">Limpopo</option>
+                        <option value="Mpumalanga">Mpumalanga</option>
+                        <option value="North West">North West</option>
+                        <option value="Free State">Free State</option>
+                        <option value="Northern Cape">Northern Cape</option>
+                    </select>
+                </div>
+
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label for="lwContact">Contact Number *</label>
+                        <input type="tel" id="lwContact" class="form-control" required placeholder="e.g. 021 555 1234">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <div class="lw-email-display" id="lwEmailDisplay">Loading…</div>
+                        <span class="label-desc">Pre-filled from your account.</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="lwHours">Operating Hours *</label>
+                    <input type="text" id="lwHours" class="form-control" required
+                        value="Mon–Fri 07:00–17:00, Sat 08:00–13:00"
+                        placeholder="e.g. Mon–Fri 08:00–17:00">
+                </div>
+
+                <div class="form-group">
+                    <label>Workshop Specialisation</label>
+                    <span class="label-desc">Select all focus mechanical streams that apply.</span>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="General Repairs"> General Repairs</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Electrical"> Electrical</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Tyres"> Tyres</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Panel Beating"> Panel Beating</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Engine Work"> Engine Work</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Gearbox"> Gearbox</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Suspension"> Suspension</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Air Conditioning"> Air Conditioning</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Sound Installation"> Sound Installation</label>
+                        <label class="checkbox-label"><input type="checkbox" name="lwSpec" value="Other"> Other</label>
+                    </div>
+                </div>
+
+                <div class="form-group-row" style="align-items:center;">
+                    <div class="form-group">
+                        <label for="lwYears">Years in Operation</label>
+                        <input type="number" id="lwYears" class="form-control" min="0" placeholder="e.g. 5">
+                    </div>
+                    <div class="form-group">
+                        <label>RMI Registered?</label>
+                        <span class="label-desc">RMI = Retail Motor Industry Organisation</span>
+                        <div class="radio-checkbox-group">
+                            <label class="radio-label"><input type="radio" name="lwRmi" value="Yes"> Yes</label>
+                            <label class="radio-label"><input type="radio" name="lwRmi" value="No" checked> No</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Do you provide a written quote before starting work?</label>
+                    <div class="radio-checkbox-group">
+                        <label class="radio-label"><input type="radio" name="lwQuote" value="Yes" checked> Yes</label>
+                        <label class="radio-label"><input type="radio" name="lwQuote" value="No"> No</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Do you guarantee your work?</label>
+                    <div class="radio-checkbox-group">
+                        <label class="radio-label"><input type="radio" name="lwGuarantee" value="Yes"> Yes</label>
+                        <label class="radio-label"><input type="radio" name="lwGuarantee" value="No" checked> No</label>
+                    </div>
+                </div>
+
+                <div id="lwGuaranteePeriodWrap" class="form-group conditional-container hidden">
+                    <label for="lwGuaranteePeriod">Guarantee Period</label>
+                    <input type="text" id="lwGuaranteePeriod" class="form-control" placeholder="e.g. 6 Months / 10,000 km">
+                </div>
+
+                <!-- Dynamic Services Pricing -->
+                <div style="margin:2.5rem 0; padding-top:1.5rem; border-top:1px solid var(--border-color);">
+                    <h3 style="font-size:1.25rem; margin-bottom:0.25rem;">Service Pricing</h3>
+                    <p class="label-desc" style="margin-bottom:1.5rem;">
+                        Add your most common services and their prices. Customers can see these on your profile.
+                    </p>
+
+                    <div id="lwServiceCards" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1rem;"></div>
+
+                    <div id="lwServiceAddRow" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:flex-end;">
+                        <div class="form-group" style="flex:2; min-width:160px; margin-bottom:0;">
+                            <label for="lwServiceSelect">Service</label>
+                            <select id="lwServiceSelect" class="form-control">
+                                <option value="">— select a service —</option>
+                                <option value="Oil Change">Oil Change</option>
+                                <option value="Minor Service">Minor Service</option>
+                                <option value="Major Service">Major Service</option>
+                                <option value="Wheel Alignment">Wheel Alignment</option>
+                                <option value="Brake Pads (Front)">Brake Pads (Front)</option>
+                                <option value="Brake Pads (Rear)">Brake Pads (Rear)</option>
+                                <option value="Diagnostic Scan">Diagnostic Scan</option>
+                                <option value="Aircon Regas">Aircon Regas</option>
+                                <option value="Gearbox Service">Gearbox Service</option>
+                                <option value="CV Joint Repair">CV Joint Repair</option>
+                                <option value="Timing Belt Replacement">Timing Belt Replacement</option>
+                                <option value="Clutch Replacement">Clutch Replacement</option>
+                                <option value="Battery Replacement">Battery Replacement</option>
+                                <option value="Tyre Fitting">Tyre Fitting</option>
+                                <option value="Suspension Service">Suspension Service</option>
+                                <option value="custom">Custom…</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="lwServiceCustomWrap" style="flex:2; min-width:140px; margin-bottom:0; display:none;">
+                            <label for="lwServiceCustom">Custom Service Name</label>
+                            <input type="text" id="lwServiceCustom" class="form-control" placeholder="e.g. Turbo Replacement">
+                        </div>
+                        <div class="form-group" style="flex:1; min-width:100px; margin-bottom:0;">
+                            <label for="lwServicePrice">Price (R)</label>
+                            <input type="number" id="lwServicePrice" class="form-control" min="1" placeholder="e.g. 800">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label style="visibility:hidden; display:block;">Add</label>
+                            <button type="button" id="lwAddServiceBtn" class="btn btn-secondary">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top:1.5rem;">
+                    <div style="display:flex; align-items:flex-start; gap:8px;">
+                        <input type="checkbox" id="lwConsent" style="margin-top:3px; cursor:pointer;">
+                        <label for="lwConsent" style="font-weight:500; font-size:0.9rem; line-height:1.4;">
+                            I confirm the listed prices and information are accurate and I accept the
+                            <a href="privacy.html" style="color:var(--secondary-accent); text-decoration:underline; font-size:0.85rem;">Privacy Policy</a>.
+                        </label>
+                    </div>
+                    <p id="lwConsentError" style="color:var(--danger-color); display:none; margin:8px 0 0 24px; font-size:0.85rem; font-weight:600;">
+                        Please tick the checkbox to confirm.
+                    </p>
+                </div>
+
+                <div id="lwFormError" class="auth-error" style="display:none; margin-bottom:1rem;"></div>
+
+                <button type="submit" id="lwSubmitBtn" class="btn btn-primary" style="width:100%;">
+                    Submit Listing for Review
+                </button>
+            </form>
         </div>
+
+        <!-- SUCCESS SCREEN -->
+        <div id="lw-success-section" style="display:none;" class="form-container">
+            <div class="thank-you-view">
+                <div class="icon-success">&#10003;</div>
+                <h3>Listing Submitted!</h3>
+                <p>Your workshop listing has been submitted for review. Our team will verify your information and activate your profile. You'll receive an email once your listing is live.</p>
+                <a href="workshop-home.html" class="btn btn-primary" style="margin-top:1rem;">Go to Dashboard</a>
+            </div>
+        </div>
+
     </main>
 
-    <nav class="bottom-nav">
+
+
+<nav class="bottom-nav">
         <div class="bottom-nav-links">
-            <a href="workshop-home.html" class="bottom-nav-item active">
+            <a href="workshop-home.html" class="bottom-nav-item">
                 <span class="bottom-nav-icon">
                     <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
                 </span>
                 <span class="bottom-nav-label">Home</span>
             </a>
-            <a href="my-listing.html" class="bottom-nav-item">
+<a href="my-listing.html" class="bottom-nav-item">
                 <span class="bottom-nav-icon">
                     <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
                 </span>
                 <span class="bottom-nav-label">My Listing</span>
             </a>
-            <a href="list-workshop.html" class="bottom-nav-item">
+            <a href="list-workshop.html" class="bottom-nav-item active">
                 <span class="bottom-nav-icon">
                     <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
                 </span>
-                <span class="bottom-nav-label">List My Workshop</span>
+                <span class="bottom-nav-label">List Workshop</span>
             </a>
         </div>
-        <p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
+<p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
     </nav>
-
-    <script>window.VERIYO_REQUIRED_TYPE = 'workshop';</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth-guard.js"></script>
     <script src="auth.js"></script>
-    <script src="main.js"></script>
-    <script src="workshop-home.js"></script>
+    <script src="list-workshop.js"></script>
 </body>
 </html>
