@@ -141,7 +141,10 @@
     </style>
 </head>
 <body>
-    <main class="welcome-page">
+    <div id="welcomeLoading" style="min-height:calc(100vh - 60px); display:flex; align-items:center; justify-content:center; color:var(--text-secondary);">
+        Loading…
+    </div>
+    <main class="welcome-page" id="welcomeContent" style="display:none;">
         <div class="welcome-brand">
             <a href="welcome.html" aria-label="Veriyo home">
                 <img src="logo.png" alt="Veriyo" style="height:64px; width:auto; margin-bottom:0.5rem;">
@@ -173,5 +176,40 @@
             <a href="privacy.html">Privacy Policy</a>
         </p>
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // Spec 8.5: the Welcome Page no longer appears for a signed-in person —
+        // they're taken straight to their own home area instead.
+        (async function () {
+            const _supabaseWelcome = supabase.createClient(
+                'https://xxigkehuqtwaihyxaahk.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
+            );
+            const { data: { session } } = await _supabaseWelcome.auth.getSession();
+
+            if (!session) {
+                document.getElementById('welcomeLoading').style.display = 'none';
+                document.getElementById('welcomeContent').style.display = 'flex';
+                return;
+            }
+
+            const { data: profile, error } = await _supabaseWelcome
+                .from('account_profiles')
+                .select('account_type')
+                .eq('user_id', session.user.id)
+                .single();
+
+            if (error || !profile) {
+                // Fail open — if we can't confirm the account type, don't strand
+                // a signed-in person on a blank loading screen.
+                document.getElementById('welcomeLoading').style.display = 'none';
+                document.getElementById('welcomeContent').style.display = 'flex';
+                return;
+            }
+
+            window.location.replace(profile.account_type === 'workshop' ? 'workshop-home.html' : 'motorist-home.html');
+        })();
+    </script>
 </body>
-</html>
+</html> 
