@@ -47,18 +47,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderProfile(workshop, submissions || []);
 
-// Chat button handler
+    // Chat button visibility/handler.
+    // Spec 8.14: unclaimed listings (no owner yet) never have Chat available.
+    // New rule: a workshop account viewing a workshop profile never sees Chat —
+    // workshop-to-workshop chat is not a supported conversation type (also
+    // matches the DB's own chats_thread_type_check constraint).
     const chatBtn = document.getElementById('chatWorkshopBtn');
-    if (chatBtn && workshopId) {
-        chatBtn.addEventListener('click', async function () {
+    if (chatBtn) {
+        if (!workshop.user_id) {
+            // Unclaimed listing — no real owner behind it yet.
+            chatBtn.style.display = 'none';
+        } else {
             const { data: { session } } = await _supabaseProfile.auth.getSession();
+            let viewerIsWorkshop = false;
             if (session) {
-                window.location.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
-            } else {
-                sessionStorage.setItem('veriyo_chat_redirect', 'chat.html?workshop_id=' + encodeURIComponent(workshopId));
-                window.location.href = 'auth.html';
+                const { data: viewerProfile } = await _supabaseProfile
+                    .from('account_profiles')
+                    .select('account_type')
+                    .eq('user_id', session.user.id)
+                    .single();
+                viewerIsWorkshop = !!(viewerProfile && viewerProfile.account_type === 'workshop');
             }
-        });
+
+            if (viewerIsWorkshop) {
+                chatBtn.style.display = 'none';
+            } else if (workshopId) {
+                chatBtn.addEventListener('click', async function () {
+                    if (session) {
+                        window.location.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
+                    } else {
+                        window.location.href = 'auth.html?return=' + encodeURIComponent('chat.html?workshop_id=' + workshopId);
+                    }
+                });
+            }
+        }
     }
 
     // Pricing accordion toggle
