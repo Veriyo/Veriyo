@@ -3,95 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Home — Veriyo</title>
+    <title>Chat — Veriyo</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
-<nav class="navbar navbar--top">
+    <nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
-        <ul class="nav-links">
-            <li><a href="workshop-home.html" class="active">Home</a></li>
-            <li><a href="my-listing.html">My Listing</a></li>
-            <li><a href="list-workshop.html">List My Workshop</a></li>
-        </ul>
+        <ul class="nav-links" id="chatNavLinks"></ul>
     </nav>
 
-    <main class="container" style="max-width:860px; padding-top:2rem;">
+    <main class="container chat-page-container">
 
-        <div id="whHomeLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
-            Loading your dashboard…
+        <!-- Motorist view: conversation list (opened via the message icon, no workshop_id in URL) -->
+        <div id="chatMotoristListView" style="display:none;">
+            <div class="chat-header">
+                <h1 class="chat-workshop-title">Messages</h1>
+            </div>
+            <div id="chatMotoristConvList" class="chat-conv-list"></div>
+            <div id="chatMotoristEmpty" class="empty-state" style="display:none;">
+                <div class="empty-icon">&#128172;</div>
+                <p>You have no messages yet.</p>
+                <p style="font-size:0.95rem; margin-top:0.25rem;">Pick a workshop to start a conversation.</p>
+                <a href="workshops.html" class="btn btn-primary" style="margin-top:1.25rem; display:inline-block;">Browse Workshops</a>
+            </div>
         </div>
 
-        <div id="whHomeSignIn" style="display:none; text-align:center; padding:4rem 1rem;">
-            <p style="color:var(--text-primary); font-weight:600; margin-bottom:0.5rem;">Your workshop dashboard</p>
-            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Sign in to manage your listing, view notifications, and chat with motorists.</p>
-            <a href="auth.html" class="btn btn-primary">Sign In</a>
+        <!-- Motorist view: single thread -->
+        <div id="chatMotivistView" style="display:none;">
+            <div class="chat-header">
+                <a href="javascript:history.back()" class="chat-back-link">&#8592; Back</a>
+                <h1 id="chatWorkshopName" class="chat-workshop-title">Loading…</h1>
+            </div>
+            <div id="chatThread" class="chat-thread" aria-live="polite"></div>
+            <div id="chatSendError" class="chat-send-error" style="display:none;"></div>
+            <div class="chat-input-row">
+                <input type="text" id="chatInput" class="form-control chat-input"
+                    placeholder="Type a message…" autocomplete="off" maxlength="1000">
+                <button id="chatSendBtn" class="btn btn-primary chat-send-btn">Send</button>
+            </div>
         </div>
 
-        <div id="whHomeContent" style="display:none;">
-
-            <!-- Workshop Welcome Card -->
-            <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; margin-bottom:1.5rem;">
-                <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:0.25rem;">Welcome back, <span id="whWorkshopName">…</span></h1>
-                <p style="color:var(--text-secondary); font-size:0.9rem;">This is your workshop dashboard.</p>
+        <!-- Workshop manager view: conversation list + active thread -->
+        <div id="chatWorkshopView" style="display:none;">
+            <div class="chat-header">
+                <h1 class="chat-workshop-title">Conversations</h1>
+                <p class="chat-subtitle" id="chatManagerSubtitle"></p>
             </div>
-
-            <!-- Listing Status -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Listing Status</h2>
-                <div id="whStatusCard" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Quick Actions</h2>
-                <div id="whQuickActions" style="display:flex; flex-wrap:wrap; gap:0.75rem;"></div>
-            </div>
-
-            <!-- Recent Notifications -->
-            <div>
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Recent Notifications</h2>
-                <div id="whNotifList" class="chat-conv-list" style="display:none;"></div>
-                <div id="whNotifEmpty" class="empty-state" style="padding:2rem 1rem;">
-                    <p style="font-size:0.95rem;">No notifications yet.</p>
+            <div class="chat-manager-layout">
+                <div id="chatConvList" class="chat-conv-list">
+                    <div class="chat-conv-empty" id="chatConvEmpty" style="display:none;">No conversations yet.</div>
+                </div>
+                <div id="chatActiveThread" class="chat-active-thread" style="display:none;">
+                    <div class="chat-active-header">
+                        <span id="chatActiveMotrist"></span>
+                        <button class="chat-close-thread" id="chatCloseThread" title="Close">&#10005;</button>
+                    </div>
+                    <div id="chatManagerThread" class="chat-thread" aria-live="polite"></div>
+                    <div id="chatManagerSendError" class="chat-send-error" style="display:none;"></div>
+                    <div class="chat-input-row">
+                        <input type="text" id="chatManagerInput" class="form-control chat-input"
+                            placeholder="Reply…" autocomplete="off" maxlength="1000">
+                        <button id="chatManagerSendBtn" class="btn btn-primary chat-send-btn">Send</button>
+                    </div>
                 </div>
             </div>
-
         </div>
+
+        <!-- Auth required / loading state -->
+        <div id="chatAuthRequired" style="display:none; text-align:center; padding:4rem 1rem;">
+            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">You need to be signed in to use chat.</p>
+            <a href="auth.html" id="chatSignInLink" class="btn btn-primary">Sign In</a>
+        </div>
+
+        <div id="chatLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
+            Loading chat…
+        </div>
+
     </main>
 
     <nav class="bottom-nav">
-        <div class="bottom-nav-links">
-            <a href="workshop-home.html" class="bottom-nav-item active">
-                <span class="bottom-nav-icon">
-                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
-                </span>
-                <span class="bottom-nav-label">Home</span>
-            </a>
-            <a href="my-listing.html" class="bottom-nav-item">
-                <span class="bottom-nav-icon">
-                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
-                </span>
-                <span class="bottom-nav-label">My Listing</span>
-            </a>
-            <a href="list-workshop.html" class="bottom-nav-item">
-                <span class="bottom-nav-icon">
-                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
-                </span>
-                <span class="bottom-nav-label">List My Workshop</span>
-            </a>
-        </div>
+        <div class="bottom-nav-links" id="chatBottomNavLinks"></div>
         <p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
     </nav>
 
-    <script>window.VERIYO_REQUIRED_TYPE = 'workshop';</script>
+    <script>
+        // Same routing signal chat.js's own entry point uses (mode=workshop param).
+        // Runs independently of auth state, before auth.js runs, so there is only
+        // ever one .navbar--top / .bottom-nav in the DOM at a time — avoids
+        // colliding with auth.js's document.querySelector('.navbar--top').
+        (function () {
+            const params = new URLSearchParams(window.location.search);
+            const isWorkshopMode = params.get('mode') === 'workshop';
+
+            const topLinks = isWorkshopMode ? [
+                ['workshop-home.html', 'Home'],
+                ['my-listing.html', 'My Listing'],
+                ['list-workshop.html', 'List My Workshop']
+            ] : [
+                ['motorist-home.html', 'Home'],
+                ['prices.html', 'Prices'],
+                ['report.html', 'Report'],
+                ['workshops.html', 'Workshops']
+            ];
+
+            const bottomLinks = isWorkshopMode ? [
+                ['workshop-home.html', 'Home', 'icon-home'],
+                ['my-listing.html', 'My Listing', 'icon-listing'],
+                ['list-workshop.html', 'List My Workshop', 'icon-addlisting']
+            ] : [
+                ['motorist-home.html', 'Home', 'icon-home'],
+                ['prices.html', 'Prices', 'icon-prices'],
+                ['report.html', 'Report', 'icon-report'],
+                ['workshops.html', 'Workshops', 'icon-workshops']
+            ];
+
+            document.getElementById('chatNavLinks').innerHTML = topLinks
+                .map(function (l) { return '<li><a href="' + l[0] + '">' + l[1] + '</a></li>'; })
+                .join('');
+
+            document.getElementById('chatBottomNavLinks').innerHTML = bottomLinks
+                .map(function (l) {
+                    return '<a href="' + l[0] + '" class="bottom-nav-item">' +
+                        '<span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#' + l[2] + '"></use></svg></span>' +
+                        '<span class="bottom-nav-label">' + l[1] + '</span></a>';
+                })
+                .join('');
+
+            // Spec 4.15/3.6: after auth, return to this exact conversation, not a generic home.
+            document.getElementById('chatSignInLink').href =
+                'auth.html?return=' + encodeURIComponent(window.location.pathname + window.location.search);
+        })();
+    </script>
+
+
+
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth-guard.js"></script>
     <script src="auth.js"></script>
     <script src="main.js"></script>
-    <script src="workshop-home.js"></script>
+    <script src="chat.js"></script>
 </body>
 </html>
