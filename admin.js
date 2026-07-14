@@ -13,6 +13,7 @@ let pendingMotoristRecords = [];
 let pendingWorkshopRecords = [];
 let pendingClaimRecords = [];
 let pendingQuickClaimRecords = [];
+let liveWorkshopRecords = [];
 let currentTab = 'motorist';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -41,14 +42,16 @@ function switchTab(tab) {
         btn.style.color = isActive ? 'var(--primary-accent)' : 'var(--text-secondary)';
     });
 
-    document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
+document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
     document.getElementById('workshopPanel').style.display = tab === 'workshop' ? 'block' : 'none';
+    document.getElementById('liveWorkshopPanel').style.display = tab === 'live' ? 'block' : 'none';
     document.getElementById('claimsPanel').style.display = tab === 'claims' ? 'block' : 'none';
     document.getElementById('quickClaimsPanel').style.display = tab === 'quickclaims' ? 'block' : 'none';
 
     const titles = {
         'motorist': 'Pending Motorist Reports',
         'workshop': 'Pending Workshop Listings',
+        'live': 'Live Workshop Listings',
         'claims': 'Pending Claim Requests',
         'quickclaims': 'Pending Quick Claims'
     };
@@ -138,7 +141,7 @@ function showDashboard() {
 }
 
 async function loadAllPending() {
-    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadPendingClaimRequests(), loadPendingWorkshopQuickClaims()]);
+    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadLiveWorkshopListings(), loadPendingClaimRequests(), loadPendingWorkshopQuickClaims()]);
     updateTotalPendingCount();
 }
 
@@ -337,6 +340,98 @@ function renderWorkshopListings() {
     });
 }
 
+async function loadLiveWorkshopListings() {
+    const { data, error } = await supabaseClient
+        .from('Workshopprofiles')
+        .select('*')
+        .eq('status', 'Approved')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error('Failed to load live workshop listings:', error);
+        return;
+    }
+
+    liveWorkshopRecords = data || [];
+    renderLiveWorkshopListings();
+}
+
+function renderLiveWorkshopListings() {
+    const tableBody = document.getElementById('liveWorkshopBody');
+    const cardsContainer = document.getElementById('liveWorkshopCards');
+    const emptyState = document.getElementById('emptyStateLiveWorkshop');
+    const tableWrap = document.getElementById('liveWorkshopTableWrap');
+
+    if (liveWorkshopRecords.length === 0) {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (cardsContainer) cardsContainer.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (cardsContainer) cardsContainer.classList.remove('hidden');
+
+    tableBody.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopTableRow(record)).join('');
+    cardsContainer.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopCard(record)).join('');
+
+    liveWorkshopRecords.forEach(record => {
+        const deleteBtns = document.querySelectorAll(`[data-delete-live-workshop="${record.id}"]`);
+        deleteBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopDelete(record.id)));
+    });
+}
+
+function buildLiveWorkshopTableRow(record) {
+    const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
+    return `
+        <tr data-workshop-id="${record.id}">
+            <td data-label="Workshop">${escapeHTML(displayValue(record.workshop_name))}</td>
+            <td data-label="Location">${escapeHTML(displayValue(location))}</td>
+            <td data-label="Contact">${escapeHTML(displayValue(record.contact_number))}</td>
+            <td data-label="Specialisation">${escapeHTML(displayValue(record.specialisation))}</td>
+            <td data-label="Email">${escapeHTML(displayValue(record.email_address))}</td>
+            <td data-label="Actions">
+                <div class="action-buttons">
+                    <button class="btn btn-reject" data-delete-live-workshop="${record.id}">Delete</button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function buildLiveWorkshopCard(record) {
+    const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
+    return `
+        <article class="admin-card" data-workshop-id="${record.id}">
+            <div class="admin-card-header">
+                <h3>${escapeHTML(displayValue(record.workshop_name))}</h3>
+            </div>
+            <div class="admin-card-grid">
+                <div class="admin-card-field">
+                    <span class="field-label">Location</span>
+                    <span class="field-value">${escapeHTML(displayValue(location))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Contact</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.contact_number))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Specialisation</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.specialisation))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Email</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.email_address))}</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-reject" data-delete-live-workshop="${record.id}">Delete</button>
+            </div>
+        </article>
+    `;
+}
+
 function buildWorkshopTableRow(record) {
     const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
     return `
@@ -436,14 +531,21 @@ async function handleWorkshopDelete(id) {
         return;
     }
 
-    removeWorkshopFromView(id);
+removeWorkshopFromView(id);
     pendingWorkshopRecords = pendingWorkshopRecords.filter(r => r.id !== id);
+    liveWorkshopRecords = liveWorkshopRecords.filter(r => r.id !== id);
     updateTotalPendingCount();
 
-    if (pendingWorkshopRecords.length === 0) {
+    if (pendingWorkshopRecords.length === 0 && currentTab === 'workshop') {
         document.getElementById('workshopTableWrap').classList.add('hidden');
         document.getElementById('workshopCards').classList.add('hidden');
         document.getElementById('emptyStateWorkshop').classList.remove('hidden');
+    }
+
+    if (liveWorkshopRecords.length === 0 && currentTab === 'live') {
+        document.getElementById('liveWorkshopTableWrap').classList.add('hidden');
+        document.getElementById('liveWorkshopCards').classList.add('hidden');
+        document.getElementById('emptyStateLiveWorkshop').classList.remove('hidden');
     }
 }
 
