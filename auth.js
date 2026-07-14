@@ -68,7 +68,46 @@
             .select('id')
             .eq('email_address', userEmail)
             .limit(1);
-        const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0].id : null;
+const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0].id : null;
+
+        // A workshop account should only ever see workshop-relevant pages in
+        // the nav — never the motorist-only Home/Report pages — and should
+        // never see a permanent "List My Workshop" link, since a workshop
+        // only ever creates one listing and manages it from My Listing from
+        // then on. This rewrites both the top nav and the mobile bottom nav
+        // wherever they appear, so every page stays in sync automatically.
+        if (myWorkshopId) {
+            const topLinks = [
+                ['workshop-home.html', 'Home'],
+                ['prices.html', 'Prices'],
+                ['workshops.html', 'Workshops'],
+                ['my-listing.html', 'My Listing']
+            ];
+            const bottomLinks = [
+                ['workshop-home.html', 'Home', 'icon-home'],
+                ['prices.html', 'Prices', 'icon-prices'],
+                ['workshops.html', 'Workshops', 'icon-workshops'],
+                ['my-listing.html', 'My Listing', 'icon-listing']
+            ];
+
+            const topNavEl = document.querySelector('.nav-links');
+            if (topNavEl) {
+                topNavEl.innerHTML = topLinks.map(function (l) {
+                    const isActive = window.location.pathname.endsWith(l[0]);
+                    return '<li><a href="' + l[0] + '"' + (isActive ? ' class="active"' : '') + '>' + l[1] + '</a></li>';
+                }).join('');
+            }
+
+            const bottomNavEl = document.querySelector('.bottom-nav-links');
+            if (bottomNavEl) {
+                bottomNavEl.innerHTML = bottomLinks.map(function (l) {
+                    const isActive = window.location.pathname.endsWith(l[0]);
+                    return '<a href="' + l[0] + '" class="bottom-nav-item' + (isActive ? ' active' : '') + '">' +
+                        '<span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#' + l[2] + '"></use></svg></span>' +
+                        '<span class="bottom-nav-label">' + l[1] + '</span></a>';
+                }).join('');
+            }
+        }
 
         const li = document.createElement('li');
         li.className = 'nav-auth-item';
