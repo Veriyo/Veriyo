@@ -48,8 +48,18 @@
             iconEl.appendChild(dot);
         }
     }
+// Reveals the nav once we've actually decided what belongs in it —
+    // called at the very end no matter which path the code below takes,
+    // so the nav can never get stuck invisible if something goes wrong.
+    function revealNav() {
+        const topNavEl = document.querySelector('.nav-links');
+        const bottomNavEl = document.querySelector('.bottom-nav-links');
+        if (topNavEl) topNavEl.style.visibility = 'visible';
+        if (bottomNavEl) bottomNavEl.style.visibility = 'visible';
+    }
 
     document.addEventListener('DOMContentLoaded', async function () {
+      try {
         const { data: { session } } = await _supabaseAuthNav.auth.getSession();
         const navbar = document.querySelector('.navbar--top');
         if (!navbar) return;
@@ -226,12 +236,14 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
             });
         }
 
-        if (myWorkshopId) {
+if (myWorkshopId) {
             const lastLogin = session.user.last_sign_in_at;
             await checkUnreadBell(myWorkshopId, lastLogin, chatEl);
         }
+      } finally {
+        revealNav();
+      }
     });
-
     function escapeHtml(str) {
         return String(str || '')
             .replace(/&/g, '&amp;')
