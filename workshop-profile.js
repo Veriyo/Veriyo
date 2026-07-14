@@ -47,6 +47,19 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     renderProfile(workshop, submissions || []);
 
+ // Shared session lookup — used by both the Chat button and the
+    // owner-only Edit Listing button below, so we only ask Supabase once.
+    const { data: { session: viewerSession } } = await _supabaseProfile.auth.getSession();
+
+    // Edit Listing button — only shown to the workshop account that owns
+    // this exact listing (never shown to motorists or other workshops).
+    const editBanner = document.getElementById('editListingBanner');
+    if (editBanner && viewerSession && workshop.user_id && viewerSession.user.id === workshop.user_id) {
+        editBanner.style.display = 'block';
+        document.getElementById('editListingBtn').href =
+            'list-workshop.html?edit=' + encodeURIComponent(workshop.id);
+    }
+
     // Chat button visibility/handler.
     // Spec 8.14: unclaimed listings (no owner yet) never have Chat available.
     // New rule: a workshop account viewing a workshop profile never sees Chat —
@@ -58,7 +71,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Unclaimed listing — no real owner behind it yet.
             chatBtn.style.display = 'none';
         } else {
-            const { data: { session } } = await _supabaseProfile.auth.getSession();
+            const session = viewerSession;
             let viewerIsWorkshop = false;
             if (session) {
                 const { data: viewerProfile } = await _supabaseProfile
