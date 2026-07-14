@@ -59,8 +59,11 @@
                 <button class="admin-tab-btn admin-tab-btn--active" data-tab="motorist" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid var(--primary-accent); color:var(--primary-accent); font-weight:600; cursor:pointer;">
                     Motorist Reports
                 </button>
-                <button class="admin-tab-btn" data-tab="workshop" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+<button class="admin-tab-btn" data-tab="workshop" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     Workshop Listings
+                </button>
+                <button class="admin-tab-btn" data-tab="live" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Live Workshops
                 </button>
                 <button class="admin-tab-btn" data-tab="claims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     Claim Requests
@@ -133,6 +136,34 @@
                 <div id="emptyStateWorkshop" class="empty-state hidden">
                     <div class="empty-icon">&#10003;</div>
                     <p>No pending workshop listings. All caught up.</p>
+                </div>
+            </div>
+
+<!-- Live Workshops Panel -->
+            <div id="liveWorkshopPanel" style="display:none;">
+                <!-- Desktop table -->
+                <div class="admin-table-wrap" id="liveWorkshopTableWrap">
+                    <table class="admin-table" id="liveWorkshopTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop Name</th>
+                                <th>Location</th>
+                                <th>Contact</th>
+                                <th>Specialisation</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liveWorkshopBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile cards -->
+                <div id="liveWorkshopCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateLiveWorkshop" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No live workshop listings.</p>
                 </div>
             </div>
 
