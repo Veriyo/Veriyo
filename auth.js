@@ -95,10 +95,19 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
                 ['my-listing.html', 'My Listing', 'icon-listing']
             ];
 
+// Cloudflare Pages serves this site with the .html extension
+            // dropped from the address bar (e.g. "/workshops", not
+            // "/workshops.html"), so matching must ignore the extension too.
+            function isCurrentPage(fileName) {
+                const page = fileName.replace(/\.html$/, '');
+                const path = window.location.pathname.replace(/\.html$/, '').replace(/\/$/, '');
+                return path === '/' + page || path.endsWith('/' + page);
+            }
+
             const topNavEl = document.querySelector('.nav-links');
             if (topNavEl) {
                 topNavEl.innerHTML = topLinks.map(function (l) {
-                    const isActive = window.location.pathname.endsWith(l[0]);
+                    const isActive = isCurrentPage(l[0]);
                     return '<li><a href="' + l[0] + '"' + (isActive ? ' class="active"' : '') + '>' + l[1] + '</a></li>';
                 }).join('');
             }
@@ -106,7 +115,7 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
             const bottomNavEl = document.querySelector('.bottom-nav-links');
             if (bottomNavEl) {
                 bottomNavEl.innerHTML = bottomLinks.map(function (l) {
-                    const isActive = window.location.pathname.endsWith(l[0]);
+                    const isActive = isCurrentPage(l[0]);
                     return '<a href="' + l[0] + '" class="bottom-nav-item' + (isActive ? ' active' : '') + '">' +
                         '<span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#' + l[2] + '"></use></svg></span>' +
                         '<span class="bottom-nav-label">' + l[1] + '</span></a>';
