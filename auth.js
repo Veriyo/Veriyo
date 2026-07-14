@@ -28,7 +28,12 @@
     // and the bell is reserved for administrator notifications.
     async function checkUnreadBell(workshopId, lastLoginAt, iconEl) {
         if (!workshopId || !iconEl) return;
-        const since = lastLoginAt || new Date(0).toISOString();
+        // Cutoff is the later of last sign-in and the last time this workshop
+        // opened its Messages, so the dot clears once messages are read
+        // instead of persisting until the next login.
+        const lastRead = localStorage.getItem('veriyo_chat_read_' + workshopId);
+        const lastLogin = lastLoginAt || new Date(0).toISOString();
+        const since = (lastRead && lastRead > lastLogin) ? lastRead : lastLogin;
         const { data } = await _supabaseAuthNav
             .from('chats')
             .select('id')
