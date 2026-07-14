@@ -14,6 +14,7 @@ let pendingWorkshopRecords = [];
 let pendingClaimRecords = [];
 let pendingQuickClaimRecords = [];
 let liveWorkshopRecords = [];
+let livePriceRecords = [];
 let currentTab = 'motorist';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -44,16 +45,18 @@ function switchTab(tab) {
 
 document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
     document.getElementById('workshopPanel').style.display = tab === 'workshop' ? 'block' : 'none';
-    document.getElementById('liveWorkshopPanel').style.display = tab === 'live' ? 'block' : 'none';
+document.getElementById('liveWorkshopPanel').style.display = tab === 'live' ? 'block' : 'none';
     document.getElementById('claimsPanel').style.display = tab === 'claims' ? 'block' : 'none';
     document.getElementById('quickClaimsPanel').style.display = tab === 'quickclaims' ? 'block' : 'none';
+    document.getElementById('livePricesPanel').style.display = tab === 'liveprices' ? 'block' : 'none';
 
     const titles = {
         'motorist': 'Pending Motorist Reports',
         'workshop': 'Pending Workshop Listings',
         'live': 'Live Workshop Listings',
         'claims': 'Pending Claim Requests',
-        'quickclaims': 'Pending Quick Claims'
+        'quickclaims': 'Pending Quick Claims',
+        'liveprices': 'Live Price Submissions'
     };
     document.getElementById('sectionTitle').textContent = titles[tab] || 'Pending';
 }
@@ -139,12 +142,10 @@ function showDashboard() {
     document.getElementById('loginView').classList.add('hidden');
     document.getElementById('dashboardView').classList.remove('hidden');
 }
-
 async function loadAllPending() {
-    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadLiveWorkshopListings(), loadPendingClaimRequests(), loadPendingWorkshopQuickClaims()]);
+    await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadLiveWorkshopListings(), loadPendingClaimRequests(), loadPendingWorkshopQuickClaims(), loadLivePriceSubmissions()]);
     updateTotalPendingCount();
 }
-
 function updateTotalPendingCount() {
     const total = pendingMotoristRecords.length + pendingWorkshopRecords.length + pendingClaimRecords.length + pendingQuickClaimRecords.length;
     document.getElementById('pendingCount').textContent = total;
@@ -294,8 +295,135 @@ async function updateMotoristStatus(id, newStatus) {
     }
 }
 
-// ─── WORKSHOP LISTINGS ──────────────────────────────────────────────────────
+// ─── LIVE PRICE SUBMISSIONS ─────────────────────────────────────────────────
 
+async function loadLivePriceSubmissions() {
+    const { data, error } = await supabaseClient
+        .from('Submissions')
+        .select('*')
+        .eq('status', 'Approved')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error('Failed to load live price submissions:', error);
+        return;
+    }
+
+    livePriceRecords = data || [];
+    renderLivePriceSubmissions();
+}
+
+function renderLivePriceSubmissions() {
+    const tableBody = document.getElementById('livePricesBody');
+    const cardsContainer = document.getElementById('livePricesCards');
+    const emptyState = document.getElementById('emptyStateLivePrices');
+    const tableWrap = document.getElementById('livePricesTableWrap');
+
+    if (livePriceRecords.length === 0) {
+        if (tableWrap) tableWrap.classList.add('hidden');
+        if (cardsContainer) cardsContainer.classList.add('hidden');
+        if (emptyState) emptyState.classList.remove('hidden');
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (cardsContainer) cardsContainer.classList.remove('hidden');
+
+    tableBody.innerHTML = livePriceRecords.map(record => buildLivePriceTableRow(record)).join('');
+    cardsContainer.innerHTML = livePriceRecords.map(record => buildLivePriceCard(record)).join('');
+
+    livePriceRecords.forEach(record => {
+        const deleteBtns = document.querySelectorAll(`[data-delete-price="${record.id}"]`);
+        deleteBtns.forEach(btn => btn.addEventListener('click', () => handleSubmissionDelete(record.id)));
+    });
+}
+
+function buildLivePriceTableRow(record) {
+    return `
+        <tr data-price-id="${record.id}">
+            <td data-label="Workshop">${escapeHTML(displayValue(record.workshop_name))}</td>
+            <td data-label="Suburb">${escapeHTML(displayValue(record.suburb))}</td>
+            <td data-label="Vehicle">${escapeHTML(formatVehicle(record))}</td>
+            <td data-label="Repair Type">${escapeHTML(displayValue(record.repair_type))}</td>
+            <td data-label="Amount Paid">${formatCurrency(record.amount_paid)}</td>
+            <td data-label="Date">${formatDate(record.repair_date)}</td>
+            <td data-label="Actions">
+                <div class="action-buttons">
+                    <button class="btn btn-reject" data-delete-price="${record.id}">Delete</button>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+function buildLivePriceCard(record) {
+    return `
+        <article class="admin-card" data-price-id="${record.id}">
+            <div class="admin-card-header">
+                <h3>${escapeHTML(displayValue(record.workshop_name))}</h3>
+                <span class="admin-card-date">${formatDate(record.repair_date)}</span>
+            </div>
+            <div class="admin-card-grid">
+                <div class="admin-card-field">
+                    <span class="field-label">Suburb</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.suburb))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Vehicle</span>
+                    <span class="field-value">${escapeHTML(formatVehicle(record))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Repair Type</span>
+                    <span class="field-value">${escapeHTML(displayValue(record.repair_type))}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Amount Paid</span>
+                    <span class="field-value">${formatCurrency(record.amount_paid)}</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-reject" data-delete-price="${record.id}">Delete</button>
+            </div>
+        </article>
+    `;
+}
+
+async function handleSubmissionDelete(id) {
+    if (!confirm('Are you sure you want to delete this price submission? This cannot be undone.')) {
+        return;
+    }
+
+    const buttons = document.querySelectorAll(`[data-delete-price="${id}"]`);
+    buttons.forEach(btn => btn.disabled = true);
+
+    const { error } = await supabaseClient
+        .from('Submissions')
+        .delete()
+        .eq('id', id);
+
+    if (error) {
+        const statusMsg = document.getElementById('statusMessage');
+        statusMsg.textContent = 'Failed to delete submission. Please try again.';
+        statusMsg.className = 'status-message status-error';
+        buttons.forEach(btn => btn.disabled = false);
+        return;
+    }
+
+    document.querySelectorAll(`[data-price-id="${id}"]`).forEach(el => {
+        el.classList.add('row-removing');
+        setTimeout(() => el.remove(), 300);
+    });
+    livePriceRecords = livePriceRecords.filter(r => r.id !== id);
+
+    if (livePriceRecords.length === 0 && currentTab === 'liveprices') {
+        document.getElementById('livePricesTableWrap').classList.add('hidden');
+        document.getElementById('livePricesCards').classList.add('hidden');
+        document.getElementById('emptyStateLivePrices').classList.remove('hidden');
+    }
+}
+
+// ─── WORKSHOP LISTINGS ──────────────────────────────────────────────────────
 async function loadPendingWorkshopListings() {
     const { data, error } = await supabaseClient
         .from('Workshopprofiles')
