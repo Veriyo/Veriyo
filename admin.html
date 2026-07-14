@@ -68,8 +68,11 @@
                 <button class="admin-tab-btn" data-tab="claims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     Claim Requests
                 </button>
-                <button class="admin-tab-btn" data-tab="quickclaims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+<button class="admin-tab-btn" data-tab="quickclaims" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
                     Quick Claims
+                </button>
+                <button class="admin-tab-btn" data-tab="liveprices" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">
+                    Live Prices
                 </button>
             </div>
 
@@ -213,9 +216,36 @@
 
                 <div id="quickClaimsCards" class="admin-cards-mobile"></div>
 
-                <div id="emptyStateQuickClaims" class="empty-state hidden">
+<div id="emptyStateQuickClaims" class="empty-state hidden">
                     <div class="empty-icon">&#10003;</div>
                     <p>No pending quick claims. All caught up.</p>
+                </div>
+            </div>
+
+            <!-- Live Prices Panel -->
+            <div id="livePricesPanel" style="display:none;">
+                <div class="admin-table-wrap" id="livePricesTableWrap">
+                    <table class="admin-table" id="livePricesTable">
+                        <thead>
+                            <tr>
+                                <th>Workshop</th>
+                                <th>Suburb</th>
+                                <th>Vehicle</th>
+                                <th>Repair Type</th>
+                                <th>Amount Paid</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="livePricesBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="livePricesCards" class="admin-cards-mobile"></div>
+
+                <div id="emptyStateLivePrices" class="empty-state hidden">
+                    <div class="empty-icon">&#10003;</div>
+                    <p>No live price submissions.</p>
                 </div>
             </div>
         </main>
