@@ -7,10 +7,11 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
     const _supabaseLW = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let lwSession = null;
+let lwSession = null;
     let addedServices = [];
     const SERVICE_LIMIT = 8;
     let searchResultsVisible = false;
+    let editingListingId = null;
 
     function escapeHtml(str) {
         return String(str || '')
@@ -230,6 +231,67 @@
         });
     }
 
+// ─── EDIT MODE (pre-fill an existing listing for update) ──────────────────
+
+    async function loadListingForEdit(id) {
+        const { data, error } = await _supabaseLW
+            .from('Workshopprofiles')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (error || !data) {
+            document.getElementById('searchStep').style.display = 'none';
+            document.getElementById('mainContent').innerHTML =
+                '<p style="text-align:center; padding:3rem 1rem; color:var(--text-secondary);">' +
+                'We could not find that listing, or it does not belong to your account.</p>';
+            return;
+        }
+
+        editingListingId = data.id;
+        populateFormForEdit(data);
+        showForm();
+
+        const titleEl = document.getElementById('lwFormTitle');
+        const subtitleEl = document.getElementById('lwFormSubtitle');
+        const submitBtn = document.getElementById('lwSubmitBtn');
+        if (titleEl) titleEl.textContent = 'Edit Your Workshop';
+        if (subtitleEl) subtitleEl.textContent = 'Update your details below. Changes are reviewed before going live again.';
+        if (submitBtn) submitBtn.textContent = 'Save Changes for Review';
+    }
+
+    function populateFormForEdit(w) {
+        document.getElementById('lwName').value = w.workshop_name || '';
+        document.getElementById('lwAddress').value = w.physical_address || '';
+        document.getElementById('lwSuburb').value = w.suburb || '';
+        document.getElementById('lwCity').value = w.city || '';
+        document.getElementById('lwProvince').value = w.province || '';
+        document.getElementById('lwContact').value = w.contact_number || '';
+        document.getElementById('lwHours').value = w.operating_hours || '';
+        document.getElementById('lwYears').value = w.years_operation || '';
+
+        const specs = (w.specialisation || '').split(',').map(function (s) { return s.trim(); });
+        document.querySelectorAll('input[name="lwSpec"]').forEach(function (box) {
+            box.checked = specs.includes(box.value);
+        });
+
+        const rmiRadio = document.querySelector('input[name="lwRmi"][value="' + (w.rmi_registered || 'No') + '"]');
+        if (rmiRadio) rmiRadio.checked = true;
+
+        const quoteRadio = document.querySelector('input[name="lwQuote"][value="' + (w.written_quote || 'No') + '"]');
+        if (quoteRadio) quoteRadio.checked = true;
+
+        const guaranteeRadio = document.querySelector('input[name="lwGuarantee"][value="' + (w.guarantee_work || 'No') + '"]');
+        if (guaranteeRadio) guaranteeRadio.checked = true;
+        if (w.guarantee_work === 'Yes') {
+            document.getElementById('lwGuaranteePeriodWrap').classList.remove('hidden');
+            document.getElementById('lwGuaranteePeriod').value = w.guarantee_period || '';
+        }
+
+        addedServices = Array.isArray(w.services) ? w.services.slice() : [];
+        renderServiceCards();
+    }
+
     // ─── FORM VALIDATION & SUBMISSION ───────────────────────────────────────────
 
     function collectFormData() {
@@ -289,26 +351,32 @@
         el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    async function submitListing(data) {
+async function submitListing(data) {
         const submitBtn = document.getElementById('lwSubmitBtn');
         const errorEl = document.getElementById('lwFormError');
         errorEl.style.display = 'none';
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting…';
+        submitBtn.textContent = editingListingId ? 'Saving…' : 'Submitting…';
 
-        const { error } = await _supabaseLW.from('Workshopprofiles').insert(data);
+        const { error } = editingListingId
+            ? await _supabaseLW.from('Workshopprofiles').update(data).eq('id', editingListingId)
+            : await _supabaseLW.from('Workshopprofiles').insert(data);
 
         if (error) {
             errorEl.textContent = 'Submission failed: ' + error.message + '. Please try again.';
             errorEl.style.display = 'block';
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Submit Listing for Review';
+            submitBtn.textContent = editingListingId ? 'Save Changes for Review' : 'Submit Listing for Review';
         } else {
             document.getElementById('formStep').style.display = 'none';
             document.getElementById('lw-success-section').style.display = 'block';
+            if (editingListingId) {
+                document.querySelector('#lw-success-section h3').textContent = 'Changes Submitted!';
+                document.querySelector('#lw-success-section p').textContent =
+                    'Your updated details have been sent for review. Your listing will stay live with its previous details until the update is approved.';
+            }
         }
     }
-
 
 
     // ─── INIT ────────────────────────────────────────────────────────────────────
@@ -322,13 +390,17 @@ if (!session) {
             return;
         }
 
-        lwSession = session;
+lwSession = session;
 
         const emailDisplay = document.getElementById('lwEmailDisplay');
         if (emailDisplay) emailDisplay.textContent = session.user.email;
 
         renderServiceCards();
 
+        const editParam = new URLSearchParams(window.location.search).get('edit');
+        if (editParam) {
+            loadListingForEdit(editParam);
+        }
 
         // Search button
         const searchBtn = document.getElementById('searchBtn');
