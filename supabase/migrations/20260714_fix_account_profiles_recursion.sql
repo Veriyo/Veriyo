@@ -8,3 +8,7 @@ DROP POLICY IF EXISTS "select_all_account_types_admin" ON account_profiles;
 CREATE POLICY "select_all_account_types_admin" ON account_profiles
 FOR SELECT TO authenticated
 USING (public.is_admin_user());
+
+CREATE POLICY "Allow admin to delete submissions" ON "Submissions"
+FOR DELETE TO authenticated
+USING (public.is_admin_user());
