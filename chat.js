@@ -216,7 +216,9 @@
 
         const myWorkshop = workshopArr[0];
         subtitleEl.textContent = myWorkshop.workshop_name;
-
+        // Mark messages as read now, so the unread badge/dot elsewhere clear
+        // as soon as the workshop opens Messages rather than at next login.
+localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString());
         // Spec 8.10: workshop-home.js's unread badge needs a real "last viewed
         // this chat view" marker — session.user.last_sign_in_at only updates on
         // a fresh login, so it never reflects messages actually read this
