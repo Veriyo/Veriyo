@@ -72,9 +72,8 @@
             '  <span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
             '</div>';
 
-        renderQuickActions(actionsEl, [
+renderQuickActions(actionsEl, [
             { href: 'my-listing.html', label: 'View My Listing', primary: true },
-            { href: 'list-workshop.html', label: 'Update Listing', primary: false },
             { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false }
         ]);
 
@@ -104,8 +103,13 @@
             }).join('');
         }
 
-        // Unread chat count (spec 3.4 "Unread Chat Count").
-        const since = session.user.last_sign_in_at || new Date(0).toISOString();
+// Unread chat count (spec 3.4 "Unread Chat Count").
+        // Cutoff is the later of last sign-in and the last time this workshop
+        // opened its Messages, so the badge clears once messages are read
+        // instead of persisting until the next login.
+        const lastRead = localStorage.getItem('veriyo_chat_read_' + myWorkshop.id);
+        const lastLogin = session.user.last_sign_in_at || new Date(0).toISOString();
+        const since = (lastRead && lastRead > lastLogin) ? lastRead : lastLogin;
         const { data: unread } = await _sb
             .from('chats')
             .select('id')
