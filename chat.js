@@ -240,15 +240,15 @@
             });
             const motoristIds = Object.keys(byMotorist);
 
-            // Spec 8.10: show the motorist's real name in the list, not their id.
+// Spec 8.10: show the motorist's real name in the list, not their id.
+            // Uses a safe lookup function instead of querying account_profiles
+            // directly — a workshop has no general permission to browse other
+            // people's account rows, only this narrow name-only view of them.
             const { data: motoristProfiles } = await _supabaseChat
-                .from('account_profiles')
-                .select('user_id, first_name, last_name')
-                .in('user_id', motoristIds);
+                .rpc('get_account_display_names', { target_ids: motoristIds });
             const namesById = {};
             (motoristProfiles || []).forEach(function (p) {
-                const full = [p.first_name, p.last_name].filter(Boolean).join(' ').trim();
-                if (full) namesById[p.user_id] = full;
+                if (p.display_name) namesById[p.user_id] = p.display_name;
             });
 
             convListEl.innerHTML = '';
@@ -317,9 +317,18 @@
                 })
                 .subscribe();
 
-            // Wire send for this thread
+// Replace old listener by cloning the button, so a previously
+            // opened thread's send-handler doesn't fire alongside this one.
+            const newSendBtn = managerSendBtn.cloneNode(true);
+            managerSendBtn.parentNode.replaceChild(newSendBtn, managerSendBtn);
+            const newInput = managerInput.cloneNode(true);
+            managerInput.parentNode.replaceChild(newInput, managerInput);
+
+            // Wire send for this thread — reads from newInput/newSendBtn (the
+            // boxes actually visible on screen), not the originals, which are
+            // detached from the page the moment the clone-swap above runs.
             async function sendReply() {
-                const text = managerInput.value.trim();
+                const text = newInput.value.trim();
                 managerSendError.style.display = 'none';
                 if (!text) return;
 
@@ -329,7 +338,7 @@
                     return;
                 }
 
-                managerSendBtn.disabled = true;
+                newSendBtn.disabled = true;
                 const { error } = await _supabaseChat.from('chats').insert({
                     workshop_id: workshopId,
                     motorist_id: motoristId,
@@ -337,20 +346,14 @@
                     message_text: text
                 });
 
-                managerSendBtn.disabled = false;
+                newSendBtn.disabled = false;
                 if (error) {
                     managerSendError.textContent = 'Failed to send. Please try again.';
                     managerSendError.style.display = 'block';
                 } else {
-                    managerInput.value = '';
+                    newInput.value = '';
                 }
             }
-
-            // Replace old listener by cloning the button
-            const newSendBtn = managerSendBtn.cloneNode(true);
-            managerSendBtn.parentNode.replaceChild(newSendBtn, managerSendBtn);
-            const newInput = managerInput.cloneNode(true);
-            managerInput.parentNode.replaceChild(newInput, managerInput);
 
             newSendBtn.addEventListener('click', sendReply);
             newInput.addEventListener('keydown', function (e) {
