@@ -43,8 +43,8 @@
                 <h2 class="wh-listing-name" id="whLName"></h2>
                 <p class="wh-listing-location" id="whLLocation"></p>
                 <div class="wh-listing-badges" id="whLBadges"></div>
-                <div class="wh-listing-actions">
-                    <a href="list-workshop.html" class="btn btn-secondary" style="font-size:0.9rem;">Update Listing</a>
+<div class="wh-listing-actions">
+                    <a id="whLUpdateBtn" href="#" class="btn btn-secondary" style="font-size:0.9rem;">Edit Listing</a>
                     <a id="whLViewBtn" href="#" class="btn btn-primary" style="font-size:0.9rem;">View Public Profile</a>
                 </div>
             </div>
@@ -134,7 +134,8 @@
                 badgesHtml += ' <span class="badge badge-neutral">' + escHtml(w.plan) + ' Plan</span>';
             }
             document.getElementById('whLBadges').innerHTML = badgesHtml;
-            document.getElementById('whLViewBtn').href = 'workshop-profile.html?id=' + encodeURIComponent(w.id);
+document.getElementById('whLViewBtn').href = 'workshop-profile.html?id=' + encodeURIComponent(w.id);
+            document.getElementById('whLUpdateBtn').href = 'list-workshop.html?edit=' + encodeURIComponent(w.id);
             document.getElementById('whListingFound').style.display = 'block';
         }
 
