@@ -499,11 +499,13 @@ button, input, select, textarea {
         padding-bottom: 80px;
     }
 .bottom-nav-links {
-        display: flex !important;
-        width: 100%;
-        padding: 0.4rem 0;
-        gap: clamp(1rem, 12vw, 2rem);
-    }
+    display: none;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(1.5rem, 8vw, 4rem);
+    padding: 0.5rem 0;
+    visibility: hidden;
+}
     .bottom-nav-legal {
         display: flex !important;
     }
@@ -649,6 +651,7 @@ button, input, select, textarea {
     align-items: center;
     margin: 0;
     padding: 0;
+    visibility: hidden;
 }
 
 .nav-links li {
