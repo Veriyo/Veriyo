@@ -152,7 +152,8 @@
             Preview mode — no partner application on file for this account yet, so referral and task data will show empty.
         </div>
 
-        <!-- Tab Navigation -->
+<!-- Tab Navigation — visible as a top strip on desktop; hidden on
+             mobile in favour of the bottom bar below (spec 8.2 pattern). -->
         <nav class="partner-tab-nav">
             <button type="button" class="partner-tab-btn partner-tab-btn--active" data-tab="tasks" id="tabTasks">Tasks</button>
             <button type="button" class="partner-tab-btn" data-tab="dashboard" id="tabDashboard">Dashboard</button>
@@ -160,6 +161,36 @@
             <button type="button" class="partner-tab-btn" data-tab="handbook" id="tabHandbook">Handbook</button>
             <button type="button" class="partner-tab-btn" data-tab="resources" id="tabResources">Resources</button>
             <button type="button" class="partner-tab-btn" data-tab="support" id="tabSupport">Support</button>
+        </nav>
+
+        <!-- Same tabs, mobile-only bottom bar -->
+        <nav class="bottom-nav">
+            <div class="partner-bottom-tabs">
+                <button type="button" class="bottom-nav-item partner-bottom-tabs active" data-tab="tasks">
+                    <span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg></span>
+                    <span class="bottom-nav-label">Tasks</span>
+                </button>
+                <button type="button" class="bottom-nav-item partner-bottom-tabs" data-tab="dashboard">
+                    <span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-overview"></use></svg></span>
+                    <span class="bottom-nav-label">Dashboard</span>
+                </button>
+                <button type="button" class="bottom-nav-item partner-bottom-tabs" data-tab="referral">
+                    <span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-people"></use></svg></span>
+                    <span class="bottom-nav-label">Referral</span>
+                </button>
+                <button type="button" class="bottom-nav-item partner-bottom-tabs" data-tab="handbook">
+                    <span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg></span>
+                    <span class="bottom-nav-label">Handbook</span>
+                </button>
+                <button type="button" class="bottom-nav-item partner-bottom-tabs" data-tab="resources">
+                    <span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-tag"></use></svg></span>
+                    <span class="bottom-nav-label">Resources</span>
+                </button>
+                <button type="button" class="bottom-nav-item partner-bottom-tabs" data-tab="support">
+                    <span class="bottom-nav-icon"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-chat"></use></svg></span>
+                    <span class="bottom-nav-label">Support</span>
+                </button>
+            </div>
         </nav>
 
         <main class="partner-main">
