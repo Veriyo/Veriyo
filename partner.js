@@ -26,12 +26,77 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('supportForm').addEventListener('submit', handleSupportRequest);
     document.getElementById('switchToSupportBtn').addEventListener('click', () => showTab('support'));
 
-    document.querySelectorAll('.partner-tab-btn').forEach(btn => {
+document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => showTab(btn.dataset.tab));
     });
 
+    document.getElementById('addListingBtn').addEventListener('click', () => {
+        document.getElementById('addListingForm').reset();
+        document.getElementById('addListingError').style.display = 'none';
+        document.getElementById('addListingModal').style.display = 'flex';
+    });
+    document.getElementById('addListingCancelBtn').addEventListener('click', () => {
+        document.getElementById('addListingModal').style.display = 'none';
+    });
+    document.getElementById('addListingForm').addEventListener('submit', handleAddListing);
+
     checkSession();
 });
+
+async function handleAddListing(event) {
+    event.preventDefault();
+    const errorEl = document.getElementById('addListingError');
+    const submitBtn = document.getElementById('addListingSubmitBtn');
+    errorEl.style.display = 'none';
+
+    const listing = {
+        workshop_name: document.getElementById('alName').value.trim(),
+        suburb: document.getElementById('alSuburb').value.trim(),
+        city: document.getElementById('alCity').value.trim(),
+        province: document.getElementById('alProvince').value,
+        contact_number: document.getElementById('alContact').value.trim() || null,
+        operating_hours: document.getElementById('alHours').value.trim() || null,
+        physical_address: null,
+        specialisation: null,
+        guarantee_work: null,
+        guarantee_period: null,
+        rmi_registered: null,
+        written_quote: null,
+        email_address: null,
+        services: [],
+        plan: 'Dominant',
+        plan_price: 0,
+        user_id: null,
+        // Partners can't publish — this goes to the admin's Pending queue,
+        // same as any workshop-submitted listing.
+        status: 'Pending',
+        source: 'Partner Added'
+    };
+
+    if (!listing.workshop_name || !listing.suburb || !listing.city || !listing.province) {
+        errorEl.textContent = 'Workshop name, suburb, city, and province are required.';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+
+    const { error } = await supabaseClient.from('Workshopprofiles').insert(listing);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add Listing';
+
+    if (error) {
+        errorEl.textContent = 'Could not add listing: ' + error.message;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('addListingModal').style.display = 'none';
+    alert('Listing added and sent for administrator approval.');
+}
+
 
 async function checkSession() {
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -88,9 +153,15 @@ async function loadPartnerRecord(userId, userEmail) {
         .eq('user_id', userId)
         .single();
 
-    if (error || !data) {
-        document.getElementById('loginView').style.display = 'none';
-        document.getElementById('notApprovedView').style.display = '';
+if (error || !data) {
+        // Preview mode: lets you look through the portal on a real,
+        // signed-in account before a partner application actually exists
+        // for it — nothing here is written to the partners table, and
+        // every real statistic legitimately shows empty since there's no
+        // genuine partner_id behind it.
+        currentPartner = { id: null, partner_code: 'PREVIEW', status: 'Preview', full_name: 'Preview' };
+        document.getElementById('previewModeBanner').style.display = 'block';
+        showPortal();
         return;
     }
 
