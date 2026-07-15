@@ -343,26 +343,41 @@ function renderTasks() {
         return;
     }
 
-    container.innerHTML = allTasks.map(task => {
+    container.innerHTML = allTasks.map((task, index) => {
         const isCompleted = completedTaskIds.has(task.id);
+        const number = String(index + 1).padStart(2, '0');
         return `
             <div class="partner-task-card ${isCompleted ? 'partner-task-card--completed' : ''}">
-                <h3 class="partner-task-title">${escapeHTML(task.title)}</h3>
-                <p class="partner-task-description">${escapeHTML(task.description)}</p>
-                <div class="partner-task-why">
-                    <strong>Why it matters:</strong> ${escapeHTML(task.why_matters)}
+                <div class="partner-task-header">
+                    <div class="partner-task-header-left">
+                        <span class="partner-task-number">${number}</span>
+                        <h3 class="partner-task-title">${escapeHTML(task.title)}</h3>
+                    </div>
+                    <span class="partner-task-chevron">&#9662;</span>
                 </div>
-                <div class="partner-task-outcome">
-                    <strong>Expected outcome:</strong> ${escapeHTML(task.expected_outcome)}
+                <div class="partner-task-body">
+                    <p class="partner-task-description">${escapeHTML(task.description)}</p>
+                    <div class="partner-task-why">
+                        <strong>Why it matters:</strong> ${escapeHTML(task.why_matters)}
+                    </div>
+                    <div class="partner-task-outcome">
+                        <strong>Expected outcome:</strong> ${escapeHTML(task.expected_outcome)}
+                    </div>
+                    <button class="btn ${isCompleted ? 'btn-secondary' : 'btn-primary'} partner-task-btn"
+                        data-task-id="${task.id}"
+                        ${isCompleted ? 'disabled' : ''}>
+                        ${isCompleted ? '&#10003; Completed' : 'Mark as Completed'}
+                    </button>
                 </div>
-                <button class="btn ${isCompleted ? 'btn-secondary' : 'btn-primary'} partner-task-btn"
-                    data-task-id="${task.id}"
-                    ${isCompleted ? 'disabled' : ''}>
-                    ${isCompleted ? '&#10003; Completed' : 'Mark as Completed'}
-                </button>
             </div>
         `;
     }).join('');
+
+    container.querySelectorAll('.partner-task-header').forEach(header => {
+        header.addEventListener('click', () => {
+            header.closest('.partner-task-card').classList.toggle('partner-task-card--collapsed');
+        });
+    });
 
     container.querySelectorAll('.partner-task-btn').forEach(btn => {
         if (!btn.disabled) {
