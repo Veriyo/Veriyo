@@ -700,6 +700,289 @@ button, input, select, textarea {
     }
 }
 
+/* ==========================================================================
+   Partner Portal — Tasks / Dashboard / Referral tabs
+   (These classes previously had no rules anywhere in this stylesheet.)
+   ========================================================================== */
+
+/* -- Shared panel header row (title + right-aligned count/status) -- */
+.partner-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.4rem;
+}
+.partner-panel-header h2 {
+    margin-bottom: 0;
+}
+.partner-tasks-count {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+.partner-panel-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+}
+.partner-dashboard-header {
+    margin-bottom: 1.75rem;
+}
+.partner-dashboard-header h2 {
+    margin-bottom: 0.35rem;
+}
+.partner-dashboard-header .partner-panel-subtitle {
+    margin-bottom: 0;
+}
+
+/* -- Tasks -- */
+.partner-tasks-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+.partner-task-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: var(--transition);
+}
+.partner-task-card--completed {
+    border-color: var(--success-color);
+}
+.partner-task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+}
+.partner-task-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-width: 0;
+}
+.partner-task-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--primary-accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+.partner-task-header h3.partner-task-title {
+    margin-bottom: 0;
+}
+.partner-task-chevron {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease;
+}
+.partner-task-card--collapsed .partner-task-chevron {
+    transform: rotate(-90deg);
+}
+.partner-task-body {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.partner-task-card--collapsed .partner-task-body {
+    display: none;
+}
+.partner-task-description {
+    margin-bottom: 0;
+}
+.partner-task-why,
+.partner-task-outcome {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+.partner-task-btn {
+    align-self: flex-start;
+    margin-top: 0.4rem;
+}
+.partner-tasks-note {
+    text-align: center;
+    color: var(--secondary-accent);
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.95rem;
+}
+.partner-loading,
+.partner-no-data {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    padding: 1rem 0;
+}
+
+/* -- Dashboard -- */
+.partner-dashboard-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+.partner-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem 3rem;
+}
+.partner-stat-row-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+    gap: 0.5rem;
+}
+.partner-stat-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+.partner-stat-value {
+    color: var(--text-primary);
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+.partner-stat-bar {
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--secondary-accent), var(--primary-accent));
+    opacity: 0.6;
+}
+.partner-dashboard-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.partner-earnings-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--secondary-accent);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+.partner-earnings-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+.partner-earnings-value {
+    color: var(--primary-accent);
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+.partner-announcements-section {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+.partner-quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+}
+
+/* -- Referral Link -- */
+.partner-referral-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+}
+.partner-referral-display {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.partner-referral-display .form-control {
+    flex: 1;
+    min-width: 220px;
+}
+.partner-referral-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+}
+.partner-ref-stat-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+}
+.partner-ref-stat-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--secondary-accent);
+}
+.partner-ref-stat-label {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 2px solid var(--secondary-accent);
+}
+.partner-ref-stat-label--top {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+.partner-qr-box {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    border: 1px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+}
+.partner-ref-stat-card--impact h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+.partner-ref-stat-card--impact p {
+    font-size: 0.85rem;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .partner-dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+    .partner-referral-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+@media (max-width: 560px) {
+    .partner-stats-grid {
+        grid-template-columns: 1fr;
+    }
+    .partner-referral-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Top Navigation Bar */
 .navbar {
     position: fixed;
