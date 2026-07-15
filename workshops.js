@@ -7,6 +7,10 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
     const _supabaseWD = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  // Paused until there's enough traffic to justify it — set this back to
+    // true to re-enable Dominant-tier sorting, badges, and highlighting.
+    // Nothing else below needs to change.
+    const DOMINANT_PLAN_ENABLED = false;
     const PLAN_ORDER = { 'Dominant': 3, 'Trusted': 2, 'Visible': 1 };
 
     function escapeHtml(str) {
