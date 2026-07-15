@@ -42,10 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
         suggestionsPanel.style.display = isOpen ? 'none' : 'flex';
         if (!isOpen) await loadSuggestions();
     });
-    document.getElementById('suggestionsPanelClose').addEventListener('click', () => {
+document.getElementById('suggestionsPanelClose').addEventListener('click', () => {
         suggestionsPanel.style.display = 'none';
     });
 
+    // Manually adding a listing (spec 8.7) isn't built yet — this holds
+    // the button's place so it's visible and honest about its state,
+    // rather than missing or silently doing nothing.
+    document.getElementById('addListingBtn').addEventListener('click', () => {
+        alert('Adding a listing manually is coming soon.');
+    });
     // Tab switching
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
