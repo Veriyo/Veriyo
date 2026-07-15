@@ -3,7 +3,6 @@
  * Supabase Auth + Submission moderation (approve / reject)
  * Handles both Motorist Reports (Submissions) and Workshop Listings (Workshopprofiles)
  */
-
 const supabaseUrl = 'https://xxigkehuqtwaihyxaahk.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
 
@@ -17,14 +16,6 @@ let liveWorkshopRecords = [];
 let livePriceRecords = [];
 let currentTab = 'motorist';
 
-
-    // Tab switching
-    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-    });
-
-    checkSession();
-});
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -54,6 +45,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('suggestionsPanelClose').addEventListener('click', () => {
         suggestionsPanel.style.display = 'none';
     });
+
+    // Tab switching
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    checkSession();
+});
+
 function switchTab(tab) {
     currentTab = tab;
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
