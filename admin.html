@@ -299,6 +299,56 @@
         </main>
     </div>
 
+<!-- Add Listing modal (spec 8.7) — admin only, Submissions Dashboard only -->
+    <div id="addListingModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:4000; align-items:center; justify-content:center;">
+        <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; width:min(420px,90vw); max-height:85vh; overflow-y:auto;">
+            <h2 style="font-size:1.1rem; margin-bottom:0.25rem;">Add a Workshop Listing</h2>
+            <p style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;">Only information visible on a public map search. The real owner fills in the rest when they claim it.</p>
+            <form id="addListingForm">
+                <div class="form-group">
+                    <label for="alName">Workshop Name *</label>
+                    <input type="text" id="alName" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="alSuburb">Suburb *</label>
+                    <input type="text" id="alSuburb" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="alCity">City *</label>
+                    <input type="text" id="alCity" class="form-control" required />
+                </div>
+                <div class="form-group">
+                    <label for="alProvince">Province *</label>
+                    <select id="alProvince" class="form-control" required>
+                        <option value="" disabled selected>Select province</option>
+                        <option value="Gauteng">Gauteng</option>
+                        <option value="Western Cape">Western Cape</option>
+                        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                        <option value="Eastern Cape">Eastern Cape</option>
+                        <option value="Limpopo">Limpopo</option>
+                        <option value="Mpumalanga">Mpumalanga</option>
+                        <option value="North West">North West</option>
+                        <option value="Free State">Free State</option>
+                        <option value="Northern Cape">Northern Cape</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="alContact">Contact Number</label>
+                    <input type="text" id="alContact" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="alHours">Operating Hours</label>
+                    <input type="text" id="alHours" class="form-control" placeholder="e.g. Mon-Fri 08:00-17:00" />
+                </div>
+                <div id="addListingError" style="display:none; color:var(--danger-color); font-size:0.85rem; margin-bottom:0.75rem;"></div>
+                <div style="display:flex; gap:0.75rem;">
+                    <button type="button" id="addListingCancelBtn" class="btn btn-secondary-outline" style="flex:1;">Cancel</button>
+                    <button type="submit" id="addListingSubmitBtn" class="btn btn-primary" style="flex:1;">Add Listing</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Suggestions panel, opened by the bell in the dashboard header -->
     <div id="suggestionsPanel" style="display:none; position:fixed; top:0; right:0; width:min(360px,100vw); height:100vh; background:var(--surface-color); border-left:1px solid var(--border-color); z-index:3000; flex-direction:column; padding:1.5rem; gap:1rem; overflow-y:auto;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
