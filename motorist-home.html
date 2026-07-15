@@ -60,7 +60,7 @@
             </div>
         </header>
 
-        <section style="max-width:600px; margin:2rem auto; padding:0 1rem;">
+<section id="suggestionSection" style="display:none; max-width:600px; margin:2rem auto; padding:0 1rem;">
             <button id="suggestionToggleBtn"
                 style="background:none; border:1px solid var(--border-color);
                 color:var(--text-secondary); padding:0.5rem 1.2rem;
@@ -166,9 +166,11 @@
         // Spec 8.8: signed-in motorist home skips the platform introduction and
         // centers on the person's own activity instead — swap the hero for a
         // personalized welcome. Signed-out visitors keep the introductory copy.
-        (async function personalizeHero() {
+(async function personalizeHero() {
             const { data: { session } } = await _supabaseSuggestions.auth.getSession();
             if (!session) return;
+
+            document.getElementById('suggestionSection').style.display = 'block';
 
             const { data: profile } = await _supabaseSuggestions
                 .from('account_profiles')
