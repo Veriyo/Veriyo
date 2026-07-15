@@ -46,12 +46,15 @@ document.getElementById('suggestionsPanelClose').addEventListener('click', () =>
         suggestionsPanel.style.display = 'none';
     });
 
-    // Manually adding a listing (spec 8.7) isn't built yet — this holds
-    // the button's place so it's visible and honest about its state,
-    // rather than missing or silently doing nothing.
-    document.getElementById('addListingBtn').addEventListener('click', () => {
-        alert('Adding a listing manually is coming soon.');
+document.getElementById('addListingBtn').addEventListener('click', () => {
+        document.getElementById('addListingForm').reset();
+        document.getElementById('addListingError').style.display = 'none';
+        document.getElementById('addListingModal').style.display = 'flex';
     });
+    document.getElementById('addListingCancelBtn').addEventListener('click', () => {
+        document.getElementById('addListingModal').style.display = 'none';
+    });
+    document.getElementById('addListingForm').addEventListener('submit', handleAddListing);
     // Tab switching
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -181,6 +184,60 @@ function showPartnerStub() {
     document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('partnerView').classList.remove('hidden');
+}
+
+async function handleAddListing(event) {
+    event.preventDefault();
+    const errorEl = document.getElementById('addListingError');
+    const submitBtn = document.getElementById('addListingSubmitBtn');
+    errorEl.style.display = 'none';
+
+    const listing = {
+        workshop_name: document.getElementById('alName').value.trim(),
+        suburb: document.getElementById('alSuburb').value.trim(),
+        city: document.getElementById('alCity').value.trim(),
+        province: document.getElementById('alProvince').value,
+        contact_number: document.getElementById('alContact').value.trim() || null,
+        operating_hours: document.getElementById('alHours').value.trim() || null,
+        // Deliberately never collected here — stay empty until the real
+        // owner claims the listing and provides them directly.
+        physical_address: null,
+        specialisation: null,
+        guarantee_work: null,
+        guarantee_period: null,
+        rmi_registered: null,
+        written_quote: null,
+        email_address: null,
+        services: [],
+        plan: 'Dominant',
+        plan_price: 0,
+        user_id: null,
+        status: 'Approved',
+        source: 'Admin Added'
+    };
+
+    if (!listing.workshop_name || !listing.suburb || !listing.city || !listing.province) {
+        errorEl.textContent = 'Workshop name, suburb, city, and province are required.';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Adding...';
+
+    const { error } = await supabaseClient.from('Workshopprofiles').insert(listing);
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Add Listing';
+
+    if (error) {
+        errorEl.textContent = 'Could not add listing: ' + error.message;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('addListingModal').style.display = 'none';
+    await loadLiveWorkshopListings();
 }
 
 async function loadSuggestions() {
