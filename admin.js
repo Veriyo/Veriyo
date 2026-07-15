@@ -31,8 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     document.getElementById('goPartnerBtn').addEventListener('click', showPartnerStub);
     document.getElementById('dashboardBackBtn').addEventListener('click', showRoleChoice);
-    document.getElementById('partnerBackBtn').addEventListener('click', showRoleChoice);
-    document.getElementById('roleChoiceLogoutBtn').addEventListener('click', handleLogout);
+   const partnerBackBtn = document.getElementById('partnerBackBtn');
+if (partnerBackBtn) partnerBackBtn.addEventListener('click', showRoleChoice);
+
+const partnerLogoutBtn = document.getElementById('partnerLogoutBtn');
+if (partnerLogoutBtn) partnerLogoutBtn.addEventListener('click', handleLogout);
     document.getElementById('partnerLogoutBtn').addEventListener('click', handleLogout);
 
     const notifBell = document.getElementById('notifBell');
