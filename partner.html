@@ -198,13 +198,16 @@
             <!-- TASKS TAB -->
             <div id="panel-tasks" class="partner-panel">
                 <div class="partner-panel-header">
-                    <h2>Today's Tasks</h2>
-                    <span id="tasksCompletedCount">0 of 5 completed</span>
+                    <h2>Your Tasks</h2>
+                    <span id="tasksCompletedCount" class="partner-tasks-count">0 of 5 completed</span>
                 </div>
+                <p class="partner-panel-subtitle">Complete the tasks below to help more motorists discover Veriyo.</p>
 
                 <div id="tasksContainer" class="partner-tasks-grid">
                     <div class="partner-loading">Loading tasks...</div>
                 </div>
+
+                <p class="partner-tasks-note"><strong>This tasks section is for you to track your own progress — it is not reviewed by the admin.</strong></p>
 
                 <!-- Activity Report Form (shown after tasks complete) -->
                 <div id="activityReportSection" style="display:none; margin-top:2rem;">
@@ -270,59 +273,87 @@
 
             <!-- DASHBOARD TAB -->
             <div id="panel-dashboard" class="partner-panel" style="display:none;">
-                <!-- Quick Stats -->
-                <div class="partner-stats-grid">
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statTodayVisitors">0</div>
-                        <div class="partner-stat-label">Today's Visitors</div>
-                    </div>
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statWeekVisitors">0</div>
-                        <div class="partner-stat-label">Last 7 Days</div>
-                    </div>
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statMonthVisitors">0</div>
-                        <div class="partner-stat-label">Last 30 Days</div>
-                    </div>
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statTotalVisitors">0</div>
-                        <div class="partner-stat-label">Total Visitors</div>
-                    </div>
+                <div class="partner-dashboard-header">
+                    <h2>Performance Overview</h2>
+                    <p class="partner-panel-subtitle">Track your portal activity and progress.</p>
                 </div>
 
-                <!-- Conversion Stats -->
-                <div class="partner-stats-grid" style="margin-top:1rem;">
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statMotoristReports">0</div>
-                        <div class="partner-stat-label">Motorist Reports</div>
+                <div class="partner-dashboard-layout">
+                    <!-- Stats: paired rows (visitor metric beside matching outcome metric) -->
+                    <div class="partner-stats-grid">
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Today's Visitors</span>
+                                <span class="partner-stat-value" id="statTodayVisitors">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Motorist Reports</span>
+                                <span class="partner-stat-value" id="statMotoristReports">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Last 7 Days</span>
+                                <span class="partner-stat-value" id="statWeekVisitors">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Workshop Signups</span>
+                                <span class="partner-stat-value" id="statWorkshopSignups">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Last 30 Days</span>
+                                <span class="partner-stat-value" id="statMonthVisitors">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Approved Workshops</span>
+                                <span class="partner-stat-value" id="statApprovedWorkshops">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Total Visitors</span>
+                                <span class="partner-stat-value" id="statTotalVisitors">0</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
+                        <div class="partner-stat-row">
+                            <div class="partner-stat-row-top">
+                                <span class="partner-stat-label">Conversion Rate</span>
+                                <span class="partner-stat-value" id="statConversionRate">0%</span>
+                            </div>
+                            <div class="partner-stat-bar"></div>
+                        </div>
                     </div>
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statWorkshopSignups">0</div>
-                        <div class="partner-stat-label">Workshop Signups</div>
-                    </div>
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statApprovedWorkshops">0</div>
-                        <div class="partner-stat-label">Approved Workshops</div>
-                    </div>
-                    <div class="partner-stat-card">
-                        <div class="partner-stat-value" id="statConversionRate">0%</div>
-                        <div class="partner-stat-label">Conversion Rate</div>
+
+                    <!-- Sidebar: Earnings + Announcements -->
+                    <div class="partner-dashboard-sidebar">
+                        <div class="partner-earnings-card">
+                            <div class="partner-earnings-label">Estimated Earnings</div>
+                            <div class="partner-earnings-value" id="statEarnings">R0</div>
+                        </div>
+
+                        <section class="partner-announcements-section">
+                            <h3>Announcements</h3>
+                            <div id="announcementsList">
+                                <p class="partner-no-data">Loading announcements...</p>
+                            </div>
+                        </section>
                     </div>
                 </div>
-
-                <!-- Earnings Card -->
-                <div class="partner-earnings-card">
-                    <div class="partner-earnings-label">Estimated Earnings</div>
-                    <div class="partner-earnings-value" id="statEarnings">R0</div>
-                </div>
-
-                <!-- Announcements -->
-                <section class="partner-announcements-section">
-                    <h3>Announcements</h3>
-                    <div id="announcementsList">
-                        <p class="partner-no-data">Loading announcements...</p>
-                    </div>
-                </section>
 
                 <!-- Quick Actions -->
                 <div class="partner-quick-actions">
@@ -341,23 +372,26 @@
 
                     <div class="partner-referral-display">
                         <input type="text" id="referralLinkInput" class="form-control" readonly>
-                        <button id="copyReferralBtn" class="btn btn-primary">Copy</button>
+                        <button id="copyReferralBtn" class="btn btn-primary">Copy Link</button>
                     </div>
+                </div>
 
-                    <div class="partner-referral-stats">
-                        <div class="partner-ref-stat">
-                            <span class="partner-ref-stat-value" id="refLinkClicks">0</span>
-                            <span class="partner-ref-stat-label">Total Clicks</span>
-                        </div>
-                        <div class="partner-ref-stat">
-                            <span class="partner-ref-stat-value" id="refLinkConversions">0</span>
-                            <span class="partner-ref-stat-label">Conversions</span>
-                        </div>
+                <div class="partner-referral-grid">
+                    <div class="partner-ref-stat-card">
+                        <span class="partner-ref-stat-value" id="refLinkClicks">0</span>
+                        <span class="partner-ref-stat-label">Total Clicks</span>
                     </div>
-
-                    <div class="partner-qr-placeholder">
-                        <p style="color:var(--text-secondary); font-size:0.9rem;">QR Code</p>
+                    <div class="partner-ref-stat-card">
+                        <span class="partner-ref-stat-value" id="refLinkConversions">0</span>
+                        <span class="partner-ref-stat-label">Conversions</span>
+                    </div>
+                    <div class="partner-ref-stat-card">
+                        <span class="partner-ref-stat-label partner-ref-stat-label--top">QR Code</span>
                         <div class="partner-qr-box">QR code available soon</div>
+                    </div>
+                    <div class="partner-ref-stat-card partner-ref-stat-card--impact">
+                        <h3>Track your impact</h3>
+                        <p>Keep sharing and help more motorists find trusted workshops.</p>
                     </div>
                 </div>
             </div>
