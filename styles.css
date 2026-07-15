@@ -682,7 +682,10 @@ button, input, select, textarea {
     border: none;
     font-family: inherit;
 }
-
+.partner-task-why,
+.partner-task-outcome {
+    color: var(--text-secondary);
+}
 @media (max-width: 768px) {
     .partner-tab-nav {
         display: none;
