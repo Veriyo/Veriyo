@@ -29,7 +29,8 @@
         return html;
     }
 
-    function buildPlanBadge(plan) {
+function buildPlanBadge(plan) {
+        if (!DOMINANT_PLAN_ENABLED) return '';
         if (!plan || !plan.trim()) return '';
         const p = plan.trim();
         const cls = p === 'Dominant' ? 'wd-plan-badge--dominant'
@@ -38,8 +39,8 @@
         return `<span class="wd-plan-badge ${cls}">${escapeHtml(p)}</span>`;
     }
 
-    function buildCard(w, avgRating) {
-        const isDominant = (w.plan || '').trim() === 'Dominant';
+function buildCard(w, avgRating) {
+        const isDominant = DOMINANT_PLAN_ENABLED && (w.plan || '').trim() === 'Dominant';
         const stars = (avgRating !== null && avgRating !== undefined)
             ? `<div class="wd-card-stars rating-stars">${buildStars(avgRating)}</div>`
             : '';
@@ -93,10 +94,10 @@
         return avgMap;
     }
 
-    function sortWorkshops(workshops, avgMap) {
+function sortWorkshops(workshops, avgMap) {
         return workshops.slice().sort(function (a, b) {
-            const pa = PLAN_ORDER[a.plan] || 0;
-            const pb = PLAN_ORDER[b.plan] || 0;
+            const pa = DOMINANT_PLAN_ENABLED ? (PLAN_ORDER[a.plan] || 0) : 0;
+            const pb = DOMINANT_PLAN_ENABLED ? (PLAN_ORDER[b.plan] || 0) : 0;
             if (pb !== pa) return pb - pa;
             const ra = avgMap[a.id] || 0;
             const rb = avgMap[b.id] || 0;
