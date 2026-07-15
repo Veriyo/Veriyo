@@ -17,6 +17,14 @@ let liveWorkshopRecords = [];
 let livePriceRecords = [];
 let currentTab = 'motorist';
 
+
+    // Tab switching
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    checkSession();
+});
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -26,14 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
     logoutBtn.addEventListener('click', handleLogout);
     refreshBtn.addEventListener('click', () => loadAllPending());
 
-    // Tab switching
-    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    document.getElementById('goDashboardBtn').addEventListener('click', async () => {
+        showDashboard();
+        await loadAllPending();
     });
+    document.getElementById('goPartnerBtn').addEventListener('click', showPartnerStub);
+    document.getElementById('dashboardBackBtn').addEventListener('click', showRoleChoice);
+    document.getElementById('partnerBackBtn').addEventListener('click', showRoleChoice);
+    document.getElementById('roleChoiceLogoutBtn').addEventListener('click', handleLogout);
+    document.getElementById('partnerLogoutBtn').addEventListener('click', handleLogout);
 
-    checkSession();
-});
-
+    const notifBell = document.getElementById('notifBell');
+    const suggestionsPanel = document.getElementById('suggestionsPanel');
+    notifBell.addEventListener('click', async () => {
+        const isOpen = suggestionsPanel.style.display !== 'none';
+        suggestionsPanel.style.display = isOpen ? 'none' : 'flex';
+        if (!isOpen) await loadSuggestions();
+    });
+    document.getElementById('suggestionsPanelClose').addEventListener('click', () => {
+        suggestionsPanel.style.display = 'none';
+    });
 function switchTab(tab) {
     currentTab = tab;
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
@@ -79,8 +99,7 @@ async function isCurrentUserAdmin() {
 async function checkSession() {
     const isAdmin = await isCurrentUserAdmin();
     if (isAdmin) {
-        showDashboard();
-        await loadAllPending();
+        showRoleChoice();
     }
     // If not admin (including "signed in but not an admin"), the login form
     // stays showing — no session detail is exposed either way (spec 6.1).
@@ -121,10 +140,9 @@ async function handleLogin(event) {
         return;
     }
 
-    loginBtn.disabled = false;
+loginBtn.disabled = false;
     loginBtn.textContent = 'Sign In';
-    showDashboard();
-    await loadAllPending();
+    showRoleChoice();
 }
 
 async function handleLogout() {
@@ -134,13 +152,56 @@ async function handleLogout() {
 }
 
 function showLogin() {
+    document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('partnerView').classList.add('hidden');
     document.getElementById('loginView').classList.remove('hidden');
 }
 
-function showDashboard() {
+function showRoleChoice() {
     document.getElementById('loginView').classList.add('hidden');
+    document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('partnerView').classList.add('hidden');
+    document.getElementById('roleChoiceView').classList.remove('hidden');
+}
+
+function showDashboard() {
+    document.getElementById('roleChoiceView').classList.add('hidden');
+    document.getElementById('partnerView').classList.add('hidden');
     document.getElementById('dashboardView').classList.remove('hidden');
+}
+
+function showPartnerStub() {
+    document.getElementById('roleChoiceView').classList.add('hidden');
+    document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('partnerView').classList.remove('hidden');
+}
+
+async function loadSuggestions() {
+    const body = document.getElementById('suggestionsPanelBody');
+    body.innerHTML = '<p style="color:var(--text-secondary);">Loading…</p>';
+
+    const { data, error } = await supabaseClient
+        .from('suggestions')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        body.innerHTML = '<p style="color:var(--text-secondary);">Could not load suggestions right now.</p>';
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        body.innerHTML = '<div style="text-align:center;padding:2rem 1rem;color:var(--text-secondary);"><div style="font-size:2rem;margin-bottom:0.75rem;">&#128276;</div><p>No suggestions yet.</p></div>';
+        return;
+    }
+
+    body.innerHTML = data.map(s => `
+        <div style="border-bottom:1px solid var(--border-color); padding:0.75rem 0;">
+            <p style="font-size:0.9rem;">${escapeHTML(s.suggestion_text)}</p>
+            <span style="font-size:0.75rem; color:var(--text-secondary);">${formatDate(s.created_at)}</span>
+        </div>
+    `).join('');
 }
 async function loadAllPending() {
     await Promise.all([loadPendingMotoristSubmissions(), loadPendingWorkshopListings(), loadLiveWorkshopListings(), loadPendingClaimRequests(), loadPendingWorkshopQuickClaims(), loadLivePriceSubmissions()]);
@@ -616,7 +677,7 @@ async function handleWorkshopApprove(id) {
     const buttons = document.querySelectorAll(`[data-approve-workshop="${id}"], [data-delete-workshop="${id}"]`);
     buttons.forEach(btn => btn.disabled = true);
 
-  const { data, error } = await supabaseClient
+ const { data, error } = await supabaseClient
     .from('Workshopprofiles')
     .update({ status: 'Approved' })
     .eq('id', id)
@@ -626,6 +687,14 @@ if (error || !data || data.length === 0) {
     alert('Workshop approval failed. No rows were updated.');
     return;
 }
+
+supabaseClient.from('notifications').insert({
+    workshop_id: id,
+    message: 'Your listing "' + data[0].workshop_name + '" has been approved and is now live.',
+    link: 'my-listing.html'
+}).then(({ error: notifErr }) => {
+    if (notifErr) console.error('Failed to send approval notification:', notifErr);
+});
 
 removeWorkshopFromView(id);
     pendingWorkshopRecords = pendingWorkshopRecords.filter(r => r.id !== id);
@@ -646,11 +715,22 @@ async function handleWorkshopDelete(id) {
     const buttons = document.querySelectorAll(`[data-approve-workshop="${id}"], [data-delete-workshop="${id}"]`);
     buttons.forEach(btn => btn.disabled = true);
 
+    const record = pendingWorkshopRecords.find(r => r.id === id) || liveWorkshopRecords.find(r => r.id === id);
+    if (record) {
+        // Sent before deleting — once the listing row is gone there is
+        // nothing left for this notification to reference.
+        await supabaseClient.from('notifications').insert({
+            workshop_id: id,
+            message: 'Your listing "' + record.workshop_name + '" has been removed by the administrator.'
+        }).then(({ error: notifErr }) => {
+            if (notifErr) console.error('Failed to send deletion notification:', notifErr);
+        });
+    }
+
     const { error } = await supabaseClient
         .from('Workshopprofiles')
         .delete()
         .eq('id', id);
-
     if (error) {
         const statusMsg = document.getElementById('statusMessage');
         statusMsg.textContent = 'Failed to delete workshop. Please try again.';
