@@ -605,6 +605,98 @@ button, input, select, textarea {
     text-align: center;
 }
 
+/* ==========================================================================
+   Partner Portal — typography, spacing, and tab navigation
+   ========================================================================== */
+
+/* Text inside every partner panel — headings gold, body text grey,
+   spacing between sections matches the Privacy Policy page. Nothing here
+   is pure white; var(--text-primary) is reserved for the one-off emphasis
+   already marked with <strong>. */
+.partner-panel h2 {
+    color: var(--text-primary);
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+}
+.partner-panel h3 {
+    color: var(--primary-accent);
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+}
+.partner-panel p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 0.75rem;
+}
+.partner-panel ul,
+.partner-panel ol {
+    color: var(--text-secondary);
+    line-height: 2;
+    padding-left: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+.partner-panel strong {
+    color: var(--text-primary);
+}
+.partner-handbook-section {
+    margin-bottom: 2rem;
+}
+.partner-handbook-section:last-child {
+    margin-bottom: 0;
+}
+
+/* Tab navigation — top strip on desktop, bottom bar on mobile. Uses its
+   own self-contained mobile styling rather than the shared .bottom-nav
+   mechanism, since that appears to have its own unrelated display issue
+   (worth checking separately). */
+.partner-tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0 1.5rem;
+    flex-wrap: wrap;
+}
+.partner-tab-btn {
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 0.9rem 0.25rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.partner-tab-btn:hover {
+    color: var(--primary-accent);
+}
+.partner-tab-btn--active {
+    color: var(--primary-accent);
+    border-bottom-color: var(--primary-accent);
+}
+.partner-bottom-tabs {
+    display: none;
+}
+.partner-bottom-tabs.bottom-nav-item {
+    background: none;
+    border: none;
+    font-family: inherit;
+}
+
+@media (max-width: 768px) {
+    .partner-tab-nav {
+        display: none;
+    }
+    .partner-bottom-tabs {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: clamp(1rem, 6vw, 2.5rem);
+        padding: 0.5rem 0.25rem;
+        flex-wrap: wrap;
+    }
+}
+
 /* Top Navigation Bar */
 .navbar {
     position: fixed;
