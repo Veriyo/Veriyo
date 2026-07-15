@@ -77,14 +77,18 @@ renderQuickActions(actionsEl, [
             { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false }
         ]);
 
-        // Recent notifications (administrator-originated only — spec 8.6).
+// Recent notifications (administrator-originated only — spec 8.6).
+        // Cleared automatically after 7 days so the panel doesn't fill up
+        // with stale approvals — the workshop only needs to see it long
+        // enough to notice it.
+        const notifCutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         const { data: notifs } = await _sb
             .from('notifications')
             .select('*')
             .eq('workshop_id', myWorkshop.id)
+            .gte('created_at', notifCutoff)
             .order('created_at', { ascending: false })
             .limit(5);
-
         if (!notifs || notifs.length === 0) {
             notifListEl.style.display = 'none';
             notifEmptyEl.style.display = 'block';
