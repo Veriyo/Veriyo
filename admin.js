@@ -36,7 +36,7 @@ if (partnerBackBtn) partnerBackBtn.addEventListener('click', showRoleChoice);
 
 const partnerLogoutBtn = document.getElementById('partnerLogoutBtn');
 if (partnerLogoutBtn) partnerLogoutBtn.addEventListener('click', handleLogout);
-    document.getElementById('partnerLogoutBtn').addEventListener('click', handleLogout);
+   
 
     const notifBell = document.getElementById('notifBell');
     const suggestionsPanel = document.getElementById('suggestionsPanel');
