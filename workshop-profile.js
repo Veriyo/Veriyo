@@ -51,13 +51,32 @@ document.addEventListener('DOMContentLoaded', async () => {
     // owner-only Edit Listing button below, so we only ask Supabase once.
     const { data: { session: viewerSession } } = await _supabaseProfile.auth.getSession();
 
-    // Edit Listing button — only shown to the workshop account that owns
+// Edit Listing button — only shown to the workshop account that owns
     // this exact listing (never shown to motorists or other workshops).
     const editBanner = document.getElementById('editListingBanner');
     if (editBanner && viewerSession && workshop.user_id && viewerSession.user.id === workshop.user_id) {
         editBanner.style.display = 'block';
         document.getElementById('editListingBtn').href =
             'list-workshop.html?edit=' + encodeURIComponent(workshop.id);
+    }
+
+    // Looked up once, reused below for both the Chat button and the
+    // Claim banner, rather than querying twice.
+    let viewerAccountType = null;
+    if (viewerSession) {
+        const { data: viewerProfile } = await _supabaseProfile
+            .from('account_profiles')
+            .select('account_type')
+            .eq('user_id', viewerSession.user.id)
+            .single();
+        viewerAccountType = viewerProfile ? viewerProfile.account_type : null;
+    }
+
+    // A signed-in motorist doesn't get offered "claim this workshop" —
+    // that option is for a real workshop owner only.
+    if (viewerAccountType === 'motorist') {
+        const claimBanner = document.getElementById('claimBanner');
+        if (claimBanner) claimBanner.style.display = 'none';
     }
 
     // Chat button visibility/handler.
@@ -71,16 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Unclaimed listing — no real owner behind it yet.
             chatBtn.style.display = 'none';
         } else {
-            const session = viewerSession;
-            let viewerIsWorkshop = false;
-            if (session) {
-                const { data: viewerProfile } = await _supabaseProfile
-                    .from('account_profiles')
-                    .select('account_type')
-                    .eq('user_id', session.user.id)
-                    .single();
-                viewerIsWorkshop = !!(viewerProfile && viewerProfile.account_type === 'workshop');
-            }
+            const viewerIsWorkshop = viewerAccountType === 'workshop';
 
             if (viewerIsWorkshop) {
                 chatBtn.style.display = 'none';
