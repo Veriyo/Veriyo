@@ -9,10 +9,21 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const _supabasePrices = supabase.createClient(supabaseUrl, supabaseKey)
 let liveDataset = [];
 
+let isMotoristViewer = false;
+
 document.addEventListener('DOMContentLoaded', async () => {
 if (document.getElementById('pricesContainer')) {
-        initPriceListingFilters();
+        const { data: { session: pricesSession } } = await _supabasePrices.auth.getSession();
+        if (pricesSession) {
+            const { data: viewerProfile } = await _supabasePrices
+                .from('account_profiles')
+                .select('account_type')
+                .eq('user_id', pricesSession.user.id)
+                .single();
+            isMotoristViewer = !!(viewerProfile && viewerProfile.account_type === 'motorist');
+        }
 
+        initPriceListingFilters();
         // Fetch live verified records from Supabase and merge with hardcoded set
         const { data, error } = await _supabasePrices
             .from('Submissions')
@@ -248,12 +259,12 @@ const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops')
                 })()}
 
 <div class="card-date">Repaired: ${calculatedDateStr}</div>
-                <button onclick="openClaimModal('${escapeHTML(entry.workshopName)}')"
+                ${isMotoristViewer ? '' : `<button onclick="openClaimModal('${escapeHTML(entry.workshopName)}')"
                     style="background:none; border:none; color:var(--text-secondary);
                     font-size:0.75rem; cursor:pointer; padding:0; margin-top:0.25rem;
                     text-decoration:underline;">
                     Is this your workshop? Claim this listing
-                </button>
+                </button>`}
             </article>
         `;
     }).join('');
