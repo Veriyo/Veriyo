@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => showTab(btn.dataset.tab));
     });
+    document.querySelectorAll('.partner-bottom-tabs[data-tab]').forEach(btn => {
+        btn.addEventListener('click', () => showTab(btn.dataset.tab));
+    });
 
     document.getElementById('addListingBtn').addEventListener('click', () => {
         document.getElementById('addListingForm').reset();
@@ -277,13 +280,15 @@ function showTab(tabName) {
     document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.classList.toggle('partner-tab-btn--active', btn.dataset.tab === tabName);
     });
+    document.querySelectorAll('.partner-bottom-tabs[data-tab]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tabName);
+    });
     document.querySelectorAll('.partner-panel').forEach(panel => {
         panel.style.display = 'none';
     });
     const target = document.getElementById('panel-' + tabName);
     if (target) target.style.display = '';
 }
-
 async function loadTasks() {
     const { data: tasks, error } = await supabaseClient
         .from('partner_tasks')
