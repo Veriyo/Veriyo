@@ -966,6 +966,61 @@ button, input, select, textarea {
     line-height: 1.5;
 }
 
+/* -- Resources -- */
+.partner-resources-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.partner-resource-item {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+}
+.partner-resource-item h4 {
+    color: var(--text-primary);
+    margin-bottom: 0.4rem;
+}
+.partner-resource-item p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+.partner-resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--primary-accent);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    margin-top: 1rem;
+}
+.partner-resource-link:hover {
+    text-decoration: underline;
+}
+.partner-resources-placeholder {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-left: 3px solid var(--primary-accent);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+}
+.partner-resources-placeholder-title {
+    color: var(--primary-accent);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+.partner-resources-placeholder-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
 @media (max-width: 900px) {
     .partner-dashboard-layout {
         grid-template-columns: 1fr;
@@ -979,6 +1034,9 @@ button, input, select, textarea {
         grid-template-columns: 1fr;
     }
     .partner-referral-grid {
+        grid-template-columns: 1fr;
+    }
+    .partner-resources-list {
         grid-template-columns: 1fr;
     }
 }
