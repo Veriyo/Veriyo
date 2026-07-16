@@ -25,10 +25,63 @@
             Loading your dashboard…
         </div>
 
-        <div id="whHomeSignIn" style="display:none; text-align:center; padding:4rem 1rem;">
-            <p style="color:var(--text-primary); font-weight:600; margin-bottom:0.5rem;">Your workshop dashboard</p>
-            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">Sign in to manage your listing, view notifications, and chat with motorists.</p>
-            <a href="auth.html" class="btn btn-primary">Sign In</a>
+        <!-- Signed-out: trust-building marketing view for workshop owners -->
+        <div id="whHomeSignIn" style="display:none;">
+            <header class="hero">
+                <h1><span style="color:var(--primary-accent);">Grow</span> Your Workshop With Veriyo</h1>
+                <p>Be visible. Build trust. Attract more customers.</p>
+                <div class="cta-group">
+                    <a href="auth.html" class="btn btn-primary">Register Your Workshop</a>
+                    <a href="list-workshop.html" class="btn btn-secondary">Learn More</a>
+                </div>
+            </header>
+
+            <div class="image-placeholder" role="img" aria-label="Photo of a workshop technician">
+                <div class="image-placeholder-icon">
+                    <svg width="64" height="64" aria-hidden="true"><use href="icons.svg#icon-building"></use></svg>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-circle">
+                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-megaphone"></use></svg>
+                    </div>
+                    <h3>Reach More Customers</h3>
+                    <p>Get discovered by motorists searching for real prices.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-circle">
+                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-handshake"></use></svg>
+                    </div>
+                    <h3>Build Your Reputation</h3>
+                    <p>Showcase your services, prices and credentials.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-circle">
+                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-scale"></use></svg>
+                    </div>
+                    <h3>Fair Competition</h3>
+                    <p>Stand out through transparent, honest pricing.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-circle">
+                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-people"></use></svg>
+                    </div>
+                    <h3>Be Part of a Better Industry</h3>
+                    <p>Help create a fairer market for everyone.</p>
+                </div>
+            </div>
+
+            <div class="value-banner">
+                <h3>List your workshop.<br>It's <span>simple</span> and quick.</h3>
+                <div class="value-banner-checks">
+                    <span class="check-line"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg> Increase your visibility</span>
+                    <span class="check-line"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg> Earn customer trust</span>
+                    <span class="check-line"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg> Grow your business</span>
+                </div>
+                <a href="auth.html" class="btn btn-primary">Register Workshop</a>
+            </div>
         </div>
 
         <div id="whHomeContent" style="display:none;">
@@ -42,7 +95,7 @@
             <!-- Listing Status -->
             <div style="margin-bottom:1.5rem;">
                 <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Listing Status</h2>
-                <div id="whStatusCard" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
+                <div id="whStatusCard" class="listing-status-card" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
             </div>
 
             <!-- Quick Actions -->
@@ -52,11 +105,21 @@
             </div>
 
             <!-- Recent Notifications -->
-            <div>
+            <div style="margin-bottom:1.5rem;">
                 <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Recent Notifications</h2>
                 <div id="whNotifList" class="chat-conv-list" style="display:none;"></div>
                 <div id="whNotifEmpty" class="empty-state" style="padding:2rem 1rem;">
                     <p style="font-size:0.95rem;">No notifications yet.</p>
+                </div>
+            </div>
+
+            <div class="thank-banner">
+                <div class="thank-banner-icon">
+                    <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-trophy"></use></svg>
+                </div>
+                <div>
+                    <h3>Thank you for being part of Veriyo!</h3>
+                    <p>Together we build trust between workshops and motorists.</p>
                 </div>
             </div>
 

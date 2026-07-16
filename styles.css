@@ -3430,3 +3430,274 @@ button, input, select, textarea {
     .profile-detail:first-child { border-top: none; padding-top: 0; }
     .profile-submissions-grid { grid-template-columns: 1fr; }
 }
+
+/* ==========================================================================
+   Home Page Modernization — Motorist & Workshop landing / dashboard states
+   Reuses existing tokens (--surface-color, --border-color, --primary-accent,
+   var(--radius), var(--transition)) and existing component patterns
+   (.step-card, .badge, .empty-state) so nothing new is introduced that
+   fights the current design system.
+   ========================================================================== */
+
+/* Hero image placeholder — ready for a real photo to be dropped in later */
+.image-placeholder {
+    position: relative;
+    max-width: 1100px;
+    margin: 2rem auto;
+    aspect-ratio: 16 / 7;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+    background: linear-gradient(135deg, #16202f 0%, #0d1420 100%);
+}
+
+.image-placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(10, 15, 30, 0.94) 0%, rgba(10, 15, 30, 0.55) 100%);
+}
+
+.image-placeholder-icon {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(166, 178, 197, 0.25);
+}
+
+.image-placeholder-icon svg { width: 64px; height: 64px; }
+
+.image-placeholder--small { aspect-ratio: 4 / 3; max-width: 280px; margin: 0; border-radius: 14px; }
+
+@media (max-width: 640px) {
+    .image-placeholder { aspect-ratio: 4 / 3; border-radius: 14px; }
+}
+
+/* Feature card grid (logged-out landing pages) */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin: 2.5rem auto;
+}
+
+.feature-card {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.75rem 1.5rem;
+    transition: var(--transition);
+}
+
+.feature-card:hover {
+    border-color: var(--primary-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.feature-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgba(212, 160, 23, 0.12);
+    color: var(--primary-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.1rem;
+}
+
+.feature-icon-circle svg { width: 24px; height: 24px; }
+
+.feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
+.feature-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; }
+
+@media (max-width: 900px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }
+
+/* Value / info banner — used for "Be a smarter car owner", "List your workshop", thank-you strips */
+.value-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    max-width: 1100px;
+    margin: 0 auto 2.5rem;
+    padding: 1.75rem 2rem;
+    background: linear-gradient(135deg, var(--surface-color), #0d1420);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+}
+
+.value-banner h3 { font-size: 1.3rem; font-weight: 700; }
+.value-banner h3 span { color: var(--primary-accent); }
+.value-banner-checks { display: flex; flex-direction: column; gap: 0.5rem; }
+.value-banner-checks .check-line { display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; color: var(--text-primary); }
+.value-banner-checks .check-line svg { color: var(--success-color); flex-shrink: 0; }
+
+.thank-banner {
+    max-width: 1100px;
+    margin: 0 auto 1rem;
+    padding: 1.5rem 2rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.thank-banner-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: rgba(212, 160, 23, 0.12);
+    color: var(--primary-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.thank-banner-icon svg { width: 24px; height: 24px; }
+.thank-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+.thank-banner p { color: var(--text-secondary); font-size: 0.85rem; }
+
+@media (max-width: 640px) {
+    .value-banner { padding: 1.25rem 1.25rem; }
+    .thank-banner { padding: 1.1rem 1.25rem; }
+}
+
+/* Dashboard search panel (logged-in motorist) */
+.search-panel {
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+    padding: 1.75rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+}
+
+.search-panel h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem; }
+.search-panel > p { color: var(--text-secondary); font-size: 0.88rem; margin-bottom: 1.25rem; }
+
+.search-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.search-input-wrap { position: relative; flex: 1; min-width: 240px; }
+.search-input-wrap svg {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+}
+
+.search-input-wrap input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.6rem;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+}
+
+.search-input-wrap input:focus { outline: none; border-color: var(--primary-accent); }
+.search-input-wrap input::placeholder { color: var(--text-secondary); }
+
+@media (max-width: 640px) {
+    .search-row { flex-direction: column; }
+    .search-row .btn { width: 100%; }
+}
+
+/* Quick action cards (logged-in dashboards) */
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+}
+
+.quick-action-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.4rem;
+    transition: var(--transition);
+}
+
+.quick-action-card:hover { border-color: var(--primary-accent); transform: translateY(-3px); }
+
+.quick-action-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background-color: rgba(212, 160, 23, 0.12);
+    color: var(--primary-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.quick-action-icon svg { width: 22px; height: 22px; }
+.quick-action-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
+.quick-action-card p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4; }
+
+@media (max-width: 900px) { .quick-actions-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .quick-actions-grid { grid-template-columns: 1fr; } }
+
+/* Two-column dashboard panels (checklist + activity / summary) */
+.dashboard-columns {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 1.25rem;
+    max-width: 1100px;
+    margin: 0 auto 1.5rem;
+}
+
+.dashboard-panel {
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.dashboard-panel h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 1rem; }
+
+.checklist { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+.checklist li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.9rem; color: var(--text-primary); }
+.checklist li svg { color: var(--success-color); flex-shrink: 0; margin-top: 0.15rem; width: 18px; height: 18px; }
+
+@media (max-width: 800px) { .dashboard-columns { grid-template-columns: 1fr; } }
+
+/* Workshop listing status card (logged-in workshop dashboard) */
+.listing-status-card {
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.listing-status-card .image-placeholder--small { flex-shrink: 0; }
+.listing-status-info { flex: 1; min-width: 200px; }
+.listing-status-info h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.2rem; }
+.listing-status-info p { color: var(--text-secondary); font-size: 0.85rem; }
+.listing-status-card .badge { align-self: flex-start; }
+
+@media (max-width: 560px) {
+    .listing-status-card { flex-direction: column; align-items: stretch; }
+    .listing-status-card .image-placeholder--small { max-width: 100%; }
+}
