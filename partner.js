@@ -33,7 +33,7 @@ document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => showTab(btn.dataset.tab));
     });
 
-    document.getElementById('addListingBtn').addEventListener('click', () => {
+document.getElementById('addListingBtn').addEventListener('click', () => {
         document.getElementById('addListingForm').reset();
         document.getElementById('addListingError').style.display = 'none';
         document.getElementById('addListingModal').style.display = 'flex';
@@ -43,8 +43,56 @@ document.querySelectorAll('.partner-tab-btn').forEach(btn => {
     });
     document.getElementById('addListingForm').addEventListener('submit', handleAddListing);
 
+    document.querySelectorAll('.partner-resource-link[data-resource]').forEach(btn => {
+        btn.addEventListener('click', () => openResourceViewer(btn.dataset.resource));
+    });
+    document.getElementById('resourceViewerClose').addEventListener('click', () => {
+        document.getElementById('resourceViewerModal').style.display = 'none';
+    });
+
     checkSession();
 });
+
+async function openResourceViewer(resource) {
+    const modal = document.getElementById('resourceViewerModal');
+    const title = document.getElementById('resourceViewerTitle');
+    const body = document.getElementById('resourceViewerBody');
+    const downloadBtn = document.getElementById('resourceViewerDownloadBtn');
+
+    if (resource === 'messages') {
+        title.textContent = 'Suggested Messages';
+        body.innerHTML = '<p style="color:var(--text-secondary);">Loading…</p>';
+        downloadBtn.href = 'suggested-messages.txt';
+        modal.style.display = 'flex';
+
+        const res = await fetch('suggested-messages.txt');
+        const text = await res.text();
+        body.innerHTML = renderMessagesText(text);
+    } else if (resource === 'logo') {
+        title.textContent = 'Veriyo Logo';
+        body.innerHTML = '<img src="logo.png" alt="Veriyo logo" style="max-width:100%; display:block; margin:0 auto; border-radius:8px; background:var(--surface-color);" />';
+        downloadBtn.href = 'logo.png';
+        modal.style.display = 'flex';
+    }
+}
+
+function renderMessagesText(text) {
+    return text.split('\n').map(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return '<div style="height:0.75rem;"></div>';
+
+        const isSectionHeading = /^[A-Z0-9 ,'-]+$/.test(trimmed) && /[A-Z]/.test(trimmed);
+        const isMessageTitle = /^(Message|Workshop Message) \d+/.test(trimmed);
+
+        if (isSectionHeading) {
+            return `<p style="color:var(--primary-accent); font-weight:700; font-size:1.05rem; margin-top:1.5rem; margin-bottom:0.5rem;">${escapeHTML(trimmed)}</p>`;
+        }
+        if (isMessageTitle) {
+            return `<p style="color:var(--primary-accent); font-weight:600; margin-top:1.25rem; margin-bottom:0.25rem;">${escapeHTML(trimmed)}</p>`;
+        }
+        return `<p style="color:var(--text-secondary); line-height:1.8; margin-bottom:0.5rem;">${escapeHTML(trimmed)}</p>`;
+    }).join('');
+}
 
 async function handleAddListing(event) {
     event.preventDefault();
