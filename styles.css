@@ -119,7 +119,44 @@ button, input, select, textarea {
 .cta-group .btn {
     white-space: nowrap;
 }
+.wh-landing-hero { text-align: center; padding: 2rem 1rem 1.5rem; max-width: 640px; margin: 0 auto; }
+.wh-landing-hero h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 0.5rem; }
+.wh-landing-hero .hero-highlight { color: var(--primary-accent); }
+.wh-landing-sub { color: var(--text-primary); font-size: 0.95rem; margin-bottom: 0.4rem; }
+.wh-landing-desc { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1.25rem; }
+.wh-landing-cta { justify-content: center; gap: 0.75rem; }
+.wh-landing-cta .btn { padding: 0.6rem 1.1rem; font-size: 0.85rem; }
 
+.wh-landing-features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; max-width: 900px; margin: 0 auto 1rem; padding: 0 1rem; }
+.wh-landing-feature { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1rem; }
+.wh-landing-feature h3 { font-size: 0.85rem; font-weight: 700; margin: 0.5rem 0 0.25rem; color: var(--text-primary); }
+.wh-landing-feature p { color: var(--text-secondary); font-size: 0.78rem; line-height: 1.35; margin: 0; }
+
+/* Icon sits directly on the card background — no separate highlighted badge */
+.wh-feature-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--surface-color);
+    color: var(--primary-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wh-landing-checklist { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; margin: 0; padding: 0; }
+.wh-landing-checklist li { color: var(--text-secondary); font-size: 0.8rem; padding-left: 1.2rem; position: relative; }
+.wh-landing-checklist li::before { content: '✓'; color: var(--success-color); position: absolute; left: 0; font-weight: 700; }
+
+.wh-landing-how { max-width: 700px; margin: 1.5rem auto 0; padding: 0 1rem 2rem; }
+.wh-landing-how h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary); }
+.wh-landing-how ol { list-style: decimal; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.wh-landing-how li { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; }
+.wh-landing-how li strong { color: var(--text-primary); }
+
+@media (max-width: 700px) {
+    .wh-landing-features { grid-template-columns: repeat(2, 1fr); }
+}
 @media (max-width: 900px) {
     .hero-split { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1rem; }
     .hero-split-text .cta-group { justify-content: center; }
