@@ -40,9 +40,9 @@
         const notifListEl = document.getElementById('whNotifList');
         const notifEmptyEl = document.getElementById('whNotifEmpty');
 
-        const { data: rows } = await _sb
+const { data: rows } = await _sb
             .from('Workshopprofiles')
-            .select('id, workshop_name, suburb, city, province, status')
+            .select('id, workshop_name, suburb, city, province, status, plan, rmi_registered, written_quote, guarantee_work, guarantee_period, price_oil_change, price_minor_service, price_major_service, price_alignment, price_brake_pads, price_diagnostic, custom_service_name_1, custom_service_name_2')
             .eq('user_id', session.user.id)
             .limit(1);
 
@@ -62,20 +62,70 @@
             return;
         }
 
-        const location = [myWorkshop.suburb, myWorkshop.city, myWorkshop.province].filter(Boolean).join(', ');
+const location = [myWorkshop.suburb, myWorkshop.city, myWorkshop.province].filter(Boolean).join(', ');
+        const editHref = 'list-workshop.html?edit=' + encodeURIComponent(myWorkshop.id);
+
+        // Text callout in place of an image — shows their actual plan tier
+        // rather than a picture, since no images are used here.
         statusCard.innerHTML =
-            '<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">' +
-            '  <div>' +
-            '    <p style="font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">' + escapeHtml(myWorkshop.workshop_name) + '</p>' +
-            '    <p style="font-size:0.85rem; color:var(--text-secondary);">' + escapeHtml(location) + '</p>' +
-            '  </div>' +
-            '  <span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
-            '</div>';
+            '<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:0.9rem 1.1rem; text-align:center; min-width:120px;">' +
+            '  <p style="font-size:0.7rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.25rem;">Your Plan</p>' +
+            '  <p style="font-size:1rem; font-weight:700; color:var(--primary-accent);">' + escapeHtml(myWorkshop.plan || 'Dominant') + '</p>' +
+            '</div>' +
+            '<div style="flex:1; min-width:180px;">' +
+            '  <p style="font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">' + escapeHtml(myWorkshop.workshop_name) + '</p>' +
+            '  <p style="font-size:0.85rem; color:var(--text-secondary);">' + escapeHtml(location) + '</p>' +
+            '</div>' +
+            '<span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
+            '<a href="my-listing.html" class="btn btn-secondary" style="font-size:0.85rem;">View My Listing</a>';
 
 renderQuickActions(actionsEl, [
             { href: 'my-listing.html', label: 'View My Listing', primary: true },
-            { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false }
+            { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false },
+            { href: editHref, label: 'Update Details', primary: false }
         ]);
+
+        // Services You Offer — real services only, capped at 5, no icons invented.
+        const allServices = [
+            myWorkshop.price_oil_change != null ? 'Oil Change' : null,
+            myWorkshop.price_minor_service != null ? 'Minor Service' : null,
+            myWorkshop.price_major_service != null ? 'Major Service' : null,
+            myWorkshop.price_alignment != null ? 'Wheel Alignment' : null,
+            myWorkshop.price_brake_pads != null ? 'Brake Pads' : null,
+            myWorkshop.price_diagnostic != null ? 'Diagnostic' : null,
+            myWorkshop.custom_service_name_1 || null,
+            myWorkshop.custom_service_name_2 || null
+        ].filter(Boolean).slice(0, 5);
+
+        // Highlights — only real attributes this workshop actually has on
+        // record, nothing generic or unverifiable.
+        const highlights = [];
+        if (myWorkshop.rmi_registered === 'Yes') highlights.push('RMI Registered');
+        if (myWorkshop.written_quote === 'Yes') highlights.push('Provides Written Quotes');
+        if (myWorkshop.guarantee_work === 'Yes') {
+            highlights.push('Guarantee on Repairs' + (myWorkshop.guarantee_period ? ' (' + escapeHtml(myWorkshop.guarantee_period) + ')' : ''));
+        }
+
+        const detailColumns = document.getElementById('whDetailColumns');
+        const servicesListEl = document.getElementById('whServicesList');
+        const highlightsListEl = document.getElementById('whHighlightsList');
+        document.getElementById('whEditListingBtn').href = editHref;
+
+        if (allServices.length > 0 || highlights.length > 0) {
+            detailColumns.style.display = 'grid';
+            servicesListEl.innerHTML = allServices.length
+                ? allServices.map(function (s) {
+                    return '<li style="padding:0.5rem 0; border-bottom:1px solid var(--border-color); font-size:0.9rem; color:var(--text-primary);">' + escapeHtml(s) + '</li>';
+                }).join('')
+                : '<li style="color:var(--text-secondary); font-size:0.9rem;">No services added yet.</li>';
+            highlightsListEl.innerHTML = highlights.length
+                ? highlights.map(function (h) {
+                    return '<li style="display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0; font-size:0.9rem; color:var(--text-primary);">' +
+                        '<svg width="18" height="18" style="color:var(--success-color); flex-shrink:0;" aria-hidden="true"><use href="icons.svg#icon-check-circle"></use></svg>' +
+                        escapeHtml(h) + '</li>';
+                }).join('')
+                : '<li style="color:var(--text-secondary); font-size:0.9rem;">Nothing on record yet — update your listing to add these.</li>';
+        }
 
 // Recent notifications (administrator-originated only — spec 8.6).
         // Cleared automatically after 7 days so the panel doesn't fill up
