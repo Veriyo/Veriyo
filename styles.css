@@ -3632,7 +3632,7 @@ button, input, select, textarea {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    background-color: rgba(212, 160, 23, 0.12);
+    background-color: var(--surface-color);
     color: var(--primary-accent);
     display: flex;
     align-items: center;
