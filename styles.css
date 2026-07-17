@@ -3764,3 +3764,672 @@ button, input, select, textarea {
     .listing-status-card { flex-direction: column; align-items: stretch; }
     .listing-status-card .image-placeholder--small { max-width: 100%; }
 }
+/* ==========================================================
+   WORKSHOP HOME PAGE
+   Add this at the bottom of styles.css
+========================================================== */
+
+.workshop-home-page{
+    background:var(--bg-primary);
+    color:var(--text-primary);
+}
+
+.workshop-home-page .container{
+    width:min(1200px,92%);
+    margin:0 auto;
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.header-inner{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    min-height:78px;
+}
+
+.header-actions{
+    display:flex;
+    align-items:center;
+    gap:14px;
+}
+
+.workshop-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:var(--surface-2);
+    color:var(--text-primary);
+    text-decoration:none;
+    font-weight:700;
+}
+
+.header-icon-btn{
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border-radius:12px;
+    text-decoration:none;
+    background:var(--surface-1);
+    border:1px solid var(--border-color);
+}
+
+/* ==========================================================
+   HERO
+========================================================== */
+
+.workshop-landing{
+    padding:5rem 0;
+}
+
+.workshop-hero{
+    display:grid;
+    grid-template-columns:1.25fr .95fr;
+    gap:3rem;
+    align-items:center;
+}
+
+.hero-copy{
+    display:flex;
+    flex-direction:column;
+    gap:1.4rem;
+}
+
+.hero-copy h1{
+    font-size:3.5rem;
+    line-height:1.1;
+    max-width:650px;
+}
+
+.hero-copy p{
+    max-width:620px;
+    line-height:1.8;
+    opacity:.85;
+}
+
+.hero-tag{
+    display:inline-flex;
+    width:max-content;
+    padding:.55rem 1rem;
+    border-radius:999px;
+    background:var(--surface-1);
+    border:1px solid var(--border-color);
+    font-size:.82rem;
+    font-weight:600;
+}
+
+.hero-actions{
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+}
+
+/* ==========================================================
+   SUMMARY
+========================================================== */
+
+.hero-summary{
+    display:grid;
+    gap:1.25rem;
+}
+
+.summary-card{
+    background:var(--surface-1);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:1.6rem;
+}
+
+.summary-card h3{
+    margin-bottom:.8rem;
+}
+
+.summary-card p{
+    line-height:1.7;
+    opacity:.82;
+}
+
+/* ==========================================================
+   BENEFITS
+========================================================== */
+
+.workshop-benefits{
+    padding:5rem 0;
+}
+
+.section-heading{
+    text-align:center;
+    max-width:760px;
+    margin:0 auto 3rem;
+}
+
+.section-heading h2{
+    margin:.75rem 0 1rem;
+    font-size:2.5rem;
+}
+
+.section-heading p{
+    line-height:1.8;
+}
+
+.benefit-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.6rem;
+}
+
+.benefit-card{
+    padding:2rem;
+    border-radius:18px;
+    border:1px solid var(--border-color);
+    background:var(--surface-1);
+    display:flex;
+    flex-direction:column;
+}
+
+.benefit-card h3{
+    margin:1.25rem 0 .75rem;
+}
+
+.benefit-card p{
+    line-height:1.7;
+    opacity:.82;
+}
+
+.benefit-icon{
+    width:58px;
+    height:58px;
+    display:grid;
+    place-items:center;
+    border-radius:16px;
+    background:var(--surface-2);
+}
+
+.benefit-icon svg{
+    width:26px;
+    height:26px;
+}
+
+/* ==========================================================
+   QUICK START
+========================================================== */
+
+.workshop-quick-start{
+    padding:0 0 5rem;
+}
+
+.quick-start-card{
+    border:1px solid var(--border-color);
+    border-radius:22px;
+    background:var(--surface-1);
+    padding:2.5rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:2rem;
+}
+
+.quick-start-card h2{
+    margin:.75rem 0 1rem;
+}
+
+.quick-start-card p{
+    max-width:620px;
+    line-height:1.8;
+}
+
+.quick-start-actions{
+    display:flex;
+    gap:1rem;
+    flex-wrap:wrap;
+}
+/* ==========================================================
+   DASHBOARD
+========================================================== */
+
+.workshop-dashboard{
+    padding:5rem 0;
+}
+
+.dashboard-layout{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    gap:2rem;
+    align-items:start;
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.dashboard-sidebar{
+    background:var(--surface-1);
+    border:1px solid var(--border-color);
+    border-radius:20px;
+    padding:1.75rem;
+    position:sticky;
+    top:100px;
+}
+
+.dashboard-profile{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    margin-bottom:2rem;
+}
+
+.profile-avatar{
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    font-weight:700;
+    background:var(--surface-2);
+}
+
+.dashboard-profile h3{
+    margin:0;
+    font-size:1rem;
+}
+
+.dashboard-profile span{
+    display:block;
+    margin-top:.35rem;
+    opacity:.7;
+    font-size:.9rem;
+}
+
+.dashboard-nav{
+    display:flex;
+    flex-direction:column;
+    gap:.65rem;
+}
+
+.dashboard-nav a{
+    text-decoration:none;
+    color:inherit;
+    padding:.9rem 1rem;
+    border-radius:12px;
+    transition:.2s;
+}
+
+.dashboard-nav a.active{
+    background:var(--surface-2);
+}
+
+.dashboard-nav a:hover{
+    background:var(--surface-2);
+}
+
+/* ==========================================================
+   CONTENT
+========================================================== */
+
+.dashboard-content{
+    display:flex;
+    flex-direction:column;
+    gap:2rem;
+}
+
+.dashboard-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:2rem;
+}
+
+.dashboard-header h2{
+    margin:.6rem 0;
+}
+
+.dashboard-header p{
+    opacity:.75;
+}
+
+/* ==========================================================
+   STATS
+========================================================== */
+
+.dashboard-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:1.25rem;
+}
+
+.stat-card{
+    background:var(--surface-1);
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    padding:1.5rem;
+}
+
+.stat-label{
+    display:block;
+    font-size:.82rem;
+    opacity:.7;
+    margin-bottom:.75rem;
+}
+
+.stat-card h3{
+    margin:0;
+    font-size:2rem;
+}
+
+.stat-card small{
+    display:block;
+    margin-top:.8rem;
+    opacity:.65;
+}
+
+/* ==========================================================
+   DASHBOARD SECTIONS
+========================================================== */
+
+.dashboard-section{
+    background:var(--surface-1);
+    border:1px solid var(--border-color);
+    border-radius:20px;
+    padding:2rem;
+}
+
+.section-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:1.5rem;
+}
+
+.section-header h3{
+    margin:0;
+}
+
+.section-header a{
+    text-decoration:none;
+}
+
+/* ==========================================================
+   ACTIONS
+========================================================== */
+
+.action-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1.25rem;
+}
+
+.action-card{
+    text-decoration:none;
+    color:inherit;
+    border:1px solid var(--border-color);
+    border-radius:16px;
+    padding:1.5rem;
+    background:var(--surface-2);
+}
+
+.action-card h4{
+    margin:0 0 .8rem;
+}
+
+.action-card p{
+    margin:0;
+    opacity:.75;
+    line-height:1.7;
+}
+
+/* ==========================================================
+   TABLE
+========================================================== */
+
+.dashboard-table{
+    display:flex;
+    flex-direction:column;
+}
+
+.table-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:1rem 0;
+    border-bottom:1px solid var(--border-color);
+}
+
+.table-row:last-child{
+    border-bottom:none;
+}
+
+.table-row strong{
+    display:block;
+    margin-bottom:.35rem;
+}
+
+.table-row span{
+    opacity:.75;
+}
+
+/* ==========================================================
+   LISTING OVERVIEW
+========================================================== */
+
+.listing-overview{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1.5rem;
+}
+
+.listing-status-card{
+    border:1px solid var(--border-color);
+    border-radius:18px;
+    background:var(--surface-2);
+    padding:1.75rem;
+}
+
+.listing-status-card h4{
+    margin:1rem 0;
+}
+
+.listing-status-card p{
+    margin-bottom:1.5rem;
+    line-height:1.7;
+    opacity:.8;
+}
+
+.status-badge{
+    display:inline-flex;
+    padding:.45rem .9rem;
+    border-radius:999px;
+    font-size:.8rem;
+    font-weight:600;
+    background:var(--surface-1);
+}
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.site-footer{
+    margin-top:5rem;
+    border-top:1px solid var(--border-color);
+    padding:4rem 0 1.5rem;
+}
+
+.footer-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr 1fr 1fr;
+    gap:2.5rem;
+}
+
+.footer-brand img{
+    width:150px;
+    display:block;
+    margin-bottom:1rem;
+}
+
+.footer-brand p{
+    max-width:320px;
+    line-height:1.8;
+    opacity:.8;
+}
+
+.footer-column h4{
+    margin-bottom:1rem;
+}
+
+.footer-column ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.footer-column li{
+    margin-bottom:.8rem;
+}
+
+.footer-column a{
+    color:inherit;
+    text-decoration:none;
+    opacity:.8;
+}
+
+.footer-column a:hover{
+    opacity:1;
+}
+
+.footer-bottom{
+    margin-top:3rem;
+    padding-top:1.5rem;
+    border-top:1px solid var(--border-color);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1rem;
+}
+
+.footer-links{
+    display:flex;
+    gap:1.5rem;
+}
+
+.footer-links a{
+    color:inherit;
+    text-decoration:none;
+    opacity:.8;
+}
+
+.footer-links a:hover{
+    opacity:1;
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:1100px){
+
+    .workshop-hero{
+        grid-template-columns:1fr;
+    }
+
+    .benefit-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .dashboard-layout{
+        grid-template-columns:1fr;
+    }
+
+    .dashboard-sidebar{
+        position:static;
+    }
+
+    .dashboard-stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .listing-overview{
+        grid-template-columns:1fr;
+    }
+
+    .footer-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media (max-width:768px){
+
+    .header-inner{
+        flex-wrap:wrap;
+        gap:1rem;
+    }
+
+    .hero-copy h1{
+        font-size:2.5rem;
+    }
+
+    .hero-actions,
+    .quick-start-actions{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .quick-start-card{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .benefit-grid{
+        grid-template-columns:1fr;
+    }
+
+    .dashboard-stats{
+        grid-template-columns:1fr;
+    }
+
+    .action-grid{
+        grid-template-columns:1fr;
+    }
+
+    .table-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:.5rem;
+    }
+
+    .footer-grid{
+        grid-template-columns:1fr;
+    }
+
+    .footer-bottom{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+}
+
+@media (max-width:480px){
+
+    .workshop-landing,
+    .workshop-benefits,
+    .workshop-dashboard{
+        padding:3rem 0;
+    }
+
+    .hero-copy h1{
+        font-size:2rem;
+    }
+
+    .dashboard-sidebar,
+    .dashboard-section,
+    .summary-card,
+    .benefit-card,
+    .quick-start-card,
+    .stat-card{
+        padding:1.25rem;
+    }
+
+}
