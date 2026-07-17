@@ -147,12 +147,43 @@ button, input, select, textarea {
 .wh-landing-checklist li { color: var(--text-secondary); font-size: 0.8rem; padding-left: 1.2rem; position: relative; }
 .wh-landing-checklist li::before { content: '✓'; color: var(--success-color); position: absolute; left: 0; font-weight: 700; }
 
-.wh-landing-how { max-width: 700px; margin: 1.5rem auto 0; padding: 0 1rem 2rem; }
-.wh-landing-how h2 { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--text-primary); }
-.wh-landing-how ol { list-style: decimal; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.5rem; }
-.wh-landing-how li { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; }
-.wh-landing-how li strong { color: var(--text-primary); }
+.wh-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
 
+.wh-modal-box {
+    position: relative;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 2rem 1.75rem 1.75rem;
+    max-width: 480px;
+    width: 100%;
+}
+
+.wh-modal-box h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary); }
+.wh-modal-box ol { list-style: decimal; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.wh-modal-box li { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; }
+.wh-modal-box li strong { color: var(--text-primary); }
+
+.wh-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.9rem;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.wh-modal-close:hover { color: var(--text-primary); }
 @media (max-width: 700px) {
     .wh-landing-features { grid-template-columns: repeat(2, 1fr); }
 }
