@@ -109,22 +109,35 @@
 
         <div id="whHomeContent" style="display:none;">
 
-            <!-- Workshop Welcome Card -->
+<!-- Workshop Welcome Card -->
             <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; margin-bottom:1.5rem;">
-                <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:0.25rem;">Hey there, <span id="whWorkshopName">…</span></h1>
+                <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:0.25rem;">Hey there, <span id="whWorkshopName">…</span> 👋</h1>
                 <p style="color:var(--text-secondary); font-size:0.9rem;">This is your workshop dashboard.</p>
             </div>
 
-            <!-- Listing Status -->
+            <!-- Listing Overview -->
             <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Listing Status</h2>
-                <div id="whStatusCard" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
+                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Listing Overview</h2>
+                <div id="whStatusCard" class="listing-status-card" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
             </div>
 
             <!-- Quick Actions -->
             <div style="margin-bottom:1.5rem;">
                 <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Quick Actions</h2>
                 <div id="whQuickActions" style="display:flex; flex-wrap:wrap; gap:0.75rem;"></div>
+            </div>
+
+            <!-- Services + Why Customers Choose You -->
+            <div id="whDetailColumns" class="dashboard-columns" style="display:none; margin-bottom:1.5rem;">
+                <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;">
+                    <h2 style="font-size:1.05rem; font-weight:700; margin-bottom:0.9rem;">Services You Offer</h2>
+                    <ul id="whServicesList" style="list-style:none; margin:0 0 1.25rem; padding:0;"></ul>
+                    <a id="whEditListingBtn" href="#" class="btn btn-secondary" style="font-size:0.9rem; width:100%;">Edit Listing</a>
+                </div>
+                <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;">
+                    <h2 style="font-size:1.05rem; font-weight:700; margin-bottom:0.9rem;">Why Customers Choose You</h2>
+                    <ul id="whHighlightsList" style="list-style:none; margin:0; padding:0;"></ul>
+                </div>
             </div>
 
             <!-- Recent Notifications -->
@@ -135,7 +148,6 @@
                     <p style="font-size:0.95rem;">No notifications yet.</p>
                 </div>
             </div>
-
         </div>
     </main>
 
