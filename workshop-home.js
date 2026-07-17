@@ -27,12 +27,14 @@
         return new Date(ts).toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
     }
 
-    function renderQuickActions(container, actions) {
+function renderQuickActions(container, actions) {
         container.innerHTML = actions.map(function (a) {
-            return '<a href="' + a.href + '" class="btn ' + (a.primary ? 'btn-primary' : 'btn-secondary') + '" style="font-size:0.9rem;">' + escapeHtml(a.label) + '</a>';
+            const icon = a.icon
+                ? '<svg width="18" height="18" aria-hidden="true"><use href="icons.svg#' + a.icon + '"></use></svg>'
+                : '';
+            return '<a href="' + a.href + '" class="btn ' + (a.primary ? 'btn-primary' : 'btn-secondary') + '" style="font-size:0.9rem;">' + icon + escapeHtml(a.label) + '</a>';
         }).join('');
     }
-
     async function loadDashboard(session) {
         const nameEl = document.getElementById('whWorkshopName');
         const statusCard = document.getElementById('whStatusCard');
@@ -54,8 +56,8 @@ const { data: rows } = await _sb
             statusCard.innerHTML =
                 '<p style="color:var(--text-primary); margin-bottom:0.5rem;">You have not created a workshop listing yet.</p>' +
                 '<p style="color:var(--text-secondary); font-size:0.9rem;">Create one to start building your presence on Veriyo.</p>';
-            renderQuickActions(actionsEl, [
-                { href: 'list-workshop.html', label: 'Create My Listing', primary: true }
+renderQuickActions(actionsEl, [
+                { href: 'list-workshop.html', label: 'Create My Listing', primary: true, icon: 'icon-addlisting' }
             ]);
             notifListEl.style.display = 'none';
             notifEmptyEl.style.display = 'block';
@@ -67,22 +69,24 @@ const location = [myWorkshop.suburb, myWorkshop.city, myWorkshop.province].filte
 
         // Text callout in place of an image — shows their actual plan tier
         // rather than a picture, since no images are used here.
-        statusCard.innerHTML =
+statusCard.innerHTML =
             '<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:0.9rem 1.1rem; text-align:center; min-width:120px;">' +
             '  <p style="font-size:0.7rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.25rem;">Your Plan</p>' +
-            '  <p style="font-size:1rem; font-weight:700; color:var(--primary-accent);">' + escapeHtml(myWorkshop.plan || 'Dominant') + '</p>' +
+            '  <p style="font-size:1rem; font-weight:700; color:var(--primary-accent);">' + escapeHtml(myWorkshop.plan || 'Not set') + '</p>' +
             '</div>' +
             '<div style="flex:1; min-width:180px;">' +
             '  <p style="font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">' + escapeHtml(myWorkshop.workshop_name) + '</p>' +
             '  <p style="font-size:0.85rem; color:var(--text-secondary);">' + escapeHtml(location) + '</p>' +
             '</div>' +
-            '<span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
-            '<a href="my-listing.html" class="btn btn-secondary" style="font-size:0.85rem;">View My Listing</a>';
+            '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.6rem;">' +
+            '  <span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
+            '  <a href="my-listing.html" class="btn btn-secondary" style="font-size:0.85rem;">View My Listing</a>' +
+            '</div>';
 
 renderQuickActions(actionsEl, [
-            { href: 'my-listing.html', label: 'View My Listing', primary: true },
-            { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false },
-            { href: editHref, label: 'Update Details', primary: false }
+            { href: 'my-listing.html', label: 'View My Listing', primary: true, icon: 'icon-listing' },
+            { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false, icon: 'icon-chat' },
+            { href: editHref, label: 'Update Details', primary: false, icon: 'icon-addlisting' }
         ]);
 
         // Services You Offer — real services only, capped at 5, no icons invented.
@@ -97,15 +101,9 @@ renderQuickActions(actionsEl, [
             myWorkshop.custom_service_name_2 || null
         ].filter(Boolean).slice(0, 5);
 
-        // Highlights — only real attributes this workshop actually has on
-        // record, nothing generic or unverifiable.
-        const highlights = [];
-        if (myWorkshop.rmi_registered === 'Yes') highlights.push('RMI Registered');
-        if (myWorkshop.written_quote === 'Yes') highlights.push('Provides Written Quotes');
-        if (myWorkshop.guarantee_work === 'Yes') {
-            highlights.push('Guarantee on Repairs' + (myWorkshop.guarantee_period ? ' (' + escapeHtml(myWorkshop.guarantee_period) + ')' : ''));
-        }
-
+// Fixed value-proposition checklist for this card — not sourced
+        // from workshop record fields.
+        const highlights = ['Prices Visible to Motorists', 'Fast Response to Enquiries', 'Trusted by Local Customers'];
         const detailColumns = document.getElementById('whDetailColumns');
         const servicesListEl = document.getElementById('whServicesList');
         const highlightsListEl = document.getElementById('whHighlightsList');
@@ -118,13 +116,11 @@ renderQuickActions(actionsEl, [
                     return '<li style="padding:0.5rem 0; border-bottom:1px solid var(--border-color); font-size:0.9rem; color:var(--text-primary);">' + escapeHtml(s) + '</li>';
                 }).join('')
                 : '<li style="color:var(--text-secondary); font-size:0.9rem;">No services added yet.</li>';
-            highlightsListEl.innerHTML = highlights.length
-                ? highlights.map(function (h) {
-                    return '<li style="display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0; font-size:0.9rem; color:var(--text-primary);">' +
-                        '<svg width="18" height="18" style="color:var(--success-color); flex-shrink:0;" aria-hidden="true"><use href="icons.svg#icon-check-circle"></use></svg>' +
-                        escapeHtml(h) + '</li>';
-                }).join('')
-                : '<li style="color:var(--text-secondary); font-size:0.9rem;">Nothing on record yet — update your listing to add these.</li>';
+highlightsListEl.innerHTML = highlights.map(function (h) {
+                return '<li style="display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0; font-size:0.9rem; color:var(--text-primary);">' +
+                    '<svg width="18" height="18" style="color:var(--success-color); flex-shrink:0;" aria-hidden="true"><use href="icons.svg#icon-check-circle"></use></svg>' +
+                    escapeHtml(h) + '</li>';
+            }).join('');
         }
 
 // Recent notifications (administrator-originated only — spec 8.6).
