@@ -112,6 +112,14 @@ button, input, select, textarea {
     aspect-ratio: 4 / 3;
 }
 
+/* The base .image-placeholder::before overlay is tuned for full-bleed
+   heroes with text sitting on top of the photo. In the split layout the
+   text lives beside the image, not on top of it, so that overlay was
+   only darkening the photo unnecessarily — tone it down here instead. */
+.hero-split-image::before {
+    background: linear-gradient(180deg, rgba(10, 15, 30, 0.05) 0%, rgba(10, 15, 30, 0.35) 100%);
+}
+
 @media (max-width: 900px) {
     .hero-split { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1rem; }
     .hero-split-text .cta-group { justify-content: center; }
@@ -121,16 +129,27 @@ button, input, select, textarea {
 
 /* Global Buttons styling */
 .btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
     padding: 0.8rem 2rem;
     font-weight: 600;
     border-radius: var(--radius);
-    border: none;
+    border: 2px solid transparent;
     cursor: pointer;
     transition: var(--transition);
     font-size: 1rem;
+    line-height: 1.2;
     text-align: center;
 }
+
+.btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
 .btn-primary {
     background-color: var(--primary-accent);
     color: #000000;
@@ -3745,4 +3764,3 @@ button, input, select, textarea {
     .listing-status-card { flex-direction: column; align-items: stretch; }
     .listing-status-card .image-placeholder--small { max-width: 100%; }
 }
-   
