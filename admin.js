@@ -15,6 +15,7 @@ let pendingQuickClaimRecords = [];
 let liveWorkshopRecords = [];
 let livePriceRecords = [];
 let currentTab = 'motorist';
+let currentAdminEmail = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
@@ -58,9 +59,32 @@ document.getElementById('addListingBtn').addEventListener('click', () => {
         document.getElementById('addListingModal').style.display = 'none';
     });
     document.getElementById('addListingForm').addEventListener('submit', handleAddListing);
-    // Tab switching
+// Tab switching
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+    document.querySelectorAll('#adminNavMenuDropdown .header-nav-menu-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchTab(btn.dataset.tab);
+            document.getElementById('adminNavMenuDropdown').style.display = 'none';
+        });
+    });
+    document.getElementById('adminNavMenuToggle').addEventListener('click', () => {
+        const menu = document.getElementById('adminNavMenuDropdown');
+        const isOpen = menu.style.display !== 'none';
+        menu.style.display = isOpen ? 'none' : 'flex';
+        document.getElementById('adminNavMenuToggle').setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.getElementById('adminAvatarToggle').addEventListener('click', () => {
+        const dropdown = document.getElementById('adminAvatarDropdown');
+        const isOpen = dropdown.style.display !== 'none';
+        dropdown.style.display = isOpen ? 'none' : 'flex';
+        document.getElementById('adminAvatarToggle').setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.getElementById('logoutBtnMobile').addEventListener('click', handleLogout);
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.header-nav-menu-wrap')) document.getElementById('adminNavMenuDropdown').style.display = 'none';
+        if (!e.target.closest('.header-avatar-wrap')) document.getElementById('adminAvatarDropdown').style.display = 'none';
     });
 
     checkSession();
@@ -73,6 +97,10 @@ function switchTab(tab) {
         btn.classList.toggle('admin-tab-btn--active', isActive);
         btn.style.borderBottomColor = isActive ? 'var(--primary-accent)' : 'transparent';
         btn.style.color = isActive ? 'var(--primary-accent)' : 'var(--text-secondary)';
+    });
+
+document.querySelectorAll('#adminNavMenuDropdown .header-nav-menu-item').forEach(btn => {
+        btn.classList.toggle('header-nav-menu-item--active', btn.dataset.tab === tab);
     });
 
 document.getElementById('motoristPanel').style.display = tab === 'motorist' ? 'block' : 'none';
@@ -96,6 +124,7 @@ document.getElementById('liveWorkshopPanel').style.display = tab === 'live' ? 'b
 async function isCurrentUserAdmin() {
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) return false;
+    currentAdminEmail = session.user.email;
 
     const { data: profile, error } = await supabaseClient
         .from('account_profiles')
@@ -181,6 +210,10 @@ function showDashboard() {
     document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('partnerView').classList.add('hidden');
     document.getElementById('dashboardView').classList.remove('hidden');
+
+    const initials = (currentAdminEmail || 'A').slice(0, 2).toUpperCase();
+    document.getElementById('adminAvatarToggle').textContent = initials;
+    document.getElementById('adminAvatarName').textContent = currentAdminEmail || 'Admin';
 }
 
 function showPartnerStub() {
@@ -275,7 +308,9 @@ async function loadAllPending() {
 }
 function updateTotalPendingCount() {
     const total = pendingMotoristRecords.length + pendingWorkshopRecords.length + pendingClaimRecords.length + pendingQuickClaimRecords.length;
-    document.getElementById('pendingCount').textContent = total;
+    const badge = document.getElementById('pendingBellBadge');
+    badge.textContent = total;
+    badge.style.display = total > 0 ? 'flex' : 'none';
 }
 
 // ─── MOTORIST REPORTS ──────────────────────────────────────────────────────
