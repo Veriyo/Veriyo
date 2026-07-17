@@ -144,8 +144,29 @@
 <button id="addListingBtn" class="btn btn-secondary-outline" title="Add a workshop listing" style="padding:0.5rem 0.7rem; display:flex; align-items:center;">
                     <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
                 </button>
+                <div class="header-nav-menu-wrap">
+                    <button type="button" id="navMenuToggle" class="header-icon-btn" title="Menu" aria-haspopup="true" aria-expanded="false">
+                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-more"></use></svg>
+                    </button>
+                    <nav id="navMenuDropdown" class="header-nav-menu" style="display:none;">
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="tasks">Tasks</button>
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="dashboard">Dashboard</button>
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="referral">Referral Link</button>
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="handbook">Handbook</button>
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="resources">Resources</button>
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="support">Support</button>
+                    </nav>
+                </div>
     <span class="partner-status-badge" id="partnerStatusBadge">Active</span>
                 <button id="portalLogoutBtn" class="btn btn-danger-outline">Sign Out</button>
+                <div class="header-avatar-wrap">
+                    <button type="button" id="avatarToggle" class="header-avatar" aria-haspopup="true" aria-expanded="false"></button>
+                    <div id="avatarDropdown" class="header-avatar-dropdown" style="display:none;">
+                        <div class="header-avatar-dropdown-name" id="avatarDropdownName"></div>
+                        <div class="header-avatar-dropdown-status" id="avatarDropdownStatus"></div>
+                        <button type="button" id="portalLogoutBtnMobile" class="btn btn-danger-outline btn-block" style="margin-top:0.75rem;">Sign Out</button>
+                    </div>
+                </div>
             </div>
         </header>
         <div id="previewModeBanner" style="display:none; background:rgba(212,160,23,0.12); border-bottom:1px solid var(--primary-accent); color:var(--text-primary); text-align:center; font-size:0.85rem; padding:0.6rem 1rem;">
