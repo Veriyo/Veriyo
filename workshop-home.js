@@ -32,15 +32,15 @@ function renderQuickActions(container, actions) {
             const icon = a.icon
                 ? '<svg width="18" height="18" aria-hidden="true"><use href="icons.svg#' + a.icon + '"></use></svg>'
                 : '';
-            return '<a href="' + a.href + '" class="btn ' + (a.primary ? 'btn-primary' : 'btn-secondary') + '" style="font-size:0.9rem;">' + icon + escapeHtml(a.label) + '</a>';
+             return '<a href="' + a.href + '" class="btn ' + (a.primary ? 'btn-primary' : 'btn-secondary') + '">' + icon + escapeHtml(a.label) + '</a>';
         }).join('');
+   
     }
     async function loadDashboard(session) {
         const nameEl = document.getElementById('whWorkshopName');
         const statusCard = document.getElementById('whStatusCard');
         const actionsEl = document.getElementById('whQuickActions');
-        const notifListEl = document.getElementById('whNotifList');
-        const notifEmptyEl = document.getElementById('whNotifEmpty');
+
 
 const { data: rows } = await _sb
             .from('Workshopprofiles')
@@ -59,8 +59,7 @@ const { data: rows } = await _sb
 renderQuickActions(actionsEl, [
                 { href: 'list-workshop.html', label: 'Create My Listing', primary: true, icon: 'icon-addlisting' }
             ]);
-            notifListEl.style.display = 'none';
-            notifEmptyEl.style.display = 'block';
+
             return;
         }
 
@@ -71,12 +70,12 @@ const location = [myWorkshop.suburb, myWorkshop.city, myWorkshop.province].filte
         // rather than a picture, since no images are used here.
 statusCard.innerHTML =
             '<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:0.9rem 1.1rem; text-align:center; min-width:120px;">' +
-            '  <p style="font-size:0.7rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.25rem;">Your Plan</p>' +
-            '  <p style="font-size:1rem; font-weight:700; color:var(--primary-accent);">' + escapeHtml(myWorkshop.plan || 'Not set') + '</p>' +
+'  <p style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.25rem;">Your Plan</p>' +
+            '  <p style="font-size:1.05rem; font-weight:700; color:var(--primary-accent);">' + escapeHtml(myWorkshop.plan || 'Not set') + '</p>' +
             '</div>' +
             '<div style="flex:1; min-width:180px;">' +
-            '  <p style="font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">' + escapeHtml(myWorkshop.workshop_name) + '</p>' +
-            '  <p style="font-size:0.85rem; color:var(--text-secondary);">' + escapeHtml(location) + '</p>' +
+            '  <p style="font-size:1.05rem; font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">' + escapeHtml(myWorkshop.workshop_name) + '</p>' +
+            '  <p style="font-size:0.92rem; color:var(--text-secondary);">' + escapeHtml(location) + '</p>' +
             '</div>' +
             '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.6rem;">' +
             '  <span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
@@ -123,35 +122,6 @@ highlightsListEl.innerHTML = highlights.map(function (h) {
             }).join('');
         }
 
-// Recent notifications (administrator-originated only — spec 8.6).
-        // Cleared automatically after 7 days so the panel doesn't fill up
-        // with stale approvals — the workshop only needs to see it long
-        // enough to notice it.
-        const notifCutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-        const { data: notifs } = await _sb
-            .from('notifications')
-            .select('*')
-            .eq('workshop_id', myWorkshop.id)
-            .gte('created_at', notifCutoff)
-            .order('created_at', { ascending: false })
-            .limit(5);
-        if (!notifs || notifs.length === 0) {
-            notifListEl.style.display = 'none';
-            notifEmptyEl.style.display = 'block';
-        } else {
-            notifEmptyEl.style.display = 'none';
-            notifListEl.style.display = 'block';
-            notifListEl.innerHTML = notifs.map(function (n) {
-                const inner = '<div class="chat-conv-avatar">&#128276;</div>' +
-                    '<div class="chat-conv-info">' +
-                    '  <div class="chat-conv-id">' + escapeHtml(n.message) + '</div>' +
-                    '  <div class="chat-conv-preview">' + escapeHtml(formatTime(n.created_at)) + '</div>' +
-                    '</div>';
-                return n.link
-                    ? '<a href="' + escapeHtml(n.link) + '" class="chat-conv-item">' + inner + '</a>'
-                    : '<div class="chat-conv-item" style="cursor:default;">' + inner + '</div>';
-            }).join('');
-        }
 
 // Unread chat count (spec 3.4 "Unread Chat Count").
         // Cutoff is the later of last sign-in and the last time this workshop
