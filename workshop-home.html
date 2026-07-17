@@ -3,158 +3,991 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Workshop Home — Veriyo</title>
+    <title>Workshop Home | Veriyo</title>
+
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="logo.png" type="image/png">
 </head>
-<body>
-<nav class="navbar navbar--top">
-        <a href="welcome.html" class="nav-logo">
-            <img src="logo.png" alt="Veriyo">
-        </a>
-        <ul class="nav-links">
-            <li><a href="workshop-home.html" class="active">Home</a></li>
-            <li><a href="my-listing.html">My Listing</a></li>
-            <li><a href="list-workshop.html">List My Workshop</a></li>
-        </ul>
-    </nav>
 
-    <main class="container" style="max-width:860px; padding-top:2rem;">
+<body class="workshop-home-page">
 
-        <div id="whHomeLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
-            Loading your dashboard…
-        </div>
+    <!-- ==========================================================
+         HEADER
+    =========================================================== -->
 
-        <!-- Signed-out: trust-building marketing view for workshop owners -->
-        <div id="whHomeSignIn" style="display:none;">
-            <header class="hero">
-                <h1><span style="color:var(--primary-accent);">Grow</span> Your Workshop With Veriyo</h1>
-                <p>Be visible. Build trust. Attract more customers.</p>
-                <div class="cta-group">
-                    <a href="auth.html" class="btn btn-primary">Register Your Workshop</a>
-                    <a href="list-workshop.html" class="btn btn-secondary">Learn More</a>
-                </div>
-            </header>
+    <header class="site-header">
 
-            <div class="image-placeholder" role="img" aria-label="Photo of a workshop technician">
-                <div class="image-placeholder-icon">
-                    <svg width="64" height="64" aria-hidden="true"><use href="icons.svg#icon-building"></use></svg>
-                </div>
+        <div class="container header-inner">
+
+            <a href="index.html" class="logo">
+                <img src="logo.png" alt="Veriyo">
+            </a>
+
+            <nav class="main-nav">
+
+                <a href="index.html">Home</a>
+
+                <a href="prices.html">Repair Prices</a>
+
+                <a href="workshops.html">Browse Workshops</a>
+
+                <a href="help.html">Help</a>
+
+            </nav>
+
+            <!-- Logged Out -->
+
+            <div class="header-actions workshop-logged-out">
+
+                <a href="auth.html" class="btn btn-secondary">
+                    Sign In
+                </a>
+
+                <a href="list-workshop.html" class="btn btn-primary">
+                    List Your Workshop
+                </a>
+
             </div>
 
-            <div class="feature-grid">
-                <div class="feature-card">
-                    <div class="feature-icon-circle">
-                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-megaphone"></use></svg>
-                    </div>
-                    <h3>Reach More Customers</h3>
-                    <p>Get discovered by motorists searching for real prices.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon-circle">
-                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-handshake"></use></svg>
-                    </div>
-                    <h3>Build Your Reputation</h3>
-                    <p>Showcase your services, prices and credentials.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon-circle">
-                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-scale"></use></svg>
-                    </div>
-                    <h3>Fair Competition</h3>
-                    <p>Stand out through transparent, honest pricing.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon-circle">
-                        <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-people"></use></svg>
-                    </div>
-                    <h3>Be Part of a Better Industry</h3>
-                    <p>Help create a fairer market for everyone.</p>
-                </div>
-            </div>
+            <!-- Logged In -->
 
-            <div class="value-banner">
-                <h3>List your workshop.<br>It's <span>simple</span> and quick.</h3>
-                <div class="value-banner-checks">
-                    <span class="check-line"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg> Increase your visibility</span>
-                    <span class="check-line"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg> Earn customer trust</span>
-                    <span class="check-line"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-check"></use></svg> Grow your business</span>
-                </div>
-                <a href="auth.html" class="btn btn-primary">Register Workshop</a>
-            </div>
-        </div>
+            <div class="header-actions workshop-logged-in">
 
-        <div id="whHomeContent" style="display:none;">
+                <a href="chat.html" class="header-icon-btn">
 
-            <!-- Workshop Welcome Card -->
-            <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; margin-bottom:1.5rem;">
-                <h1 style="font-size:1.5rem; font-weight:700; margin-bottom:0.25rem;">Hey there, <span id="whWorkshopName">…</span></h1>
-                <p style="color:var(--text-secondary); font-size:0.9rem;">This is your workshop dashboard.</p>
-            </div>
+                    <svg class="icon">
+                        <use href="icons.svg#chat"></use>
+                    </svg>
 
-            <!-- Listing Status -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Listing Status</h2>
-                <div id="whStatusCard" class="listing-status-card" style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.25rem;"></div>
-            </div>
+                </a>
 
-            <!-- Quick Actions -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Quick Actions</h2>
-                <div id="whQuickActions" style="display:flex; flex-wrap:wrap; gap:0.75rem;"></div>
-            </div>
+                <a href="my-listing.html" class="header-icon-btn">
 
-            <!-- Recent Notifications -->
-            <div style="margin-bottom:1.5rem;">
-                <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:0.75rem;">Recent Notifications</h2>
-                <div id="whNotifList" class="chat-conv-list" style="display:none;"></div>
-                <div id="whNotifEmpty" class="empty-state" style="padding:2rem 1rem;">
-                    <p style="font-size:0.95rem;">No notifications yet.</p>
-                </div>
-            </div>
+                    <svg class="icon">
+                        <use href="icons.svg#garage"></use>
+                    </svg>
 
-            <div class="thank-banner">
-                <div class="thank-banner-icon">
-                    <svg width="24" height="24" aria-hidden="true"><use href="icons.svg#icon-trophy"></use></svg>
-                </div>
-                <div>
-                    <h3>Thank you for being part of Veriyo!</h3>
-                    <p>Together we build trust between workshops and motorists.</p>
-                </div>
+                </a>
+
+                <a href="workshop-profile.html"
+                   class="workshop-avatar">
+
+                    W
+
+                </a>
+
             </div>
 
         </div>
+
+    </header>
+
+
+
+    <!-- ==========================================================
+         LOGGED OUT LANDING
+    =========================================================== -->
+
+    <main>
+
+ <section class="workshop-state workshop-state-logged-out">
+
+    <section class="workshop-landing">
+            <div class="container workshop-hero">
+
+                <div class="hero-copy">
+
+                    <span class="hero-tag">
+
+                        Trusted by Independent Workshops
+
+                    </span>
+
+                    <h1>
+
+                        Grow Your Workshop With
+                        South Africa's Repair
+                        Transparency Platform
+
+                    </h1>
+
+                    <p>
+
+                        Join thousands of motorists who compare,
+                        discover and contact reputable workshops.
+                        Build trust, receive enquiries and manage
+                        your online workshop profile from one place.
+
+                    </p>
+
+                    <div class="hero-actions">
+
+                        <a href="list-workshop.html"
+                           class="btn btn-primary">
+
+                            List My Workshop
+
+                        </a>
+
+                        <a href="workshops.html"
+                           class="btn btn-outline">
+
+                            Browse Workshops
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="hero-summary">
+
+                    <div class="summary-card">
+
+                        <h3>Your Presence</h3>
+
+                        <p>
+
+                            Showcase your services,
+                            opening hours, certifications,
+                            contact details and customer
+                            reputation in one professional profile.
+
+                        </p>
+
+                    </div>
+
+                    <div class="summary-card">
+
+                        <h3>Reach More Drivers</h3>
+
+                        <p>
+
+                            Help motorists discover your
+                            workshop while researching
+                            repair prices across Veriyo.
+
+                        </p>
+
+                    </div>
+
+                    <div class="summary-card">
+
+                        <h3>Simple Management</h3>
+
+                        <p>
+
+                            Update services,
+                            respond to customers
+                            and manage your listing
+                            whenever you need.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+                <!-- ==========================================================
+             WHY JOIN VERIYO
+        =========================================================== -->
+
+        <section class="workshop-benefits">
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <span class="section-tag">
+                        Why Workshops Choose Veriyo
+                    </span>
+
+                    <h2>
+                        Build Trust Before A Customer Walks Through Your Door
+                    </h2>
+
+                    <p>
+                        Veriyo helps reputable workshops present their business
+                        professionally while giving motorists confidence through
+                        transparency.
+                    </p>
+
+                </div>
+
+
+                <div class="benefit-grid">
+
+                    <article class="benefit-card">
+
+                        <div class="benefit-icon">
+
+                            <svg class="icon">
+                                <use href="icons.svg#garage"></use>
+                            </svg>
+
+                        </div>
+
+                        <h3>
+                            Professional Profile
+                        </h3>
+
+                        <p>
+                            Display your workshop information, services,
+                            certifications and operating hours in one place.
+                        </p>
+
+                    </article>
+
+
+                    <article class="benefit-card">
+
+                        <div class="benefit-icon">
+
+                            <svg class="icon">
+                                <use href="icons.svg#calendar"></use>
+                            </svg>
+
+                        </div>
+
+                        <h3>
+                            Easy Updates
+                        </h3>
+
+                        <p>
+                            Edit your listing whenever your workshop expands,
+                            changes pricing or introduces new services.
+                        </p>
+
+                    </article>
+
+
+                    <article class="benefit-card">
+
+                        <div class="benefit-icon">
+
+                            <svg class="icon">
+                                <use href="icons.svg#chat"></use>
+                            </svg>
+
+                        </div>
+
+                        <h3>
+                            Direct Enquiries
+                        </h3>
+
+                        <p>
+                            Respond to motorists through Veriyo's messaging
+                            system and keep conversations organised.
+                        </p>
+
+                    </article>
+
+
+                    <article class="benefit-card">
+
+                        <div class="benefit-icon">
+
+                            <svg class="icon">
+                                <use href="icons.svg#shield"></use>
+                            </svg>
+
+                        </div>
+
+                        <h3>
+                            Build Credibility
+                        </h3>
+
+                        <p>
+                            Maintain an accurate profile that helps motorists
+                            recognise your workshop as a trusted repair partner.
+                        </p>
+
+                    </article>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ==========================================================
+             QUICK START
+        =========================================================== -->
+
+        <section class="workshop-quick-start">
+
+            <div class="container">
+
+                <div class="quick-start-card">
+
+                    <div>
+
+                        <span class="section-tag">
+                            Get Started
+                        </span>
+
+                        <h2>
+                            Create Your Workshop Presence In Minutes
+                        </h2>
+
+                        <p>
+
+                            Register your workshop, complete your business
+                            profile and begin reaching motorists looking for
+                            reliable repair services.
+
+                        </p>
+
+                    </div>
+
+                    <div class="quick-start-actions">
+
+                        <a href="list-workshop.html"
+                           class="btn btn-primary">
+
+                            List My Workshop
+
+                        </a>
+
+                        <a href="auth.html"
+                           class="btn btn-secondary">
+
+                            Sign In
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </section>
+
+</section>
+
+<section class="workshop-state workshop-state-logged-in">
+
+    <section class="workshop-dashboard">
+        <!-- ==========================================================
+             LOGGED IN DASHBOARD
+        =========================================================== -->
+
+        <section class="workshop-dashboard">
+
+            <div class="container dashboard-layout">
+
+                <!-- Sidebar -->
+
+                <aside class="dashboard-sidebar">
+
+                    <div class="dashboard-profile">
+
+                        <div class="profile-avatar">
+                            W
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Workshop Name
+                            </h3>
+
+                            <span>
+                                Verified Workshop
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <nav class="dashboard-nav">
+
+                        <a class="active" href="workshop-home.html">
+                            Dashboard
+                        </a>
+
+                        <a href="my-listing.html">
+                            My Listing
+                        </a>
+
+                        <a href="chat.html">
+                            Messages
+                        </a>
+
+                        <a href="workshop-profile.html">
+                            Workshop Profile
+                        </a>
+
+                        <a href="help.html">
+                            Help Centre
+                        </a>
+
+                    </nav>
+
+                </aside>
+
+
+
+                <!-- Main Dashboard -->
+
+                <section class="dashboard-content">
+
+                    <div class="dashboard-header">
+
+                        <div>
+
+                            <span class="section-tag">
+                                Dashboard
+                            </span>
+
+                            <h2>
+                                Welcome Back
+                            </h2>
+
+                            <p>
+                                Here's an overview of your workshop activity.
+                            </p>
+
+                        </div>
+
+                        <a href="workshop-profile.html"
+                           class="btn btn-primary">
+
+                            Edit Profile
+
+                        </a>
+
+                    </div>
+
+                                        <!-- ==========================================
+                         Dashboard Statistics
+                    =========================================== -->
+
+                    <div class="dashboard-stats">
+
+                        <article class="stat-card">
+
+                            <span class="stat-label">
+                                Profile Views
+                            </span>
+
+                            <h3>1,248</h3>
+
+                            <small>
+                                Last 30 days
+                            </small>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <span class="stat-label">
+                                New Enquiries
+                            </span>
+
+                            <h3>26</h3>
+
+                            <small>
+                                Awaiting response
+                            </small>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <span class="stat-label">
+                                Response Rate
+                            </span>
+
+                            <h3>96%</h3>
+
+                            <small>
+                                Excellent
+                            </small>
+
+                        </article>
+
+
+                        <article class="stat-card">
+
+                            <span class="stat-label">
+                                Listing Status
+                            </span>
+
+                            <h3>Active</h3>
+
+                            <small>
+                                Publicly visible
+                            </small>
+
+                        </article>
+
+                    </div>
+
+
+
+                    <!-- ==========================================
+                         Quick Actions
+                    =========================================== -->
+
+                    <div class="dashboard-section">
+
+                        <div class="section-header">
+
+                            <h3>
+                                Quick Actions
+                            </h3>
+
+                        </div>
+
+                        <div class="action-grid">
+
+                            <a href="workshop-profile.html"
+                               class="action-card">
+
+                                <h4>
+                                    Edit Workshop Profile
+                                </h4>
+
+                                <p>
+
+                                    Update contact information,
+                                    opening hours and workshop
+                                    description.
+
+                                </p>
+
+                            </a>
+
+
+
+                            <a href="my-listing.html"
+                               class="action-card">
+
+                                <h4>
+                                    Manage Listing
+                                </h4>
+
+                                <p>
+
+                                    Keep your services and
+                                    workshop information
+                                    up to date.
+
+                                </p>
+
+                            </a>
+
+
+
+                            <a href="chat.html"
+                               class="action-card">
+
+                                <h4>
+                                    Open Messages
+                                </h4>
+
+                                <p>
+
+                                    Continue conversations
+                                    with motorists.
+
+                                </p>
+
+                            </a>
+
+
+
+                            <a href="help.html"
+                               class="action-card">
+
+                                <h4>
+                                    Help Centre
+                                </h4>
+
+                                <p>
+
+                                    Read guides and get
+                                    support whenever
+                                    you need it.
+
+                                </p>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ==========================================
+                         Recent Enquiries
+                    =========================================== -->
+
+                    <div class="dashboard-section">
+
+                        <div class="section-header">
+
+                            <h3>
+                                Recent Enquiries
+                            </h3>
+
+                            <a href="chat.html">
+                                View All
+                            </a>
+
+                        </div>
+
+                        <div class="dashboard-table">
+
+                            <div class="table-row">
+
+                                <div>
+
+                                    <strong>
+                                        Brake Pad Replacement
+                                    </strong>
+
+                                    <span>
+                                        Toyota Corolla
+                                    </span>
+
+                                </div>
+
+                                <span>
+                                    2 hours ago
+                                </span>
+
+                            </div>
+
+
+
+                            <div class="table-row">
+
+                                <div>
+
+                                    <strong>
+                                        Major Service
+                                    </strong>
+
+                                    <span>
+                                        VW Polo
+                                    </span>
+
+                                </div>
+
+                                <span>
+                                    Yesterday
+                                </span>
+
+                            </div>
+
+
+
+                            <div class="table-row">
+
+                                <div>
+
+                                    <strong>
+                                        Clutch Replacement
+                                    </strong>
+
+                                    <span>
+                                        Ford Ranger
+                                    </span>
+
+                                </div>
+
+                                <span>
+                                    3 days ago
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ==========================================
+                         Listing Overview
+                    =========================================== -->
+
+                    <div class="dashboard-section">
+
+                        <div class="section-header">
+
+                            <h3>
+                                Listing Overview
+                            </h3>
+
+                        </div>
+
+                        <div class="listing-overview">
+
+                            <div class="listing-status-card">
+
+                                <span class="status-badge">
+
+                                    Active
+
+                                </span>
+
+                                <h4>
+
+                                    Workshop Profile
+
+                                </h4>
+
+                                <p>
+
+                                    Your workshop profile is
+                                    currently visible to
+                                    motorists searching
+                                    Veriyo.
+
+                                </p>
+
+                                <a href="workshop-profile.html"
+                                   class="btn btn-secondary">
+
+                                    View Profile
+
+                                </a>
+
+                            </div>
+
+
+
+                            <div class="listing-status-card">
+
+                                <h4>
+
+                                    Recommended Next Step
+
+                                </h4>
+
+                                <p>
+
+                                    Add additional services
+                                    and update your workshop
+                                    information regularly to
+                                    improve visibility.
+
+                                </p>
+
+                                <a href="my-listing.html"
+                                   class="btn btn-primary">
+
+                                    Update Listing
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+        </section>
+        </section>
+
+                <!-- ==========================================================
+             FOOTER
+        =========================================================== -->
+
+        <footer class="site-footer">
+
+            <div class="container footer-grid">
+
+                <div class="footer-brand">
+
+                    <a href="index.html" class="footer-logo">
+
+                        <img src="logo.png"
+                             alt="Veriyo">
+
+                    </a>
+
+                    <p>
+
+                        Helping motorists make informed repair
+                        decisions while giving reputable
+                        workshops a trusted place to grow.
+
+                    </p>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <h4>
+                        Explore
+                    </h4>
+
+                    <ul>
+
+                        <li>
+                            <a href="index.html">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="prices.html">
+                                Repair Prices
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="workshops.html">
+                                Browse Workshops
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="report.html">
+                                Report a Price
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <h4>
+                        Workshops
+                    </h4>
+
+                    <ul>
+
+                        <li>
+                            <a href="list-workshop.html">
+                                List My Workshop
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="claim-workshop.html">
+                                Claim Workshop
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="my-listing.html">
+                                My Listing
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="workshop-profile.html">
+                                Workshop Profile
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+
+                <div class="footer-column">
+
+                    <h4>
+                        Support
+                    </h4>
+
+                    <ul>
+
+                        <li>
+                            <a href="help.html">
+                                Help Centre
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="privacy.html">
+                                Privacy Policy
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="auth.html">
+                                Sign In
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="partner.html">
+                                Partners
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="container footer-bottom">
+
+                <p>
+
+                    © 2026 Veriyo.
+                    All rights reserved.
+
+                </p>
+
+                <div class="footer-links">
+
+                    <a href="privacy.html">
+                        Privacy
+                    </a>
+
+                    <a href="help.html">
+                        Help
+                    </a>
+
+                    <a href="partner.html">
+                        Partners
+                    </a>
+
+                </div>
+
+            </div>
+
+        </footer>
+
     </main>
 
-    <nav class="bottom-nav">
-        <div class="bottom-nav-links">
-            <a href="workshop-home.html" class="bottom-nav-item active">
-                <span class="bottom-nav-icon">
-                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-home"></use></svg>
-                </span>
-                <span class="bottom-nav-label">Home</span>
-            </a>
-            <a href="my-listing.html" class="bottom-nav-item">
-                <span class="bottom-nav-icon">
-                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-listing"></use></svg>
-                </span>
-                <span class="bottom-nav-label">My Listing</span>
-            </a>
-            <a href="list-workshop.html" class="bottom-nav-item">
-                <span class="bottom-nav-icon">
-                    <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
-                </span>
-                <span class="bottom-nav-label">List My Workshop</span>
-            </a>
-        </div>
-        <p class="bottom-nav-legal">&copy; Veriyo | Built for South African drivers <a href="privacy.html">Privacy Policy</a></p>
-    </nav>
-
-    <script>window.VERIYO_REQUIRED_TYPE = 'workshop';</script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="auth-guard.js"></script>
-    <script src="auth.js"></script>
-    <script src="main.js"></script>
     <script src="workshop-home.js"></script>
+
 </body>
 </html>
