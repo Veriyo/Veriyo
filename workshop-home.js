@@ -86,8 +86,8 @@ statusCard.innerHTML =
 renderQuickActions(actionsEl, [
             { href: 'my-listing.html', label: 'View My Listing', primary: true, icon: 'icon-listing' },
             { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false, icon: 'icon-chat' },
-            { href: editHref, label: 'Update Details', primary: false, icon: 'icon-addlisting' }
-        ]);
+{ href: editHref, label: 'Update Details', primary: false, icon: 'icon-pencil' }
+]);
 
         // Services You Offer — real services only, capped at 5, no icons invented.
         const allServices = [
