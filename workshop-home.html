@@ -75,7 +75,12 @@
                 <a href="auth.html" class="btn btn-primary">Register Workshop</a>
             </div>
 
-            <div id="whHowItWorks" class="wh-landing-how">
+
+    </div>
+
+        <div id="whHowItWorksModal" class="wh-modal-overlay" style="display:none;">
+            <div class="wh-modal-box">
+                <button type="button" id="whHowItWorksClose" class="wh-modal-close" aria-label="Close">&times;</button>
                 <h2>How It Works</h2>
                 <ol>
                     <li><strong>You create a listing.</strong> Add your workshop's details and base pricing.</li>
@@ -84,6 +89,23 @@
                 </ol>
             </div>
         </div>
+
+        <script>
+            (function () {
+                var openBtn = document.querySelector('a[href="#whHowItWorks"]');
+                var modal = document.getElementById('whHowItWorksModal');
+                var closeBtn = document.getElementById('whHowItWorksClose');
+                if (!openBtn || !modal) return;
+                openBtn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    modal.style.display = 'flex';
+                });
+                closeBtn.addEventListener('click', function () { modal.style.display = 'none'; });
+                modal.addEventListener('click', function (e) {
+                    if (e.target === modal) modal.style.display = 'none';
+                });
+            })();
+        </script>
 
         <div id="whHomeContent" style="display:none;">
 
