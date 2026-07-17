@@ -93,14 +93,34 @@
                     <span class="admin-subtitle">Submission Management</span>
                 </div>
             </div>
-            <div class="admin-header-right">
+<div class="admin-header-right">
                 <button id="dashboardBackBtn" class="btn btn-secondary-outline">&larr; Back</button>
-                <span id="notifBell" style="cursor:pointer; font-size:1.3rem; position:relative;" title="Suggestions">&#128276;</span>
-                <div class="pending-count-badge">
-                    <span id="pendingCount">0</span>
-                    <span class="pending-count-label">Pending</span>
+                <span id="notifBell" style="cursor:pointer; font-size:1.3rem; position:relative;" title="Suggestions">
+                    &#128276;
+                    <span id="pendingBellBadge" class="pending-bell-badge" style="display:none;">0</span>
+                </span>
+                <div class="header-nav-menu-wrap">
+                    <button type="button" id="adminNavMenuToggle" class="header-icon-btn" title="Menu" aria-haspopup="true" aria-expanded="false">
+                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-more"></use></svg>
+                    </button>
+                    <nav id="adminNavMenuDropdown" class="header-nav-menu" style="display:none;">
+                        <button type="button" class="header-nav-menu-item" data-tab="motorist">Motorist Reports</button>
+                        <button type="button" class="header-nav-menu-item" data-tab="workshop">Workshop Listings</button>
+                        <button type="button" class="header-nav-menu-item" data-tab="live">Live Workshops</button>
+                        <button type="button" class="header-nav-menu-item" data-tab="claims">Claim Requests</button>
+                        <button type="button" class="header-nav-menu-item" data-tab="quickclaims">Quick Claims</button>
+                        <button type="button" class="header-nav-menu-item" data-tab="liveprices">Live Prices</button>
+                    </nav>
                 </div>
                 <button id="logoutBtn" class="btn btn-danger-outline">Log Out</button>
+                <div class="header-avatar-wrap">
+                    <button type="button" id="adminAvatarToggle" class="header-avatar" aria-haspopup="true" aria-expanded="false"></button>
+                    <div id="adminAvatarDropdown" class="header-avatar-dropdown" style="display:none;">
+                        <div class="header-avatar-dropdown-name" id="adminAvatarName"></div>
+                        <div class="header-avatar-dropdown-status">Administrator</div>
+                        <button type="button" id="logoutBtnMobile" class="btn btn-danger-outline btn-block" style="margin-top:0.75rem;">Log Out</button>
+                    </div>
+                </div>
             </div>
         </header>
         <main class="admin-main">
