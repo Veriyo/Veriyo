@@ -79,6 +79,38 @@ button, input, select, textarea {
     font-size: 1.25rem;
     margin-bottom: 2.5rem;
 }
+.hero-split {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+    text-align: left;
+    max-width: 1100px;
+    padding: 3rem 1rem;
+}
+
+.hero-split-text { flex: 1.1; }
+.hero-split-text .cta-group { justify-content: flex-start; }
+.hero-highlight { color: var(--primary-accent); }
+
+.hero-supporting-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-top: -1.5rem;
+    margin-bottom: 2rem;
+}
+
+.hero-split-image {
+    flex: 0.9;
+    margin: 0;
+    aspect-ratio: 4 / 3;
+}
+
+@media (max-width: 900px) {
+    .hero-split { flex-direction: column; text-align: center; gap: 1.5rem; padding: 2rem 1rem; }
+    .hero-split-text .cta-group { justify-content: center; }
+    .hero-supporting-text { margin-top: 0; }
+    .hero-split-image { width: 100%; }
+}
 
 .cta-group {
     display: flex;
