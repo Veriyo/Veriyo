@@ -27,12 +27,29 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('switchToSupportBtn').addEventListener('click', () => showTab('support'));
 
 document.querySelectorAll('.partner-tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => showTab(btn.dataset.tab));
-    });
-    document.querySelectorAll('.partner-bottom-tabs[data-tab]').forEach(btn => {
-        btn.addEventListener('click', () => showTab(btn.dataset.tab));
+        btn.addEventListener('click', () => {
+            showTab(btn.dataset.tab);
+            document.getElementById('navMenuDropdown').style.display = 'none';
+        });
     });
 
+    document.getElementById('navMenuToggle').addEventListener('click', () => {
+        const menu = document.getElementById('navMenuDropdown');
+        const isOpen = menu.style.display !== 'none';
+        menu.style.display = isOpen ? 'none' : 'flex';
+        document.getElementById('navMenuToggle').setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.getElementById('avatarToggle').addEventListener('click', () => {
+        const dropdown = document.getElementById('avatarDropdown');
+        const isOpen = dropdown.style.display !== 'none';
+        dropdown.style.display = isOpen ? 'none' : 'flex';
+        document.getElementById('avatarToggle').setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.getElementById('portalLogoutBtnMobile').addEventListener('click', handleLogout);
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.header-nav-menu-wrap')) document.getElementById('navMenuDropdown').style.display = 'none';
+        if (!e.target.closest('.header-avatar-wrap')) document.getElementById('avatarDropdown').style.display = 'none';
+    });
 document.getElementById('addListingBtn').addEventListener('click', () => {
         document.getElementById('addListingForm').reset();
         document.getElementById('addListingError').style.display = 'none';
@@ -303,8 +320,14 @@ function showPortal() {
     document.getElementById('trialView').style.display = 'none';
     document.getElementById('portalView').style.display = '';
 
-    document.getElementById('partnerCodeDisplay').textContent = currentPartner.partner_code;
+document.getElementById('partnerCodeDisplay').textContent = currentPartner.partner_code;
     document.getElementById('partnerStatusBadge').textContent = currentPartner.status;
+
+    const displayName = currentPartner.full_name || currentPartner.partner_code || 'Partner';
+    const initials = displayName.trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
+    document.getElementById('avatarToggle').textContent = initials || 'P';
+    document.getElementById('avatarDropdownName').textContent = displayName;
+    document.getElementById('avatarDropdownStatus').textContent = currentPartner.status;
 
 const referralLink = 'https://veriyo.co.za/?ref=' + currentPartner.partner_code;
     document.getElementById('referralLinkInput').value = referralLink;
@@ -327,9 +350,6 @@ async function updateLastActive() {
 function showTab(tabName) {
     document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.classList.toggle('partner-tab-btn--active', btn.dataset.tab === tabName);
-    });
-    document.querySelectorAll('.partner-bottom-tabs[data-tab]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === tabName);
     });
     document.querySelectorAll('.partner-panel').forEach(panel => {
         panel.style.display = 'none';
