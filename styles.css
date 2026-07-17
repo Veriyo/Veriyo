@@ -106,18 +106,18 @@ button, input, select, textarea {
     margin-bottom: 2rem;
 }
 
-.hero-split-image {
-    flex: 0.9;
-    margin: 0;
-    aspect-ratio: 4 / 3;
+/* Signed-out motorist hero — no image column anymore, so pull it in
+   line with the tightly-packed spacing the signed-in dashboard's
+   search panel uses, instead of the airier default .hero padding. */
+#motoristLoggedOut .hero {
+    padding: 2rem 1rem 2.5rem;
 }
+#motoristLoggedOut .hero p { margin-bottom: 1.75rem; }
+#motoristLoggedOut .hero-supporting-text { margin-bottom: 1.5rem; }
 
-/* The base .image-placeholder::before overlay is tuned for full-bleed
-   heroes with text sitting on top of the photo. In the split layout the
-   text lives beside the image, not on top of it, so that overlay was
-   only darkening the photo unnecessarily — tone it down here instead. */
-.hero-split-image::before {
-    background: linear-gradient(180deg, rgba(10, 15, 30, 0.05) 0%, rgba(10, 15, 30, 0.35) 100%);
+/* Keep each CTA's label on a single line instead of wrapping mid-word. */
+.cta-group .btn {
+    white-space: nowrap;
 }
 
 @media (max-width: 900px) {
