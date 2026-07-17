@@ -618,12 +618,12 @@ button, input, select, textarea {
         padding-bottom: 80px;
     }
 .bottom-nav-links {
-    display: none;
+    display: flex;
     justify-content: center;
     align-items: center;
     gap: clamp(1.5rem, 8vw, 4rem);
     padding: 0.5rem 0;
-    visibility: hidden;
+    visibility: visible;
 }
     .bottom-nav-legal {
         display: flex !important;
