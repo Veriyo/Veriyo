@@ -805,17 +805,18 @@ button, input, select, textarea {
 .partner-task-outcome {
     color: var(--text-secondary);
 }
+
 @media (max-width: 768px) {
     .partner-tab-nav {
         display: none;
     }
-    .partner-bottom-tabs {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: clamp(1rem, 6vw, 2.5rem);
-        padding: 0.5rem 0.25rem;
-        flex-wrap: wrap;
+    .partner-header-right .header-nav-menu-wrap,
+    .partner-header-right .header-avatar-wrap {
+        display: block;
+    }
+    .partner-status-badge,
+    #portalLogoutBtn {
+        display: none;
     }
 }
 
@@ -1461,30 +1462,141 @@ button, input, select, textarea {
     gap: 1rem;
 }
 
-.pending-count-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0.4rem 1rem;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    line-height: 1.2;
+@media (max-width: 768px) {
+    .admin-header-right .header-nav-menu-wrap,
+    .admin-header-right .header-avatar-wrap {
+        display: block;
+    }
+    #logoutBtn {
+        display: none;
+    }
 }
 
-.pending-count-badge span:first-child {
-    font-size: 1.25rem;
+
+.pending-bell-badge {
+    position: absolute;
+    top: -6px;
+    right: -8px;
+    background-color: var(--danger-color);
+    color: #fff;
+    font-size: 0.65rem;
     font-weight: 700;
+    line-height: 1;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+}
+
+/* Header three-dot nav menu + avatar — shared by partner.html and
+   admin.html. Visibility (mobile vs desktop) is set in the breakpoint
+   blocks near each page's own header rules. */
+.header-icon-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+}
+.header-icon-btn:hover {
+    color: var(--primary-accent);
+    background-color: rgba(212, 160, 23, 0.08);
+}
+
+.header-nav-menu-wrap,
+.header-avatar-wrap {
+    display: none;
+    position: relative;
+}
+
+.header-nav-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    min-width: 170px;
+    flex-direction: column;
+    padding: 0.4rem;
+    z-index: 1200;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.header-nav-menu-item {
+    text-align: left;
+    background: none;
+    border: none;
+    font-family: inherit;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding: 0.65rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.header-nav-menu-item:hover,
+.header-nav-menu-item.partner-tab-btn--active,
+.header-nav-menu-item.header-nav-menu-item--active {
+    background-color: rgba(212, 160, 23, 0.1);
     color: var(--primary-accent);
 }
 
-.pending-count-label {
-    font-size: 0.7rem;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+.header-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-accent);
+    color: #10141c;
+    border: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
+.header-avatar-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background-color: var(--surface-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    min-width: 200px;
+    padding: 0.9rem;
+    z-index: 1200;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.header-avatar-dropdown-name {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.header-avatar-dropdown-status {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    margin-top: 0.15rem;
+}
+
+@media (max-width: 768px) {
+    #addListingBtn {
+        border: none !important;
+        background: none !important;
+        padding: 0.4rem !important;
+    }
+}
 .admin-main {
     max-width: 1200px;
     margin: 0 auto;
