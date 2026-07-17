@@ -162,13 +162,26 @@
     <path d="M19.2 7.3l-2.4 5.1a2.5 2.5 0 004.8 0z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
   </symbol>
 
-  <!-- HANDSHAKE: "Be Part of a Better Industry" (abstract interlock mark) -->
-  <symbol id="icon-handshake" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M1 9L9 11.2V14.8L1 17V9Z"/>
-    <path d="M23 9L15 11.2V14.8L23 17V9Z"/>
-    <path d="M9 11.2L12.5 13L9 14.8Z"/>
-    <path d="M15 11.2L11.5 13L15 14.8Z"/>
-  </symbol>
+<!-- HANDSHAKE: Be Part of a Better Industry -->
+<symbol id="icon-handshake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Left sleeve -->
+    <path d="M2 8l4-2 3 3-2 2-5-3z"/>
+
+    <!-- Right sleeve -->
+    <path d="M22 8l-4-2-3 3 2 2 5-3z"/>
+
+    <!-- Left hand -->
+    <path d="M7 11l3 3"/>
+
+    <!-- Right hand -->
+    <path d="M17 11l-3 3"/>
+
+    <!-- Handshake -->
+    <path d="M10 14l1 1"/>
+    <path d="M11 15l1-1"/>
+    <path d="M12 14l1 1"/>
+    <path d="M13 15l1-1"/>
+</symbol>
 
   <!-- PENCIL: edit action, used for "Update Details" -->
   <symbol id="icon-pencil" viewBox="0 0 24 24" fill="currentColor">
