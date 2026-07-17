@@ -125,6 +125,7 @@ button, input, select, textarea {
 .wh-landing-sub { color: var(--text-primary); font-size: 1.25rem; margin-bottom: 0.5rem; }
 .wh-landing-desc { color: var(--text-secondary); font-size: 1rem; margin-bottom: 2rem; }
 .wh-landing-cta { justify-content: center; gap: 1.5rem; }
+.wh-landing-cta .btn { min-width: 270px; }
 
 .wh-landing-features { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; max-width: 1100px; margin: 0 auto 2.5rem; padding: 0 1rem; }
 .wh-landing-feature { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: var(--radius); padding: 1.75rem 1.5rem; }
