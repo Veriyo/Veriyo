@@ -1440,6 +1440,15 @@ button, input, select, textarea {
     gap: 0.75rem;
 }
 
+.admin-logo-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
 .admin-logo {
     height: 40px;
     width: auto;
@@ -1470,8 +1479,10 @@ button, input, select, textarea {
     #logoutBtn {
         display: none;
     }
+    .admin-tab-nav {
+        display: none;
+    }
 }
-
 
 .pending-bell-badge {
     position: absolute;
@@ -3797,15 +3808,11 @@ button, input, select, textarea {
 .thank-banner-icon {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
-    background-color: rgba(212, 160, 23, 0.12);
     color: var(--primary-accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
-
 .thank-banner-icon svg { width: 24px; height: 24px; }
 .thank-banner h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
 .thank-banner p { color: var(--text-secondary); font-size: 0.85rem; }
@@ -3885,13 +3892,10 @@ button, input, select, textarea {
 .quick-action-icon {
     width: 44px;
     height: 44px;
-    border-radius: 10px;
-    background-color: rgba(212, 160, 23, 0.12);
     color: var(--primary-accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 }
 
 .quick-action-icon svg { width: 22px; height: 22px; }
