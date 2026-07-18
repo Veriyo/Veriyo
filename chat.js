@@ -30,25 +30,6 @@
         if (threadEl) threadEl.scrollTop = threadEl.scrollHeight;
     }
 
-function buildBubble(msg, currentUserId, mode) {
-        if (msg.message_text && msg.message_text.indexOf('📌 Support Request:') === 0) {
-            const parts = msg.message_text.split('\n\n');
-            const titleLine = parts[0];
-            const bodyText = parts.slice(1).join('\n\n');
-            return `<div class="chat-thread-divider">
-                <div class="chat-thread-divider-title">${escapeHtml(titleLine)}</div>
-                ${bodyText ? '<div class="chat-thread-divider-body">' + escapeHtml(bodyText) + '</div>' : ''}
-            </div>`;
-        }
-        const isMine = (mode === 'workshop' || mode === 'admin')
-            ? msg.sender === mode
-            : msg.sender === (mode === 'partner' ? 'partner' : 'motorist');
-        const side = isMine ? 'right' : 'left';
-        return `<div class="chat-bubble chat-bubble--${side}">
-            <div class="chat-bubble-text">${escapeHtml(msg.message_text)}</div>
-            <div class="chat-bubble-time">${formatTime(msg.created_at)}</div>
-        </div>`;
-    }
 
     // ─── MOTORIST VIEW ──────────────────────────────────────────────────────────
     async function initMotoristView(session, workshopId) {
