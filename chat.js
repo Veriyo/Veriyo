@@ -31,6 +31,15 @@
     }
 
 function buildBubble(msg, currentUserId, mode) {
+        if (msg.message_text && msg.message_text.indexOf('📌 Support Request:') === 0) {
+            const parts = msg.message_text.split('\n\n');
+            const titleLine = parts[0];
+            const bodyText = parts.slice(1).join('\n\n');
+            return `<div class="chat-thread-divider">
+                <div class="chat-thread-divider-title">${escapeHtml(titleLine)}</div>
+                ${bodyText ? '<div class="chat-thread-divider-body">' + escapeHtml(bodyText) + '</div>' : ''}
+            </div>`;
+        }
         const isMine = (mode === 'workshop' || mode === 'admin')
             ? msg.sender === mode
             : msg.sender === (mode === 'partner' ? 'partner' : 'motorist');
@@ -372,8 +381,7 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
             }
         });
     }
-// ─── ADMIN VIEW (chat with any partner) ─────────────────────────────────────
-    async function initAdminView(session) {
+async function initAdminView(session) {
         const view = document.getElementById('chatAdminView');
         const convListEl = document.getElementById('chatAdminConvList');
         const convEmpty = document.getElementById('chatAdminConvEmpty');
@@ -388,12 +396,13 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
         document.getElementById('chatLoading').style.display = 'none';
         document.title = 'Partner Chat — Veriyo';
 
-        // Unlike the workshop manager view, this lists every partner — not
-        // just ones who already messaged — so admin can start a fresh
-        // conversation with anyone, sorted most-recently-active first.
+        // partners.id is this table's own row id — chats.partner_id stores
+        // the partner's auth uid instead (partners.user_id), same pattern
+        // as motorist_id elsewhere. Both are fetched; only user_id is ever
+        // used against the chats table.
         const { data: partners } = await _supabaseChat
             .from('partners')
-            .select('id, full_name, partner_code')
+            .select('id, user_id, full_name, partner_code')
             .order('last_active_at', { ascending: false, nullsFirst: false });
 
         if (!partners || partners.length === 0) {
@@ -414,14 +423,14 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
 
         convListEl.innerHTML = '';
         partners.forEach(function (partner) {
-            const latestMsg = latestByPartner[partner.id];
+            const latestMsg = latestByPartner[partner.user_id];
             const displayName = partner.full_name || partner.partner_code;
             const preview = latestMsg
                 ? (latestMsg.message_text.length > 60 ? latestMsg.message_text.slice(0, 60) + '…' : latestMsg.message_text)
                 : 'No messages yet — tap to start a conversation';
             const convItem = document.createElement('div');
             convItem.className = 'chat-conv-item';
-            convItem.dataset.partnerId = partner.id;
+            convItem.dataset.partnerId = partner.user_id;
             convItem.innerHTML = `
                 <div class="chat-conv-avatar">${escapeHtml(displayName[0].toUpperCase())}</div>
                 <div class="chat-conv-info">
@@ -431,14 +440,14 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
             convItem.addEventListener('click', function () {
                 document.querySelectorAll('#chatAdminConvList .chat-conv-item').forEach(el => el.classList.remove('chat-conv-item--active'));
                 convItem.classList.add('chat-conv-item--active');
-                openPartnerThread(partner.id, displayName);
+                openPartnerThread(partner.user_id, displayName);
             });
             convListEl.appendChild(convItem);
         });
 
         let currentRealtimeSub = null;
 
-        function openPartnerThread(partnerId, displayName) {
+        function openPartnerThread(partnerUserId, displayName) {
             activeThreadPanel.style.display = 'flex';
             activePartnerEl.textContent = displayName;
             adminSendError.style.display = 'none';
@@ -447,7 +456,7 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
                 const { data: msgs } = await _supabaseChat
                     .from('chats')
                     .select('*')
-                    .eq('partner_id', partnerId)
+                    .eq('partner_id', partnerUserId)
                     .order('created_at', { ascending: true });
 
                 adminThreadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'admin')).join('');
@@ -461,12 +470,12 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
             }
 
             currentRealtimeSub = _supabaseChat
-                .channel('chats-admin-' + partnerId)
+                .channel('chats-admin-' + partnerUserId)
                 .on('postgres_changes', {
                     event: 'INSERT',
                     schema: 'public',
                     table: 'chats',
-                    filter: 'partner_id=eq.' + partnerId
+                    filter: 'partner_id=eq.' + partnerUserId
                 }, function (payload) {
                     adminThreadEl.innerHTML += buildBubble(payload.new, session.user.id, 'admin');
                     scrollToBottom(adminThreadEl);
@@ -485,7 +494,7 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
 
                 newSendBtn.disabled = true;
                 const { error } = await _supabaseChat.from('chats').insert({
-                    partner_id: partnerId,
+                    partner_id: partnerUserId,
                     sender: 'admin',
                     message_text: text
                 });
@@ -513,75 +522,18 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
                 currentRealtimeSub = null;
             }
         });
-    }
 
-    // ─── PARTNER VIEW (single thread with Admin) ────────────────────────────────
-    async function initPartnerView(session) {
-        const view = document.getElementById('chatPartnerView');
-        const threadEl = document.getElementById('chatPartnerThread');
-        const sendBtn = document.getElementById('chatPartnerSendBtn');
-        const inputEl = document.getElementById('chatPartnerInput');
-        const sendError = document.getElementById('chatPartnerSendError');
-
-        view.style.display = 'block';
-        document.getElementById('chatLoading').style.display = 'none';
-        document.title = 'Chat with Admin — Veriyo';
-
-        async function loadMessages() {
-            const { data: msgs } = await _supabaseChat
-                .from('chats')
-                .select('*')
-                .eq('partner_id', session.user.id)
-                .order('created_at', { ascending: true });
-
-            threadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'partner')).join('');
-            scrollToBottom(threadEl);
-        }
-
-        await loadMessages();
-
-        _supabaseChat
-            .channel('chats-partner-' + session.user.id)
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'chats',
-                filter: 'partner_id=eq.' + session.user.id
-            }, function (payload) {
-                threadEl.innerHTML += buildBubble(payload.new, session.user.id, 'partner');
-                scrollToBottom(threadEl);
-            })
-            .subscribe();
-
-        async function sendMessage() {
-            const text = inputEl.value.trim();
-            sendError.style.display = 'none';
-            if (!text) return;
-
-            sendBtn.disabled = true;
-            const { error } = await _supabaseChat.from('chats').insert({
-                partner_id: session.user.id,
-                sender: 'partner',
-                message_text: text
-            });
-
-            sendBtn.disabled = false;
-            if (error) {
-                sendError.textContent = 'Failed to send message. Please try again.';
-                sendError.style.display = 'block';
-            } else {
-                inputEl.value = '';
+        // Deep link from a Support Requests card: chat.html?mode=admin&partner_id=<auth uid>
+        const preselectId = new URLSearchParams(window.location.search).get('partner_id');
+        if (preselectId) {
+            const match = partners.find(p => String(p.user_id) === String(preselectId));
+            if (match) {
+                const item = convListEl.querySelector('[data-partner-id="' + preselectId + '"]');
+                if (item) item.classList.add('chat-conv-item--active');
+                openPartnerThread(match.user_id, match.full_name || match.partner_code);
             }
         }
-
-        sendBtn.addEventListener('click', sendMessage);
-        inputEl.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-        });
     }
-
-    // ─── ENTRY POINT ────────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', async function () {
         const { data: { session } } = await _supabaseChat.auth.getSession();
 
         if (!session) {
