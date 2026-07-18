@@ -358,10 +358,11 @@ async function submitListing(data) {
         submitBtn.disabled = true;
         submitBtn.textContent = editingListingId ? 'Saving…' : 'Submitting…';
 
-        const { error } = editingListingId
+  const { error } = editingListingId
             ? await _supabaseLW.from('Workshopprofiles').update(data).eq('id', editingListingId)
-            : await _supabaseLW.from('Workshopprofiles').insert(data);
-
+            : await _supabaseLW.from('Workshopprofiles').insert(Object.assign({}, data, {
+                referral_source: localStorage.getItem('veriyo_ref') || null
+            }));
         if (error) {
             errorEl.textContent = 'Submission failed: ' + error.message + '. Please try again.';
             errorEl.style.display = 'block';
