@@ -542,13 +542,12 @@ async function loadDashboardStats() {
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    const [todayRes, weekRes, monthRes, allRes] = await Promise.all([
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('created_at', todayStart),
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('created_at', weekAgo),
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('created_at', monthAgo),
+const [todayRes, weekRes, monthRes, allRes] = await Promise.all([
+        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', todayStart),
+        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', weekAgo),
+        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', monthAgo),
         supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId)
     ]);
-
     const todayVisitors = todayRes.count || 0;
     const weekVisitors = weekRes.count || 0;
     const monthVisitors = monthRes.count || 0;
