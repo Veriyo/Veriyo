@@ -264,6 +264,15 @@
     <path d="M9 20h6a1 1 0 011 1v.2a.8.8 0 01-.8.8H8.8a.8.8 0 01-.8-.8V21a1 1 0 011-1z"/>
 </symbol>
 
+<!-- CHAT-DOTS: message bubble with a typing indicator, used for the
+       admin/partner chat entry point -->
+  <symbol id="icon-chat-dots" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 6.5C5 4.6 6.6 3 8.5 3h7C18.5 3 20 4.5 20 6.5v5c0 2-1.5 3.5-3.5 3.5H11l-4.5 4v-4H8.5C6.6 15 5 13.4 5 11.5z"/>
+    <circle cx="9" cy="9" r="1" fill="currentColor" stroke="none"/>
+    <circle cx="12.5" cy="9" r="1" fill="currentColor" stroke="none"/>
+    <circle cx="16" cy="9" r="1" fill="currentColor" stroke="none"/>
+  </symbol>
+
   <!-- MORE: three-dot overflow menu trigger, used on mobile headers -->
   <symbol id="icon-more" viewBox="0 0 24 24" fill="currentColor">
     <circle cx="5" cy="12" r="2"/>
