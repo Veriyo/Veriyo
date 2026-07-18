@@ -30,10 +30,10 @@
         if (threadEl) threadEl.scrollTop = threadEl.scrollHeight;
     }
 
-    function buildBubble(msg, currentUserId, mode) {
-        const isMine = mode === 'workshop'
-            ? msg.sender === 'workshop'
-            : msg.sender === 'motorist';
+function buildBubble(msg, currentUserId, mode) {
+        const isMine = (mode === 'workshop' || mode === 'admin')
+            ? msg.sender === mode
+            : msg.sender === (mode === 'partner' ? 'partner' : 'motorist');
         const side = isMine ? 'right' : 'left';
         return `<div class="chat-bubble chat-bubble--${side}">
             <div class="chat-bubble-text">${escapeHtml(msg.message_text)}</div>
@@ -390,8 +390,12 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
         const mode = params.get('mode');
         const workshopId = params.get('workshop_id');
 
-        if (mode === 'workshop') {
+if (mode === 'workshop') {
             await initWorkshopView(session);
+        } else if (mode === 'admin') {
+            await initAdminView(session);
+        } else if (mode === 'partner') {
+            await initPartnerView(session);
         } else if (workshopId) {
             await initMotoristView(session, workshopId);
         } else {
