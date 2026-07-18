@@ -57,19 +57,20 @@
          partner-management pages are being built separately) -->
     <div id="partnerView" class="dashboard-view hidden">
         <header class="admin-header">
-            <div class="admin-header-left">
-                <img src="logo.png" alt="Veriyo" class="admin-logo" />
+          <div class="admin-header-left">
+                <button type="button" class="admin-logo-btn" title="Back to dashboard selection">
+                    <img src="logo.png" alt="Veriyo" class="admin-logo" />
+                </button>
                 <div>
                     <h1>Veriyo Admin</h1>
                     <span class="admin-subtitle">Partner Management</span>
                 </div>
             </div>
 <div class="admin-header-right">
-                <button id="dashboardBackBtn" class="btn btn-secondary-outline">&larr; Back</button>
                <button id="addListingBtn" class="btn btn-secondary-outline" title="Add a workshop listing" style="padding:0.5rem 0.7rem; display:flex; align-items:center;">
                     <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
                 </button>
-                <span id="notifBell" style="cursor:pointer; font-size:1.3rem; position:relative;" title="Suggestions">&#128276;</span>
+                <span id="notifBellStub" style="cursor:pointer; font-size:1.3rem; position:relative;" title="Suggestions">&#128276;</span>
             </div>
         </header>
         <main class="admin-main">
@@ -86,15 +87,16 @@
     <!-- DASHBOARD VIEW -->
     <div id="dashboardView" class="dashboard-view hidden">
         <header class="admin-header">
-            <div class="admin-header-left">
-                <img src="logo.png" alt="Veriyo" class="admin-logo" />
+       <div class="admin-header-left">
+                <button type="button" class="admin-logo-btn" title="Back to dashboard selection">
+                    <img src="logo.png" alt="Veriyo" class="admin-logo" />
+                </button>
                 <div>
                     <h1>Veriyo Admin</h1>
                     <span class="admin-subtitle">Submission Management</span>
                 </div>
             </div>
 <div class="admin-header-right">
-                <button id="dashboardBackBtn" class="btn btn-secondary-outline">&larr; Back</button>
                 <span id="notifBell" style="cursor:pointer; font-size:1.3rem; position:relative;" title="Suggestions">
                     &#128276;
                     <span id="pendingBellBadge" class="pending-bell-badge" style="display:none;">0</span>
@@ -125,7 +127,7 @@
         </header>
         <main class="admin-main">
             <!-- Tab Navigation -->
-            <div style="display:flex; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); flex-wrap:wrap;">
+           <div class="admin-tab-nav" style="display:flex; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); flex-wrap:wrap;">
                 <button class="admin-tab-btn admin-tab-btn--active" data-tab="motorist" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid var(--primary-accent); color:var(--primary-accent); font-weight:600; cursor:pointer;">
                     Motorist Reports
                 </button>
