@@ -657,22 +657,12 @@ async function handleSupportRequest(event) {
         return;
     }
 
-    // Drop a titled marker into the shared chat thread with admin — this is
-    // where the actual conversation about it happens from here on, not a
-    // one-shot response field.
-    await supabaseClient.from('chats').insert({
-        partner_id: currentSession.user.id,
-        sender: 'partner',
-        message_text: '📌 Support Request: ' + subject + '\n\n' + message
-    });
-
     document.getElementById('supportForm').reset();
     document.getElementById('supportSuccess').style.display = '';
     setTimeout(() => { document.getElementById('supportSuccess').style.display = 'none'; }, 3000);
 
     loadSupportHistory();
 }
-
 async function loadSupportHistory() {
     const { data: requests, error } = await supabaseClient
         .from('partner_support_requests')
