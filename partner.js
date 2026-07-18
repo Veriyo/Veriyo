@@ -24,7 +24,35 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('copyReferralBtn').addEventListener('click', copyReferralLink);
     document.getElementById('activityReportForm').addEventListener('submit', handleActivityReport);
     document.getElementById('supportForm').addEventListener('submit', handleSupportRequest);
-    document.getElementById('switchToSupportBtn').addEventListener('click', () => showTab('support'));
+document.getElementById('switchToSupportBtn').addEventListener('click', () => showTab('support'));
+
+    document.getElementById('earningsHowItWorksToggle').addEventListener('click', () => {
+        const btn = document.getElementById('earningsHowItWorksToggle');
+        const body = document.getElementById('earningsHowItWorksBody');
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        body.hidden = isOpen;
+    });
+
+    document.getElementById('viewRecruitedWorkshopsBtn').addEventListener('click', () => {
+        showTab('workshops');
+        loadRecruitedWorkshops();
+    });
+    document.getElementById('backToDashboardBtn').addEventListener('click', () => showTab('dashboard'));
+
+    document.getElementById('earningsHowItWorksToggle').addEventListener('click', () => {
+        const btn = document.getElementById('earningsHowItWorksToggle');
+        const body = document.getElementById('earningsHowItWorksBody');
+        const isOpen = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', String(!isOpen));
+        body.hidden = isOpen;
+    });
+
+    document.getElementById('viewRecruitedWorkshopsBtn').addEventListener('click', () => {
+        showTab('workshops');
+        loadRecruitedWorkshops();
+    });
+    document.getElementById('backToDashboardBtn').addEventListener('click', () => showTab('dashboard'));
 
 document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -571,8 +599,41 @@ const [todayRes, weekRes, monthRes, allRes] = await Promise.all([
     document.getElementById('statEarnings').textContent =
         new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(earnings);
 
-    document.getElementById('refLinkClicks').textContent = totalVisitors.toLocaleString('en-ZA');
+document.getElementById('refLinkClicks').textContent = totalVisitors.toLocaleString('en-ZA');
     document.getElementById('refLinkConversions').textContent = (currentPartner.total_conversions || 0).toLocaleString('en-ZA');
+}
+
+async function loadRecruitedWorkshops() {
+    const listEl = document.getElementById('recruitedWorkshopsList');
+    listEl.innerHTML = '<div class="partner-loading">Loading…</div>';
+
+    const { data: recruited, error } = await supabaseClient
+        .from('Workshopprofiles')
+        .select('workshop_name, plan, status')
+        .eq('referral_source', currentPartner.partner_code)
+        .order('created_at', { ascending: false });
+
+    if (error || !recruited || recruited.length === 0) {
+        listEl.innerHTML = '<div class="chat-conv-empty">No workshops have signed up through your link yet.</div>';
+        return;
+    }
+
+    listEl.innerHTML = recruited.map(w => {
+        const planLabel = w.plan
+            ? '<span class="badge badge-success">' + escapeHtmlP(w.plan) + '</span>'
+            : '<span class="badge badge-neutral">No plan chosen yet</span>';
+        return '<div class="chat-conv-item" style="cursor:default;">' +
+            '<div class="chat-conv-info">' +
+            '  <div class="chat-conv-id">' + escapeHtmlP(w.workshop_name || 'Unnamed workshop') + '</div>' +
+            '  <div class="chat-conv-preview">' + planLabel + '</div>' +
+            '</div></div>';
+    }).join('');
+}
+
+function escapeHtmlP(str) {
+    const div = document.createElement('div');
+    div.textContent = str == null ? '' : String(str);
+    return div.innerHTML;
 }
 
 async function loadAnnouncements() {
