@@ -407,7 +407,7 @@ async function updateSupportBellBadge() {
     const { count } = await supabaseClient
         .from('partner_support_requests')
         .select('id', { count: 'exact', head: true })
-        .is('admin_response', null);
+        .or('status.eq.Open,status.eq.In Progress,status.is.null');
 
     const badge = document.getElementById('supportBellBadge');
     badge.textContent = count || 0;
@@ -435,28 +435,61 @@ async function loadSupportRequestsTab() {
         return;
     }
 
-    const { data: partners } = await supabaseClient
+const { data: partners } = await supabaseClient
         .from('partners')
-        .select('id, full_name, partner_code');
+        .select('id, user_id, full_name, partner_code');
     const nameById = {};
-    (partners || []).forEach(p => { nameById[p.id] = p.full_name || p.partner_code; });
+    const userIdById = {};
+    (partners || []).forEach(p => {
+        nameById[p.id] = p.full_name || p.partner_code;
+        userIdById[p.id] = p.user_id;
+    });
 
-    // Unanswered requests first, newest-first within each group
+    // Unresolved requests first, newest-first within each group
     const sorted = requests.slice().sort((a, b) => {
-        const aOpen = a.admin_response ? 1 : 0;
-        const bOpen = b.admin_response ? 1 : 0;
-        if (aOpen !== bOpen) return aOpen - bOpen;
+        const aResolved = a.status === 'Resolved' ? 1 : 0;
+        const bResolved = b.status === 'Resolved' ? 1 : 0;
+        if (aResolved !== bResolved) return aResolved - bResolved;
         return new Date(b.created_at) - new Date(a.created_at);
     });
 
-    listEl.innerHTML = sorted.map(r => renderSupportCard(r, nameById[r.partner_id] || 'Unknown partner')).join('');
+    listEl.innerHTML = sorted.map(r => renderSupportCard(r, nameById[r.partner_id] || 'Unknown partner', userIdById[r.partner_id])).join('');
 
-    document.querySelectorAll('#supportRequestsList .admin-card').forEach(card => {
-        card.addEventListener('click', () => openSupportResponseModal(card.dataset.requestId));
+    document.querySelectorAll('#supportRequestsList .support-open-chat-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const partnerUserId = e.target.closest('.admin-card').dataset.partnerUserId;
+            if (partnerUserId) window.location.href = 'chat.html?mode=admin&partner_id=' + encodeURIComponent(partnerUserId);
+        });
+    });
+    document.querySelectorAll('#supportRequestsList .support-mark-resolved-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const requestId = e.target.closest('.admin-card').dataset.requestId;
+            await supabaseClient
+                .from('partner_support_requests')
+                .update({ status: 'Resolved', responded_at: new Date().toISOString() })
+                .eq('id', requestId);
+            loadSupportRequestsTab();
+            updateSupportBellBadge();
+        });
     });
 }
 
-function renderSupportCard(request, partnerName) {
+function renderSupportCard(request, partnerName, partnerUserId) {
+    const isResolved = request.status === 'Resolved';
+    const statusClass = isResolved || request.status === 'Closed' ? 'wd-plan-badge--dominant'
+        : request.status === 'In Progress' ? 'wd-plan-badge--trusted' : 'wd-plan-badge--visible';
+    return `
+        <article class="admin-card" data-request-id="${request.id}" data-partner-user-id="${partnerUserId || ''}">
+            <div class="admin-card-header">
+                <h3>${escapeHtmlAdmin(partnerName)} <span class="field-label" style="text-transform:none;">${escapeHtmlAdmin(request.subject)}</span></h3>
+                <span class="wd-plan-badge ${statusClass}">${escapeHtmlAdmin(request.status || 'Open')}</span>
+            </div>
+            <div style="display:flex; gap:0.75rem; padding:0 1.25rem 1.25rem;">
+                <button type="button" class="btn btn-secondary-outline support-open-chat-btn" style="flex:1;">Open Conversation</button>
+                <button type="button" class="btn btn-primary support-mark-resolved-btn" style="flex:1;" ${isResolved ? 'disabled' : ''}>${isResolved ? 'Resolved ✓' : 'Mark Resolved'}</button>
+            </div>
+        </article>`;
+}
     const statusClass = request.status === 'Resolved' || request.status === 'Closed' ? 'wd-plan-badge--dominant'
         : request.status === 'In Progress' ? 'wd-plan-badge--trusted' : 'wd-plan-badge--visible';
     return `
