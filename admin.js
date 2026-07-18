@@ -65,8 +65,36 @@ document.getElementById('addListingBtn').addEventListener('click', () => {
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
-    document.querySelectorAll('.partner-mgmt-tab-btn').forEach(btn => {
+document.querySelectorAll('.partner-mgmt-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchPartnerMgmtTab(btn.dataset.partnerTab));
+    });
+    document.querySelectorAll('#partnerNavMenuDropdown .header-nav-menu-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchPartnerMgmtTab(btn.dataset.partnerTab);
+            document.getElementById('partnerNavMenuDropdown').style.display = 'none';
+        });
+    });
+    document.getElementById('partnerNavMenuToggle').addEventListener('click', () => {
+        const menu = document.getElementById('partnerNavMenuDropdown');
+        const isOpen = menu.style.display !== 'none';
+        menu.style.display = isOpen ? 'none' : 'flex';
+        document.getElementById('partnerNavMenuToggle').setAttribute('aria-expanded', String(!isOpen));
+    });
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#partnerView .header-nav-menu-wrap')) {
+            const menu = document.getElementById('partnerNavMenuDropdown');
+            if (menu) menu.style.display = 'none';
+        }
+    });
+    document.getElementById('partnerNotifBell').addEventListener('click', () => {
+        switchPartnerMgmtTab('support');
+    });
+    document.getElementById('supportResponseCancelBtn').addEventListener('click', () => {
+        document.getElementById('supportResponseModal').style.display = 'none';
+    });
+    document.getElementById('supportResponseSubmitBtn').addEventListener('click', submitSupportResponse);
+    document.getElementById('activityReportModalClose').addEventListener('click', () => {
+        document.getElementById('activityReportModal').style.display = 'none';
     });
     document.querySelectorAll('#adminNavMenuDropdown .header-nav-menu-item').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -226,6 +254,7 @@ function showPartnerStub() {
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('partnerView').classList.remove('hidden');
     loadPartnersTab();
+    updateSupportBellBadge();
 }
 
 function switchPartnerMgmtTab(tab) {
@@ -235,10 +264,16 @@ function switchPartnerMgmtTab(tab) {
         btn.style.borderBottomColor = isActive ? 'var(--primary-accent)' : 'transparent';
         btn.style.color = isActive ? 'var(--primary-accent)' : 'var(--text-secondary)';
     });
+    document.querySelectorAll('#partnerNavMenuDropdown .header-nav-menu-item').forEach(btn => {
+        btn.classList.toggle('header-nav-menu-item--active', btn.dataset.partnerTab === tab);
+    });
     document.getElementById('partnerMgmtPanelPartners').style.display = tab === 'partners' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelChat').style.display = tab === 'chat' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelAnnouncements').style.display = tab === 'announcements' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelSupport').style.display = tab === 'support' ? 'block' : 'none';
+    document.getElementById('partnerMgmtPanelReports').style.display = tab === 'reports' ? 'block' : 'none';
+    if (tab === 'support') loadSupportRequestsTab();
+    if (tab === 'reports') loadActivityReportsTab();
 }
 
 function planBadgeClass(plan) {
@@ -282,7 +317,7 @@ async function loadPartnersTab() {
         doneCountByPartner[c.partner_id] = (doneCountByPartner[c.partner_id] || 0) + 1;
     });
 
-    // Workshops each partner recruited, via referral_source = partner_code
+// Workshops each partner recruited, via referral_source = partner_code
     const partnerCodes = partners.map(p => p.partner_code);
     const { data: recruited } = await supabaseClient
         .from('Workshopprofiles')
@@ -295,10 +330,21 @@ async function loadPartnersTab() {
         recruitedByCode[w.referral_source].push(w);
     });
 
+    // partners has no total_visitors column — count real rows, same as
+    // partner.js's own stats do for the partner viewing their own profile.
+    const { data: visitorRows } = await supabaseClient
+        .from('partner_visitors')
+        .select('partner_id');
+    const visitorCountByPartner = {};
+    (visitorRows || []).forEach(v => {
+        visitorCountByPartner[v.partner_id] = (visitorCountByPartner[v.partner_id] || 0) + 1;
+    });
+
     listEl.innerHTML = partners.map(p => renderPartnerCard(
         p,
         doneCountByPartner[p.id] || 0,
-        recruitedByCode[p.partner_code] || []
+        recruitedByCode[p.partner_code] || [],
+        visitorCountByPartner[p.id] || 0
     )).join('');
 
     document.querySelectorAll('#partnerCardsList .admin-card-header').forEach(header => {
@@ -309,7 +355,7 @@ async function loadPartnersTab() {
     });
 }
 
-function renderPartnerCard(partner, tasksDoneToday, recruitedWorkshops) {
+function renderPartnerCard(partner, tasksDoneToday, recruitedWorkshops, totalClicks) {
     const workshopsHtml = recruitedWorkshops.length
         ? recruitedWorkshops.map(w => `
             <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-color);">
@@ -329,9 +375,9 @@ function renderPartnerCard(partner, tasksDoneToday, recruitedWorkshops) {
                     <span class="field-label">Tasks Completed Today</span>
                     <span class="field-value">${tasksDoneToday} / 5</span>
                 </div>
-                <div class="admin-card-field">
+<div class="admin-card-field">
                     <span class="field-label">Total Clicks</span>
-                    <span class="field-value">${partner.total_visitors || 0}</span>
+                    <span class="field-value">${totalClicks}</span>
                 </div>
                 <div class="admin-card-field">
                     <span class="field-label">Conversions</span>
@@ -353,6 +399,186 @@ function escapeHtmlAdmin(str) {
     return String(str || '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+let currentSupportRequestId = null;
+
+async function updateSupportBellBadge() {
+    const { count } = await supabaseClient
+        .from('partner_support_requests')
+        .select('id', { count: 'exact', head: true })
+        .is('admin_response', null);
+
+    const badge = document.getElementById('supportBellBadge');
+    badge.textContent = count || 0;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+}
+
+async function loadSupportRequestsTab() {
+    const listEl = document.getElementById('supportRequestsList');
+    const emptyEl = document.getElementById('supportRequestsEmpty');
+    const loadingEl = document.getElementById('supportRequestsLoading');
+
+    loadingEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = '';
+
+    const { data: requests, error } = await supabaseClient
+        .from('partner_support_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    loadingEl.style.display = 'none';
+
+    if (error || !requests || requests.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+
+    const { data: partners } = await supabaseClient
+        .from('partners')
+        .select('id, full_name, partner_code');
+    const nameById = {};
+    (partners || []).forEach(p => { nameById[p.id] = p.full_name || p.partner_code; });
+
+    // Unanswered requests first, newest-first within each group
+    const sorted = requests.slice().sort((a, b) => {
+        const aOpen = a.admin_response ? 1 : 0;
+        const bOpen = b.admin_response ? 1 : 0;
+        if (aOpen !== bOpen) return aOpen - bOpen;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    listEl.innerHTML = sorted.map(r => renderSupportCard(r, nameById[r.partner_id] || 'Unknown partner')).join('');
+
+    document.querySelectorAll('#supportRequestsList .admin-card').forEach(card => {
+        card.addEventListener('click', () => openSupportResponseModal(card.dataset.requestId));
+    });
+}
+
+function renderSupportCard(request, partnerName) {
+    const statusClass = request.status === 'Resolved' || request.status === 'Closed' ? 'wd-plan-badge--dominant'
+        : request.status === 'In Progress' ? 'wd-plan-badge--trusted' : 'wd-plan-badge--visible';
+    return `
+        <article class="admin-card" data-request-id="${request.id}" style="cursor:pointer;">
+            <div class="admin-card-header">
+                <h3>${escapeHtmlAdmin(partnerName)} <span class="field-label" style="text-transform:none;">${escapeHtmlAdmin(request.subject)}</span></h3>
+                <span class="wd-plan-badge ${statusClass}">${escapeHtmlAdmin(request.status || 'Open')}</span>
+            </div>
+        </article>`;
+}
+
+function openSupportResponseModal(requestId) {
+    currentSupportRequestId = requestId;
+    supabaseClient
+        .from('partner_support_requests')
+        .select('*')
+        .eq('id', requestId)
+        .single()
+        .then(({ data: request }) => {
+            if (!request) return;
+            document.getElementById('supportResponseTitle').textContent = request.subject;
+            document.getElementById('supportResponseMessage').textContent = request.message;
+            document.getElementById('supportResponseText').value = request.admin_response || '';
+            document.getElementById('supportResponseError').style.display = 'none';
+            document.getElementById('supportResponseModal').style.display = 'flex';
+        });
+}
+
+async function submitSupportResponse() {
+    const text = document.getElementById('supportResponseText').value.trim();
+    const errorEl = document.getElementById('supportResponseError');
+    if (!text) {
+        errorEl.textContent = 'Write a response before sending.';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from('partner_support_requests')
+        .update({
+            admin_response: text,
+            status: 'Resolved',
+            responded_at: new Date().toISOString()
+        })
+        .eq('id', currentSupportRequestId);
+
+    if (error) {
+        errorEl.textContent = 'Failed to send: ' + error.message;
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    document.getElementById('supportResponseModal').style.display = 'none';
+    loadSupportRequestsTab();
+    updateSupportBellBadge();
+}
+
+async function loadActivityReportsTab() {
+    const listEl = document.getElementById('activityReportsList');
+    const emptyEl = document.getElementById('activityReportsEmpty');
+    const loadingEl = document.getElementById('activityReportsLoading');
+
+    loadingEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = '';
+
+    const { data: reports, error } = await supabaseClient
+        .from('partner_activity_reports')
+        .select('*')
+        .order('report_date', { ascending: false });
+
+    loadingEl.style.display = 'none';
+
+    if (error || !reports || reports.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+
+    const { data: partners } = await supabaseClient
+        .from('partners')
+        .select('id, full_name, partner_code');
+    const nameById = {};
+    (partners || []).forEach(p => { nameById[p.id] = p.full_name || p.partner_code; });
+
+    listEl.innerHTML = reports.map(r => `
+        <article class="admin-card" data-report-id="${r.id}" style="cursor:pointer;">
+            <div class="admin-card-header">
+                <h3>${escapeHtmlAdmin(nameById[r.partner_id] || 'Unknown partner')}</h3>
+                <span class="admin-card-date">${escapeHtmlAdmin(r.report_date)}</span>
+            </div>
+        </article>`).join('');
+
+    document.querySelectorAll('#activityReportsList .admin-card').forEach(card => {
+        card.addEventListener('click', () => openActivityReportPreview(card.dataset.reportId, reports, nameById));
+    });
+}
+
+function openActivityReportPreview(reportId, reports, nameById) {
+    const r = reports.find(x => String(x.id) === String(reportId));
+    if (!r) return;
+
+    document.getElementById('activityReportModalTitle').textContent =
+        (nameById[r.partner_id] || 'Partner') + ' — ' + r.report_date;
+
+    const fields = [
+        ['Groups Reached', r.groups_reached],
+        ['Estimated People Reached', r.estimated_people_reached],
+        ['Conversations Started', r.conversations_started],
+        ['Questions Received', r.questions_received],
+        ['Interesting Feedback', r.interesting_feedback || '—'],
+        ['Problems Encountered', r.problems_encountered || '—'],
+        ['Motorist Ideas', r.motorist_ideas || '—'],
+        ['Additional Notes', r.additional_notes || '—']
+    ];
+
+    document.getElementById('activityReportModalBody').innerHTML = fields.map(([label, value]) => `
+        <div class="admin-card-field" style="margin-bottom:0.75rem;">
+            <span class="field-label">${escapeHtmlAdmin(label)}</span>
+            <span class="field-value">${escapeHtmlAdmin(String(value))}</span>
+        </div>`).join('');
+
+    document.getElementById('activityReportModal').style.display = 'flex';
 }
 
 async function handleAddListing(event) {
