@@ -95,13 +95,13 @@ document.addEventListener('DOMContentLoaded', async () => {
             if (viewerIsWorkshop) {
                 chatBtn.style.display = 'none';
             } else if (workshopId) {
-                chatBtn.addEventListener('click', async function () {
-                    if (session) {
-                        window.location.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
-                    } else {
-                        window.location.href = 'auth.html?return=' + encodeURIComponent('chat.html?workshop_id=' + workshopId);
-                    }
-                });
+              chatBtn.addEventListener('click', async function () {
+    if (viewerSession) {
+        window.location.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
+    } else {
+        window.location.href = 'auth.html?return=' + encodeURIComponent('chat.html?workshop_id=' + workshopId);
+    }
+});
             }
         }
     }
