@@ -65,6 +65,9 @@ document.getElementById('addListingBtn').addEventListener('click', () => {
     document.querySelectorAll('.admin-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => switchTab(btn.dataset.tab));
     });
+    document.querySelectorAll('.partner-mgmt-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchPartnerMgmtTab(btn.dataset.partnerTab));
+    });
     document.querySelectorAll('#adminNavMenuDropdown .header-nav-menu-item').forEach(btn => {
         btn.addEventListener('click', () => {
             switchTab(btn.dataset.tab);
@@ -222,6 +225,134 @@ function showPartnerStub() {
     document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('partnerView').classList.remove('hidden');
+    loadPartnersTab();
+}
+
+function switchPartnerMgmtTab(tab) {
+    document.querySelectorAll('.partner-mgmt-tab-btn').forEach(btn => {
+        const isActive = btn.dataset.partnerTab === tab;
+        btn.classList.toggle('partner-mgmt-tab-btn--active', isActive);
+        btn.style.borderBottomColor = isActive ? 'var(--primary-accent)' : 'transparent';
+        btn.style.color = isActive ? 'var(--primary-accent)' : 'var(--text-secondary)';
+    });
+    document.getElementById('partnerMgmtPanelPartners').style.display = tab === 'partners' ? 'block' : 'none';
+    document.getElementById('partnerMgmtPanelChat').style.display = tab === 'chat' ? 'block' : 'none';
+    document.getElementById('partnerMgmtPanelAnnouncements').style.display = tab === 'announcements' ? 'block' : 'none';
+    document.getElementById('partnerMgmtPanelSupport').style.display = tab === 'support' ? 'block' : 'none';
+}
+
+function planBadgeClass(plan) {
+    return plan === 'Dominant' ? 'wd-plan-badge--dominant'
+        : plan === 'Trusted' ? 'wd-plan-badge--trusted'
+        : 'wd-plan-badge--visible';
+}
+
+async function loadPartnersTab() {
+    const listEl = document.getElementById('partnerCardsList');
+    const emptyEl = document.getElementById('partnerCardsEmpty');
+    const loadingEl = document.getElementById('partnerCardsLoading');
+
+    loadingEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = '';
+
+    // Most recently active partner first (nulls — never active — go last)
+    const { data: partners, error } = await supabaseClient
+        .from('partners')
+        .select('*')
+        .order('last_active_at', { ascending: false, nullsFirst: false });
+
+    loadingEl.style.display = 'none';
+
+    if (error || !partners || partners.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+
+    // Today's completed task count per partner (Africa/Johannesburg, matching
+    // the rest of the app's date handling)
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Africa/Johannesburg' });
+    const { data: completions } = await supabaseClient
+        .from('partner_task_completions')
+        .select('partner_id')
+        .eq('completion_date', today);
+
+    const doneCountByPartner = {};
+    (completions || []).forEach(c => {
+        doneCountByPartner[c.partner_id] = (doneCountByPartner[c.partner_id] || 0) + 1;
+    });
+
+    // Workshops each partner recruited, via referral_source = partner_code
+    const partnerCodes = partners.map(p => p.partner_code);
+    const { data: recruited } = await supabaseClient
+        .from('Workshopprofiles')
+        .select('workshop_name, plan, referral_source')
+        .in('referral_source', partnerCodes);
+
+    const recruitedByCode = {};
+    (recruited || []).forEach(w => {
+        if (!recruitedByCode[w.referral_source]) recruitedByCode[w.referral_source] = [];
+        recruitedByCode[w.referral_source].push(w);
+    });
+
+    listEl.innerHTML = partners.map(p => renderPartnerCard(
+        p,
+        doneCountByPartner[p.id] || 0,
+        recruitedByCode[p.partner_code] || []
+    )).join('');
+
+    document.querySelectorAll('#partnerCardsList .admin-card-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const body = header.nextElementSibling;
+            body.style.display = body.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+}
+
+function renderPartnerCard(partner, tasksDoneToday, recruitedWorkshops) {
+    const workshopsHtml = recruitedWorkshops.length
+        ? recruitedWorkshops.map(w => `
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:0.5rem 0; border-bottom:1px solid var(--border-color);">
+                <span class="field-value">${escapeHtmlAdmin(w.workshop_name)}</span>
+                <span class="wd-plan-badge ${planBadgeClass(w.plan)}">${escapeHtmlAdmin(w.plan || 'Visible')}</span>
+            </div>`).join('')
+        : '<p class="field-label" style="text-transform:none;">No workshops recruited yet.</p>';
+
+    return `
+        <article class="admin-card" data-partner-id="${partner.id}">
+            <div class="admin-card-header" style="cursor:pointer;">
+                <h3>${escapeHtmlAdmin(partner.full_name)} <span class="field-label" style="text-transform:none;">${escapeHtmlAdmin(partner.partner_code)}</span></h3>
+                <span class="admin-card-date">${escapeHtmlAdmin(partner.status)}</span>
+            </div>
+            <div class="admin-card-grid" style="display:none;">
+                <div class="admin-card-field">
+                    <span class="field-label">Tasks Completed Today</span>
+                    <span class="field-value">${tasksDoneToday} / 5</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Total Clicks</span>
+                    <span class="field-value">${partner.total_visitors || 0}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Conversions</span>
+                    <span class="field-value">${partner.total_conversions || 0}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Workshops Recruited</span>
+                    <span class="field-value">${recruitedWorkshops.length}</span>
+                </div>
+                <div class="admin-card-field" style="grid-column:1 / -1;">
+                    <span class="field-label">Recruited Workshops &amp; Plans</span>
+                    ${workshopsHtml}
+                </div>
+            </div>
+        </article>`;
+}
+
+function escapeHtmlAdmin(str) {
+    return String(str || '')
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
 async function handleAddListing(event) {
