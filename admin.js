@@ -30,14 +30,16 @@ document.addEventListener('DOMContentLoaded', () => {
         showDashboard();
         await loadAllPending();
     });
-    document.getElementById('goPartnerBtn').addEventListener('click', showPartnerStub);
-    document.getElementById('dashboardBackBtn').addEventListener('click', showRoleChoice);
+document.getElementById('goPartnerBtn').addEventListener('click', showPartnerStub);
    const partnerBackBtn = document.getElementById('partnerBackBtn');
 if (partnerBackBtn) partnerBackBtn.addEventListener('click', showRoleChoice);
 
 const partnerLogoutBtn = document.getElementById('partnerLogoutBtn');
 if (partnerLogoutBtn) partnerLogoutBtn.addEventListener('click', handleLogout);
-   
+
+    document.querySelectorAll('.admin-logo-btn').forEach(btn => {
+        btn.addEventListener('click', showRoleChoice);
+    });
 
     const notifBell = document.getElementById('notifBell');
     const suggestionsPanel = document.getElementById('suggestionsPanel');
