@@ -652,10 +652,19 @@ async function handleSupportRequest(event) {
             message: message
         });
 
-    if (error) {
+   if (error) {
         alert('Failed to submit request: ' + error.message);
         return;
     }
+
+    // Drop a titled marker into the shared chat thread with admin — this is
+    // where the actual conversation about it happens from here on, not a
+    // one-shot response field.
+    await supabaseClient.from('chats').insert({
+        partner_id: currentSession.user.id,
+        sender: 'partner',
+        message_text: '📌 Support Request: ' + subject + '\n\n' + message
+    });
 
     document.getElementById('supportForm').reset();
     document.getElementById('supportSuccess').style.display = '';
