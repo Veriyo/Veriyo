@@ -2757,6 +2757,7 @@ button, input, select, textarea {
 /* Chat button on workshop profile */
 .chat-workshop-btn-wrap {
     margin-top: 1.25rem;
+    margin-bottom: 1.5rem;
 }
 
 @media (max-width: 768px) {
