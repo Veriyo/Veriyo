@@ -532,12 +532,79 @@ async function initAdminView(session) {
             if (match) {
                 const item = convListEl.querySelector('[data-partner-id="' + preselectId + '"]');
                 if (item) item.classList.add('chat-conv-item--active');
-                openPartnerThread(match.user_id, match.full_name || match.partner_code);
+openPartnerThread(match.user_id, match.full_name || match.partner_code);
             }
         }
     }
-        const { data: { session } } = await _supabaseChat.auth.getSession();
 
+    // ─── PARTNER VIEW (single thread with Admin) ────────────────────────────────
+    async function initPartnerView(session) {
+        const view = document.getElementById('chatPartnerView');
+        const threadEl = document.getElementById('chatPartnerThread');
+        const sendBtn = document.getElementById('chatPartnerSendBtn');
+        const inputEl = document.getElementById('chatPartnerInput');
+        const sendError = document.getElementById('chatPartnerSendError');
+
+        view.style.display = 'block';
+        document.getElementById('chatLoading').style.display = 'none';
+        document.title = 'Chat with Admin — Veriyo';
+
+        async function loadMessages() {
+            const { data: msgs } = await _supabaseChat
+                .from('chats')
+                .select('*')
+                .eq('partner_id', session.user.id)
+                .order('created_at', { ascending: true });
+
+            threadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'partner')).join('');
+            scrollToBottom(threadEl);
+        }
+
+        await loadMessages();
+
+        _supabaseChat
+            .channel('chats-partner-' + session.user.id)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'chats',
+                filter: 'partner_id=eq.' + session.user.id
+            }, function (payload) {
+                threadEl.innerHTML += buildBubble(payload.new, session.user.id, 'partner');
+                scrollToBottom(threadEl);
+            })
+            .subscribe();
+
+        async function sendMessage() {
+            const text = inputEl.value.trim();
+            sendError.style.display = 'none';
+            if (!text) return;
+
+            sendBtn.disabled = true;
+            const { error } = await _supabaseChat.from('chats').insert({
+                partner_id: session.user.id,
+                sender: 'partner',
+                message_text: text
+            });
+
+            sendBtn.disabled = false;
+            if (error) {
+                sendError.textContent = 'Failed to send message. Please try again.';
+                sendError.style.display = 'block';
+            } else {
+                inputEl.value = '';
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        inputEl.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+    }
+
+    // ─── ENTRY POINT ────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', async function () {
+        const { data: { session } } = await _supabaseChat.auth.getSession();
         if (!session) {
             // Save redirect and bounce to auth
             const currentUrl = window.location.pathname.split('/').pop() + window.location.search;
