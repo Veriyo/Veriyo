@@ -137,13 +137,7 @@ function renderProfile(w, submissions) {
     quoteEl.textContent = w.written_quote === 'Yes' ? 'Provides Written Quotes' : 'No Written Quotes';
     quoteEl.className = `badge ${w.written_quote === 'Yes' ? 'badge-success' : 'badge-neutral'}`;
 
-    // Photo: falls back to the tools icon placeholder already in the markup
-    // until a photo_url column exists on Workshopprofiles.
-    if (w.photo_url) {
-        const photoEl = document.getElementById('profilePhoto');
-        photoEl.innerHTML = `<img src="${escapeP(w.photo_url)}" alt="${escapeP(w.workshop_name || 'Workshop')}">`;
-    }
-
+  
     // Optional description/tagline, only shown if the workshop has one set.
     if (w.description) {
         const descEl = document.getElementById('profileDescription');
