@@ -372,6 +372,213 @@ localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString
             }
         });
     }
+// ─── ADMIN VIEW (chat with any partner) ─────────────────────────────────────
+    async function initAdminView(session) {
+        const view = document.getElementById('chatAdminView');
+        const convListEl = document.getElementById('chatAdminConvList');
+        const convEmpty = document.getElementById('chatAdminConvEmpty');
+        const activeThreadPanel = document.getElementById('chatAdminActiveThread');
+        const adminThreadEl = document.getElementById('chatAdminThread');
+        const adminInput = document.getElementById('chatAdminInput');
+        const adminSendBtn = document.getElementById('chatAdminSendBtn');
+        const adminSendError = document.getElementById('chatAdminSendError');
+        const activePartnerEl = document.getElementById('chatActivePartner');
+
+        view.style.display = 'block';
+        document.getElementById('chatLoading').style.display = 'none';
+        document.title = 'Partner Chat — Veriyo';
+
+        // Unlike the workshop manager view, this lists every partner — not
+        // just ones who already messaged — so admin can start a fresh
+        // conversation with anyone, sorted most-recently-active first.
+        const { data: partners } = await _supabaseChat
+            .from('partners')
+            .select('id, full_name, partner_code')
+            .order('last_active_at', { ascending: false, nullsFirst: false });
+
+        if (!partners || partners.length === 0) {
+            convEmpty.style.display = 'block';
+            return;
+        }
+
+        const { data: allMsgs } = await _supabaseChat
+            .from('chats')
+            .select('*')
+            .not('partner_id', 'is', null)
+            .order('created_at', { ascending: false });
+
+        const latestByPartner = {};
+        (allMsgs || []).forEach(function (m) {
+            if (!latestByPartner[m.partner_id]) latestByPartner[m.partner_id] = m;
+        });
+
+        convListEl.innerHTML = '';
+        partners.forEach(function (partner) {
+            const latestMsg = latestByPartner[partner.id];
+            const displayName = partner.full_name || partner.partner_code;
+            const preview = latestMsg
+                ? (latestMsg.message_text.length > 60 ? latestMsg.message_text.slice(0, 60) + '…' : latestMsg.message_text)
+                : 'No messages yet — tap to start a conversation';
+            const convItem = document.createElement('div');
+            convItem.className = 'chat-conv-item';
+            convItem.dataset.partnerId = partner.id;
+            convItem.innerHTML = `
+                <div class="chat-conv-avatar">${escapeHtml(displayName[0].toUpperCase())}</div>
+                <div class="chat-conv-info">
+                    <div class="chat-conv-id">${escapeHtml(displayName)}</div>
+                    <div class="chat-conv-preview">${escapeHtml(preview)}</div>
+                </div>`;
+            convItem.addEventListener('click', function () {
+                document.querySelectorAll('#chatAdminConvList .chat-conv-item').forEach(el => el.classList.remove('chat-conv-item--active'));
+                convItem.classList.add('chat-conv-item--active');
+                openPartnerThread(partner.id, displayName);
+            });
+            convListEl.appendChild(convItem);
+        });
+
+        let currentRealtimeSub = null;
+
+        function openPartnerThread(partnerId, displayName) {
+            activeThreadPanel.style.display = 'flex';
+            activePartnerEl.textContent = displayName;
+            adminSendError.style.display = 'none';
+
+            async function loadThread() {
+                const { data: msgs } = await _supabaseChat
+                    .from('chats')
+                    .select('*')
+                    .eq('partner_id', partnerId)
+                    .order('created_at', { ascending: true });
+
+                adminThreadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'admin')).join('');
+                scrollToBottom(adminThreadEl);
+            }
+
+            loadThread();
+
+            if (currentRealtimeSub) {
+                _supabaseChat.removeChannel(currentRealtimeSub);
+            }
+
+            currentRealtimeSub = _supabaseChat
+                .channel('chats-admin-' + partnerId)
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'chats',
+                    filter: 'partner_id=eq.' + partnerId
+                }, function (payload) {
+                    adminThreadEl.innerHTML += buildBubble(payload.new, session.user.id, 'admin');
+                    scrollToBottom(adminThreadEl);
+                })
+                .subscribe();
+
+            const newSendBtn = adminSendBtn.cloneNode(true);
+            adminSendBtn.parentNode.replaceChild(newSendBtn, adminSendBtn);
+            const newInput = adminInput.cloneNode(true);
+            adminInput.parentNode.replaceChild(newInput, adminInput);
+
+            async function sendReply() {
+                const text = newInput.value.trim();
+                adminSendError.style.display = 'none';
+                if (!text) return;
+
+                newSendBtn.disabled = true;
+                const { error } = await _supabaseChat.from('chats').insert({
+                    partner_id: partnerId,
+                    sender: 'admin',
+                    message_text: text
+                });
+
+                newSendBtn.disabled = false;
+                if (error) {
+                    adminSendError.textContent = 'Failed to send. Please try again.';
+                    adminSendError.style.display = 'block';
+                } else {
+                    newInput.value = '';
+                }
+            }
+
+            newSendBtn.addEventListener('click', sendReply);
+            newInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(); }
+            });
+        }
+
+        document.getElementById('chatAdminCloseThread').addEventListener('click', function () {
+            activeThreadPanel.style.display = 'none';
+            document.querySelectorAll('#chatAdminConvList .chat-conv-item').forEach(el => el.classList.remove('chat-conv-item--active'));
+            if (currentRealtimeSub) {
+                _supabaseChat.removeChannel(currentRealtimeSub);
+                currentRealtimeSub = null;
+            }
+        });
+    }
+
+    // ─── PARTNER VIEW (single thread with Admin) ────────────────────────────────
+    async function initPartnerView(session) {
+        const view = document.getElementById('chatPartnerView');
+        const threadEl = document.getElementById('chatPartnerThread');
+        const sendBtn = document.getElementById('chatPartnerSendBtn');
+        const inputEl = document.getElementById('chatPartnerInput');
+        const sendError = document.getElementById('chatPartnerSendError');
+
+        view.style.display = 'block';
+        document.getElementById('chatLoading').style.display = 'none';
+        document.title = 'Chat with Admin — Veriyo';
+
+        async function loadMessages() {
+            const { data: msgs } = await _supabaseChat
+                .from('chats')
+                .select('*')
+                .eq('partner_id', session.user.id)
+                .order('created_at', { ascending: true });
+
+            threadEl.innerHTML = (msgs || []).map(m => buildBubble(m, session.user.id, 'partner')).join('');
+            scrollToBottom(threadEl);
+        }
+
+        await loadMessages();
+
+        _supabaseChat
+            .channel('chats-partner-' + session.user.id)
+            .on('postgres_changes', {
+                event: 'INSERT',
+                schema: 'public',
+                table: 'chats',
+                filter: 'partner_id=eq.' + session.user.id
+            }, function (payload) {
+                threadEl.innerHTML += buildBubble(payload.new, session.user.id, 'partner');
+                scrollToBottom(threadEl);
+            })
+            .subscribe();
+
+        async function sendMessage() {
+            const text = inputEl.value.trim();
+            sendError.style.display = 'none';
+            if (!text) return;
+
+            sendBtn.disabled = true;
+            const { error } = await _supabaseChat.from('chats').insert({
+                partner_id: session.user.id,
+                sender: 'partner',
+                message_text: text
+            });
+
+            sendBtn.disabled = false;
+            if (error) {
+                sendError.textContent = 'Failed to send message. Please try again.';
+                sendError.style.display = 'block';
+            } else {
+                inputEl.value = '';
+            }
+        }
+
+        sendBtn.addEventListener('click', sendMessage);
+        inputEl.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+    }
 
     // ─── ENTRY POINT ────────────────────────────────────────────────────────────
     document.addEventListener('DOMContentLoaded', async function () {
