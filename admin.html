@@ -414,31 +414,7 @@
         </div>
     </div>
 
-<!-- Support request response modal -->
-    <div id="supportResponseModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:4000; align-items:center; justify-content:center;">
-        <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; width:min(420px,90vw); max-height:85vh; overflow-y:auto;">
-            <h2 style="font-size:1.1rem; margin-bottom:0.25rem;" id="supportResponseTitle">Respond to request</h2>
-            <p id="supportResponseMessage" style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:1rem;"></p>
-            <div class="form-group">
-                <label for="supportResponseText">Your response</label>
-                <textarea id="supportResponseText" class="form-control" rows="4"></textarea>
-            </div>
-            <div id="supportResponseError" style="display:none; color:var(--danger-color); font-size:0.85rem; margin-bottom:0.75rem;"></div>
-            <div style="display:flex; gap:0.75rem;">
-                <button type="button" id="supportResponseCancelBtn" class="btn btn-secondary-outline" style="flex:1;">Cancel</button>
-                <button type="button" id="supportResponseSubmitBtn" class="btn btn-primary" style="flex:1;">Send Response</button>
-            </div>
-        </div>
-    </div>
 
-    <!-- Activity report preview — read-only, no edit controls anywhere in this modal -->
-    <div id="activityReportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:4000; align-items:center; justify-content:center;">
-        <div style="background:var(--surface-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:1.5rem; width:min(480px,90vw); max-height:85vh; overflow-y:auto;">
-            <h2 style="font-size:1.1rem; margin-bottom:1rem;" id="activityReportModalTitle">Activity Report</h2>
-            <div id="activityReportModalBody"></div>
-            <button type="button" id="activityReportModalClose" class="btn btn-secondary-outline btn-block" style="margin-top:1rem;">Close</button>
-        </div>
-    </div>
 
     <!-- Suggestions panel, opened by the bell in the dashboard header -->
     <div id="suggestionsPanel" style="display:none; position:fixed; top:0; right:0; width:min(360px,100vw); height:100vh; background:var(--surface-color); border-left:1px solid var(--border-color); z-index:3000; flex-direction:column; padding:1.5rem; gap:1rem; overflow-y:auto;">
