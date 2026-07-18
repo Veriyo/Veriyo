@@ -2625,6 +2625,27 @@ button, input, select, textarea {
     align-items: flex-start;
 }
 
+.chat-thread-divider {
+    max-width: 85%;
+    margin: 1.25rem auto;
+    padding: 0.75rem 1rem;
+    background-color: rgba(212, 160, 23, 0.08);
+    border: 1px solid var(--primary-accent);
+    border-radius: var(--radius);
+    text-align: center;
+}
+.chat-thread-divider-title {
+    color: var(--primary-accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+.chat-thread-divider-body {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-top: 0.35rem;
+    white-space: pre-wrap;
+}
+
 .chat-conv-list {
     background: var(--surface-color);
     border: 1px solid var(--border-color);
