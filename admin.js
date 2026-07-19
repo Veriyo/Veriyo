@@ -251,9 +251,10 @@ function showDashboard() {
 function showPartnerStub() {
     document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('dashboardView').classList.add('hidden');
-    document.getElementById('partnerView').classList.remove('hidden');
+document.getElementById('partnerView').classList.remove('hidden');
     loadPartnersTab();
     updateSupportBellBadge();
+    updatePartnerRequestsBadge();
 }
 
 function switchPartnerMgmtTab(tab) {
@@ -266,12 +267,14 @@ function switchPartnerMgmtTab(tab) {
     document.querySelectorAll('#partnerNavMenuDropdown .header-nav-menu-item').forEach(btn => {
         btn.classList.toggle('header-nav-menu-item--active', btn.dataset.partnerTab === tab);
     });
-    document.getElementById('partnerMgmtPanelPartners').style.display = tab === 'partners' ? 'block' : 'none';
+document.getElementById('partnerMgmtPanelPartners').style.display = tab === 'partners' ? 'block' : 'none';
+    document.getElementById('partnerMgmtPanelRequests').style.display = tab === 'requests' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelChat').style.display = tab === 'chat' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelAnnouncements').style.display = tab === 'announcements' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelSupport').style.display = tab === 'support' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelReports').style.display = tab === 'reports' ? 'block' : 'none';
  if (tab === 'chat') initAdminChatTab();
+    if (tab === 'requests') loadPartnerRequestsTab();
     if (tab === 'support') loadSupportRequestsTab();
     if (tab === 'reports') loadActivityReportsTab();
 }
@@ -399,6 +402,120 @@ function escapeHtmlAdmin(str) {
     return String(str || '')
         .replace(/&/g, '&amp;').replace(/</g, '&lt;')
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+async function updatePartnerRequestsBadge() {
+    const { count } = await supabaseClient
+        .from('partners')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'Pending');
+
+    const badge = document.getElementById('partnerRequestsBadge');
+    badge.textContent = count || 0;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+}
+
+async function loadPartnerRequestsTab() {
+    const listEl = document.getElementById('partnerRequestsList');
+    const emptyEl = document.getElementById('partnerRequestsEmpty');
+    const loadingEl = document.getElementById('partnerRequestsLoading');
+
+    loadingEl.style.display = 'block';
+    emptyEl.style.display = 'none';
+    listEl.innerHTML = '';
+
+    const { data: requests, error } = await supabaseClient
+        .from('partners')
+        .select('*')
+        .in('status', ['Pending', 'Rejected'])
+        .order('created_at', { ascending: false });
+
+    loadingEl.style.display = 'none';
+
+    if (error || !requests || requests.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+
+    const sorted = requests.slice().sort((a, b) => {
+        const aPending = a.status === 'Pending' ? 0 : 1;
+        const bPending = b.status === 'Pending' ? 0 : 1;
+        if (aPending !== bPending) return aPending - bPending;
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    listEl.innerHTML = sorted.map(renderPartnerRequestCard).join('');
+
+    document.querySelectorAll('#partnerRequestsList .admin-card-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const body = header.nextElementSibling;
+            body.style.display = body.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    document.querySelectorAll('#partnerRequestsList .partner-request-approve-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const partnerId = e.target.closest('.admin-card').dataset.partnerId;
+            await supabaseClient
+                .from('partners')
+                .update({ status: 'Trial' })
+                .eq('id', partnerId);
+            loadPartnerRequestsTab();
+            updatePartnerRequestsBadge();
+        });
+    });
+
+    document.querySelectorAll('#partnerRequestsList .partner-request-reject-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const partnerId = e.target.closest('.admin-card').dataset.partnerId;
+            await supabaseClient
+                .from('partners')
+                .update({ status: 'Rejected' })
+                .eq('id', partnerId);
+            loadPartnerRequestsTab();
+            updatePartnerRequestsBadge();
+        });
+    });
+}
+
+function renderPartnerRequestCard(partner) {
+    const isRejected = partner.status === 'Rejected';
+    const statusClass = isRejected ? 'wd-plan-badge--visible' : 'wd-plan-badge--trusted';
+    return `
+        <article class="admin-card" data-partner-id="${partner.id}">
+            <div class="admin-card-header" style="cursor:pointer;">
+                <h3>${escapeHtmlAdmin(partner.full_name)} <span class="field-label" style="text-transform:none;">${escapeHtmlAdmin(partner.province || '')}</span></h3>
+                <span class="wd-plan-badge ${statusClass}">${escapeHtmlAdmin(partner.status)}</span>
+            </div>
+            <div class="admin-card-grid" style="display:none;">
+                <div class="admin-card-field">
+                    <span class="field-label">Email</span>
+                    <span class="field-value">${escapeHtmlAdmin(partner.email || '—')}</span>
+                </div>
+                <div class="admin-card-field">
+                    <span class="field-label">Province</span>
+                    <span class="field-value">${escapeHtmlAdmin(partner.province || '—')}</span>
+                </div>
+                <div class="admin-card-field" style="grid-column:1 / -1;">
+                    <span class="field-label">Strengths / Qualities</span>
+                    <span class="field-value">${escapeHtmlAdmin(partner.qualities || '—')}</span>
+                </div>
+                <div class="admin-card-field" style="grid-column:1 / -1;">
+                    <span class="field-label">Previous Experience</span>
+                    <span class="field-value">${escapeHtmlAdmin(partner.previous_experience || '—')}</span>
+                </div>
+                <div class="admin-card-field" style="grid-column:1 / -1;">
+                    <span class="field-label">Notes</span>
+                    <span class="field-value">${escapeHtmlAdmin(partner.notes || '—')}</span>
+                </div>
+                <div style="grid-column:1 / -1; display:flex; gap:0.75rem; margin-top:0.5rem;">
+                    <button type="button" class="btn btn-primary partner-request-approve-btn" style="flex:1;">Approve</button>
+                    <button type="button" class="btn btn-danger-outline partner-request-reject-btn" style="flex:1;">Reject</button>
+                </div>
+            </div>
+        </article>`;
 }
 
 async function updateSupportBellBadge() {
