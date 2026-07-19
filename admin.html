@@ -82,7 +82,8 @@
                         <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-more"></use></svg>
                     </button>
                     <nav id="partnerNavMenuDropdown" class="header-nav-menu" style="display:none;">
-                        <button type="button" class="header-nav-menu-item" data-partner-tab="partners">Partners</button>
+<button type="button" class="header-nav-menu-item" data-partner-tab="partners">Partners</button>
+                        <button type="button" class="header-nav-menu-item" data-partner-tab="requests">Partner Requests</button>
                         <button type="button" class="header-nav-menu-item" data-partner-tab="chat">Partner Chat</button>
                         <button type="button" class="header-nav-menu-item" data-partner-tab="announcements">Announcements</button>
                         <button type="button" class="header-nav-menu-item" data-partner-tab="support">Support Requests</button>
@@ -93,17 +94,23 @@
         </header>
 <main class="admin-main">
     <div class="partner-mgmt-tab-nav" style="display:flex; gap:1rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); flex-wrap:wrap;">
-        <button type="button" class="partner-mgmt-tab-btn partner-mgmt-tab-btn--active" data-partner-tab="partners" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid var(--primary-accent); color:var(--primary-accent); font-weight:600; cursor:pointer;">Partners</button>
+<button type="button" class="partner-mgmt-tab-btn partner-mgmt-tab-btn--active" data-partner-tab="partners" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid var(--primary-accent); color:var(--primary-accent); font-weight:600; cursor:pointer;">Partners</button>
+        <button type="button" class="partner-mgmt-tab-btn" data-partner-tab="requests" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer; display:flex; align-items:center; gap:0.5rem;">Partner Requests <span id="partnerRequestsBadge" class="pending-bell-badge" style="display:none; position:static;">0</span></button>
         <button type="button" class="partner-mgmt-tab-btn" data-partner-tab="chat" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">Partner Chat</button>
         <button type="button" class="partner-mgmt-tab-btn" data-partner-tab="announcements" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">Announcements</button>
         <button type="button" class="partner-mgmt-tab-btn" data-partner-tab="support" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">Support Requests</button>
         <button type="button" class="partner-mgmt-tab-btn" data-partner-tab="reports" style="padding:0.75rem 1.5rem; background:none; border:none; border-bottom:3px solid transparent; color:var(--text-secondary); font-weight:600; cursor:pointer;">Activity Reports</button>
     </div>
 
-    <div id="partnerMgmtPanelPartners" class="partner-mgmt-panel">
+<div id="partnerMgmtPanelPartners" class="partner-mgmt-panel">
         <div id="partnerCardsList" style="display:flex; flex-direction:column; gap:1rem;"></div>
         <p id="partnerCardsEmpty" style="display:none; color:var(--text-secondary); text-align:center; padding:3rem 1rem;">No partners yet.</p>
         <p id="partnerCardsLoading" style="color:var(--text-secondary); text-align:center; padding:3rem 1rem;">Loading partners…</p>
+    </div>
+    <div id="partnerMgmtPanelRequests" class="partner-mgmt-panel" style="display:none;">
+        <div id="partnerRequestsList" style="display:flex; flex-direction:column; gap:1rem;"></div>
+        <p id="partnerRequestsEmpty" style="display:none; color:var(--text-secondary); text-align:center; padding:3rem 1rem;">No partner applications right now.</p>
+        <p id="partnerRequestsLoading" style="color:var(--text-secondary); text-align:center; padding:3rem 1rem;">Loading applications…</p>
     </div>
  <div id="partnerMgmtPanelChat" class="partner-mgmt-panel" style="display:none;">
     <div class="chat-manager-layout">
