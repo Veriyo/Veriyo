@@ -70,9 +70,9 @@
                <button id="addListingBtn" class="btn btn-secondary-outline" title="Add a workshop listing" style="padding:0.5rem 0.7rem; display:flex; align-items:center;">
                     <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
                 </button>
-                <a href="chat.html?mode=admin" class="header-icon-btn" title="Partner Chat">
-                    <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-chat"></use></svg>
-                </a>
+                <button type="button" id="partnerChatIconBtn" class="header-icon-btn" title="Partner Chat">
+    <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-chat"></use></svg>
+</button>
                 <span id="partnerNotifBell" style="cursor:pointer; font-size:1.3rem; position:relative;" title="Support Requests">
                     &#128276;
                     <span id="supportBellBadge" class="pending-bell-badge" style="display:none;">0</span>
@@ -105,9 +105,27 @@
         <p id="partnerCardsEmpty" style="display:none; color:var(--text-secondary); text-align:center; padding:3rem 1rem;">No partners yet.</p>
         <p id="partnerCardsLoading" style="color:var(--text-secondary); text-align:center; padding:3rem 1rem;">Loading partners…</p>
     </div>
-    <div id="partnerMgmtPanelChat" class="partner-mgmt-panel" style="display:none;">
-        <p style="color:var(--text-secondary);">Use the chat icon above to message a partner.</p>
+ <div id="partnerMgmtPanelChat" class="partner-mgmt-panel" style="display:none;">
+    <div class="chat-manager-layout">
+        <div id="pcAdminConvList" class="chat-conv-list">
+            <div class="chat-conv-empty" id="pcAdminConvEmpty" style="display:none;">
+                <strong>No partners yet.</strong>
+            </div>
+        </div>
+        <div id="pcAdminActiveThread" class="chat-active-thread" style="display:none;">
+            <div class="chat-active-header">
+                <span id="pcActivePartner"></span>
+                <button class="chat-close-thread" id="pcAdminCloseThread" title="Close">&#10005;</button>
+            </div>
+            <div id="pcAdminThread" class="chat-thread" aria-live="polite"></div>
+            <div id="pcAdminSendError" class="chat-send-error" style="display:none;"></div>
+            <div class="chat-input-row">
+                <input type="text" id="pcAdminInput" class="form-control chat-input" placeholder="Reply…" autocomplete="off" maxlength="1000">
+                <button id="pcAdminSendBtn" class="btn btn-primary chat-send-btn">Send</button>
+            </div>
+        </div>
     </div>
+</div>
     <div id="partnerMgmtPanelAnnouncements" class="partner-mgmt-panel" style="display:none;">
         <p style="color:var(--text-secondary);">Announcement tools are coming soon.</p>
     </div>
@@ -436,5 +454,6 @@
     </div>
 
     <script src="admin.js"></script>
+    <script src="partner-chat.js"></script>
 </body>
 </html>
