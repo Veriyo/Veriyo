@@ -113,14 +113,28 @@ async function openResourceViewer(resource) {
         const res = await fetch('suggested-messages.txt');
         const text = await res.text();
         body.innerHTML = renderMessagesText(text);
-    } else if (resource === 'logo') {
+} else if (resource === 'logo') {
         title.textContent = 'Veriyo Logo';
         body.innerHTML = '<img src="logo.png" alt="Veriyo logo" style="max-width:100%; display:block; margin:0 auto; border-radius:8px; background:var(--surface-color);" />';
         downloadBtn.href = 'logo.png';
         modal.style.display = 'flex';
+    } else if (resource === 'posters') {
+        title.textContent = 'Marketing Posters';
+        downloadBtn.style.display = 'none';
+        const posters = [
+            { name: 'Veriyo — Motorist Poster', src: 'posters/veriyo.png' },
+            { name: 'Veriyo — Junior Poster', src: 'posters/veriyo-junior.png' },
+            { name: 'Veriyo — Senior Poster', src: 'posters/veriyo-senior.png' }
+        ];
+        body.innerHTML = posters.map(p => `
+            <div style="margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border-color);">
+                <img src="${p.src}" alt="${p.name}" style="max-width:100%; border-radius:8px; display:block; margin-bottom:0.75rem;" />
+                <p style="color:var(--text-primary); font-weight:600; margin-bottom:0.5rem;">${p.name}</p>
+                <a href="${p.src}" download class="btn btn-primary" style="display:block; text-align:center;">Download PNG</a>
+            </div>`).join('');
+        modal.style.display = 'flex';
     }
 }
-
 function renderMessagesText(text) {
     return text.split('\n').map(line => {
         const trimmed = line.trim();
