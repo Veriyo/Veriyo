@@ -76,46 +76,7 @@
         </div>
 
   <!-- Admin view: partner conversation list + active thread -->
-        <div id="chatAdminView" style="display:none;">
-            <div class="chat-header">
-                <h1 class="chat-workshop-title">Partner Chat</h1>
-            </div>
-            <div class="chat-manager-layout">
-                <div id="chatAdminConvList" class="chat-conv-list">
-                    <div class="chat-conv-empty" id="chatAdminConvEmpty" style="display:none;">
-                        <strong>No partners yet.</strong>
-                    </div>
-                </div>
-                <div id="chatAdminActiveThread" class="chat-active-thread" style="display:none;">
-                    <div class="chat-active-header">
-                        <span id="chatActivePartner"></span>
-                        <button class="chat-close-thread" id="chatAdminCloseThread" title="Close">&#10005;</button>
-                    </div>
-                    <div id="chatAdminThread" class="chat-thread" aria-live="polite"></div>
-                    <div id="chatAdminSendError" class="chat-send-error" style="display:none;"></div>
-                    <div class="chat-input-row">
-                        <input type="text" id="chatAdminInput" class="form-control chat-input"
-                            placeholder="Reply…" autocomplete="off" maxlength="1000">
-                        <button id="chatAdminSendBtn" class="btn btn-primary chat-send-btn">Send</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Partner view: single thread with Admin -->
-        <div id="chatPartnerView" style="display:none;">
-            <div class="chat-header">
-                <a href="javascript:history.back()" class="chat-back-link">&#8592; Back</a>
-                <h1 class="chat-workshop-title">Chat with Veriyo Admin</h1>
-            </div>
-            <div id="chatPartnerThread" class="chat-thread" aria-live="polite"></div>
-            <div id="chatPartnerSendError" class="chat-send-error" style="display:none;"></div>
-            <div class="chat-input-row">
-                <input type="text" id="chatPartnerInput" class="form-control chat-input"
-                    placeholder="Type a message…" autocomplete="off" maxlength="1000">
-                <button id="chatPartnerSendBtn" class="btn btn-primary chat-send-btn">Send</button>
-            </div>
-        </div>
+      
 
         <!-- Auth required / loading state -->
         <div id="chatAuthRequired" style="display:none; text-align:center; padding:4rem 1rem;">
@@ -142,13 +103,6 @@
         (function () {
 const params = new URLSearchParams(window.location.search);
             const isWorkshopMode = params.get('mode') === 'workshop';
-            const chatMode = params.get('mode');
-
-            if (chatMode === 'admin' || chatMode === 'partner') {
-                document.querySelector('.navbar--top').style.display = 'none';
-                document.querySelector('.bottom-nav').style.display = 'none';
-                return;
-            }
 
             const topLinks = isWorkshopMode ? [
                 ['workshop-home.html', 'Home'],
