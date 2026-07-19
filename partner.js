@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('activityReportForm').addEventListener('submit', handleActivityReport);
     document.getElementById('supportForm').addEventListener('submit', handleSupportRequest);
 document.getElementById('switchToSupportBtn').addEventListener('click', () => showTab('support'));
+document.getElementById('switchToChatBtn').addEventListener('click', () => showTab('chat'));
+document.getElementById('partnerChatIconBtn').addEventListener('click', () => showTab('chat'));
 
 document.getElementById('earningsHowItWorksBtn').addEventListener('click', () => showTab('earnings-info'));
     document.getElementById('backToDashboardFromEarningsBtn').addEventListener('click', () => showTab('dashboard'));
@@ -380,6 +382,7 @@ function showTab(tabName) {
     });
     const target = document.getElementById('panel-' + tabName);
     if (target) target.style.display = '';
+    if (tabName === 'chat') initPartnerChatTab();
 }
 async function loadTasks() {
     const { data: tasks, error } = await supabaseClient
