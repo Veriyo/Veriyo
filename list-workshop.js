@@ -398,9 +398,11 @@ lwSession = session;
 
         renderServiceCards();
 
-        const editParam = new URLSearchParams(window.location.search).get('edit');
+const editParam = new URLSearchParams(window.location.search).get('edit');
         if (editParam) {
             loadListingForEdit(editParam);
+        } else {
+            document.getElementById('searchStep').style.display = 'block';
         }
 
         // Search button
