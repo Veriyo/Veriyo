@@ -342,10 +342,8 @@ async function handleLogout() {
     await supabaseClient.auth.signOut();
     currentPartner = null;
     currentSession = null;
+    hidePartnerViews();
     document.getElementById('loginView').style.display = '';
-    document.getElementById('notApprovedView').style.display = 'none';
-    document.getElementById('trialView').style.display = 'none';
-    document.getElementById('portalView').style.display = 'none';
     document.getElementById('loginForm').reset();
 }
 
@@ -371,7 +369,7 @@ if (error || !data) {
     currentPartner = data;
 
 if (data.status === 'Pending' || data.status === 'Rejected') {
-        document.getElementById('loginView').style.display = 'none';
+        hidePartnerViews();
         document.getElementById('notApprovedView').style.display = '';
         return;
     }
@@ -382,7 +380,7 @@ if (data.status === 'Pending' || data.status === 'Rejected') {
     }
 
     if (data.status === 'Left' || data.status === 'Inactive') {
-        document.getElementById('loginView').style.display = 'none';
+        hidePartnerViews();
         document.getElementById('notApprovedView').style.display = '';
         document.querySelector('#notApprovedView h1').textContent = 'Account Inactive';
         document.querySelector('#notApprovedView p').textContent = 'Your partner account is currently inactive. Please contact the administrator.';
@@ -393,9 +391,7 @@ if (data.status === 'Pending' || data.status === 'Rejected') {
 }
 
 function showTrialView() {
-    document.getElementById('loginView').style.display = 'none';
-    document.getElementById('notApprovedView').style.display = 'none';
-    document.getElementById('portalView').style.display = 'none';
+    hidePartnerViews();
     document.getElementById('trialView').style.display = '';
 
     const now = new Date();
@@ -442,17 +438,19 @@ async function handleLeaveProgramme() {
         return;
     }
 
-    document.getElementById('trialView').style.display = 'none';
-    document.getElementById('loginView').style.display = 'none';
+    hidePartnerViews();
     document.getElementById('notApprovedView').style.display = '';
     document.querySelector('#notApprovedView h1').textContent = 'Goodbye';
     document.querySelector('#notApprovedView p').textContent = 'Thank you for trying Veriyo. Your partner account has been deactivated.';
 }
 
+function hidePartnerViews() {
+    ['partnerIntroView', 'loginView', 'signupView', 'signupSuccessView', 'notApprovedView', 'trialView', 'portalView']
+        .forEach(id => { document.getElementById(id).style.display = 'none'; });
+}
+
 function showPortal() {
-    document.getElementById('loginView').style.display = 'none';
-    document.getElementById('notApprovedView').style.display = 'none';
-    document.getElementById('trialView').style.display = 'none';
+    hidePartnerViews();
     document.getElementById('portalView').style.display = '';
 
 document.getElementById('partnerCodeDisplay').textContent = currentPartner.partner_code;
