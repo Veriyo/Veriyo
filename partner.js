@@ -40,19 +40,7 @@ document.getElementById('switchToSupportBtn').addEventListener('click', () => sh
     });
     document.getElementById('backToDashboardBtn').addEventListener('click', () => showTab('dashboard'));
 
-    document.getElementById('earningsHowItWorksToggle').addEventListener('click', () => {
-        const btn = document.getElementById('earningsHowItWorksToggle');
-        const body = document.getElementById('earningsHowItWorksBody');
-        const isOpen = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!isOpen));
-        body.hidden = isOpen;
-    });
 
-    document.getElementById('viewRecruitedWorkshopsBtn').addEventListener('click', () => {
-        showTab('workshops');
-        loadRecruitedWorkshops();
-    });
-    document.getElementById('backToDashboardBtn').addEventListener('click', () => showTab('dashboard'));
 
 document.querySelectorAll('.partner-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
