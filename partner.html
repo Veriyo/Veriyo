@@ -270,39 +270,13 @@
                 </div>
             </div>
 
-            <!-- DASHBOARD TAB -->
+<!-- DASHBOARD TAB -->
             <div id="panel-dashboard" class="partner-panel" style="display:none;">
                 <div class="partner-dashboard-header">
                     <h2>Performance Overview</h2>
                     <p class="partner-panel-subtitle">Track your portal activity and progress.</p>
                 </div>
-<!-- MY RECRUITED WORKSHOPS (reached via the button on the Estimated Earnings card, not a main nav tab) -->
-            <div id="panel-workshops" class="partner-panel" style="display:none;">
-                <div class="partner-dashboard-header">
-                    <button type="button" class="btn btn-secondary" id="backToDashboardBtn" style="margin-bottom:1rem;">&larr; Back to Dashboard</button>
-                    <h2>My Recruited Workshops</h2>
-                    <p class="partner-panel-subtitle">Every workshop that registered using your referral link, and the plan they chose.</p>
-                </div>
-                <!-- HOW EARNINGS WILL WORK (reached via the button on the Estimated Earnings card) -->
-            <div id="panel-earnings-info" class="partner-panel" style="display:none;">
-                <div class="partner-dashboard-header">
-                    <button type="button" class="btn btn-secondary" id="backToDashboardFromEarningsBtn" style="margin-bottom:1rem;">&larr; Back to Dashboard</button>
-                    <h2>How Earnings Will Work</h2>
-                </div>
-                <div class="partner-earnings-card">
-                    <p>Once paid plans launch, you'll earn <strong>10% of the plan payment</strong> a workshop you referred pays, every month, for their first <strong>12 months</strong> on Veriyo. After 12 months, that workshop's plan belongs entirely to Veriyo and no longer earns you a share.</p>
-                    <p><strong>Example:</strong> say a referred workshop is on a plan priced at R500/month.</p>
-                    <ul style="margin:0.5rem 0 0.75rem 1.1rem; color:var(--text-secondary); font-size:0.9rem; line-height:1.6;">
-                        <li>You'd earn 10% × R500 = <strong>R50</strong> for that month.</li>
-                        <li>If they stay on that plan for the full first year, that's R50 × 12 = <strong>R600</strong> total from that one workshop.</li>
-                        <li>From month 13 onward, that workshop's payments no longer count toward your earnings.</li>
-                    </ul>
-                    <p>Earnings only become payable once your running total reaches a minimum of <strong>R500</strong>.</p>
-                    <p style="margin-top:1.5rem; margin-bottom:0; color:var(--text-secondary); font-size:0.85rem;">Right now, Veriyo is in its founding period — every workshop gets full access for free, so there are no plan payments yet for you to earn a share of. This page describes how it will work once paid plans launch.</p>
-                </div>
-            </div>
-                <div id="recruitedWorkshopsList" class="chat-conv-list">
-                    <div class="partner-loading">Loading…</div>
+                <div class="partner-dashboard-layout">
                 </div>
             </div>
                 <div class="partner-dashboard-layout">
@@ -375,9 +349,7 @@
 
 <div class="partner-earnings-actions">
                                 <button type="button" class="btn btn-secondary" id="earningsHowItWorksBtn" style="width:100%;">How Earnings Will Work</button>
-                                <button type="button" class="btn btn-secondary" id="viewRecruitedWorkshopsBtn" style="width:100%; margin-top:0.75rem;">My Recruited Workshops</button>
-                            </div>
-                                <button type="button" class="btn btn-secondary" id="viewRecruitedWorkshopsBtn" style="width:100%; margin-top:0.75rem;">My Recruited Workshops</button>
+<button type="button" class="btn btn-secondary" id="viewRecruitedWorkshopsBtn" style="width:100%; margin-top:0.75rem;">My Recruited Workshops</button>
                             </div>
                         </div>
 
@@ -396,7 +368,36 @@
                     <button class="btn btn-secondary" id="switchToSupportBtn">Submit Support Request</button>
                 </div>
             </div>
+<!-- MY RECRUITED WORKSHOPS (reached via the button on the Estimated Earnings card, not a main nav tab) -->
+            <div id="panel-workshops" class="partner-panel" style="display:none;">
+                <div class="partner-dashboard-header">
+                    <button type="button" class="btn btn-secondary" id="backToDashboardBtn" style="margin-bottom:1rem;">&larr; Back to Dashboard</button>
+                    <h2>My Recruited Workshops</h2>
+                    <p class="partner-panel-subtitle">Every workshop that registered using your referral link, and the plan they chose.</p>
+                </div>
+                <div id="recruitedWorkshopsList" class="chat-conv-list">
+                    <div class="partner-loading">Loading…</div>
+                </div>
+            </div>
 
+            <!-- HOW EARNINGS WILL WORK (reached via the button on the Estimated Earnings card) -->
+            <div id="panel-earnings-info" class="partner-panel" style="display:none;">
+                <div class="partner-dashboard-header">
+                    <button type="button" class="btn btn-secondary" id="backToDashboardFromEarningsBtn" style="margin-bottom:1rem;">&larr; Back to Dashboard</button>
+                    <h2>How Earnings Will Work</h2>
+                </div>
+                <div class="partner-earnings-card">
+                    <p>Once paid plans launch, you'll earn <strong>10% of the plan payment</strong> a workshop you referred pays, every month, for their first <strong>12 months</strong> on Veriyo. After 12 months, that workshop's plan belongs entirely to Veriyo and no longer earns you a share.</p>
+                    <p><strong>Example:</strong> say a referred workshop is on a plan priced at R500/month.</p>
+                    <ul style="margin:0.5rem 0 0.75rem 1.1rem; color:var(--text-secondary); font-size:0.9rem; line-height:1.6;">
+                        <li>You'd earn 10% × R500 = <strong>R50</strong> for that month.</li>
+                        <li>If they stay on that plan for the full first year, that's R50 × 12 = <strong>R600</strong> total from that one workshop.</li>
+                        <li>From month 13 onward, that workshop's payments no longer count toward your earnings.</li>
+                    </ul>
+                    <p>Earnings only become payable once your running total reaches a minimum of <strong>R500</strong>.</p>
+                    <p style="margin-top:1.5rem; margin-bottom:0; color:var(--text-secondary); font-size:0.85rem;">Right now, Veriyo is in its founding period — every workshop gets full access for free, so there are no plan payments yet for you to earn a share of. This page describes how it will work once paid plans launch.</p>
+                </div>
+            </div>
             <!-- REFERRAL LINK TAB -->
             <div id="panel-referral" class="partner-panel" style="display:none;">
                 <div class="partner-referral-card">
