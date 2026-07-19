@@ -86,13 +86,9 @@ document.querySelectorAll('.partner-mgmt-tab-btn').forEach(btn => {
             if (menu) menu.style.display = 'none';
         }
     });
-    document.getElementById('partnerNotifBell').addEventListener('click', () => {
+document.getElementById('partnerNotifBell').addEventListener('click', () => {
         switchPartnerMgmtTab('support');
     });
-    document.getElementById('supportResponseCancelBtn').addEventListener('click', () => {
-        document.getElementById('supportResponseModal').style.display = 'none';
-    });
-    document.getElementById('supportResponseSubmitBtn').addEventListener('click', submitSupportResponse);
     document.getElementById('activityReportModalClose').addEventListener('click', () => {
         document.getElementById('activityReportModal').style.display = 'none';
     });
@@ -401,8 +397,6 @@ function escapeHtmlAdmin(str) {
         .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-let currentSupportRequestId = null;
-
 async function updateSupportBellBadge() {
     const { count } = await supabaseClient
         .from('partner_support_requests')
@@ -490,62 +484,7 @@ function renderSupportCard(request, partnerName, partnerUserId) {
             </div>
         </article>`;
 }
-    const statusClass = request.status === 'Resolved' || request.status === 'Closed' ? 'wd-plan-badge--dominant'
-        : request.status === 'In Progress' ? 'wd-plan-badge--trusted' : 'wd-plan-badge--visible';
-    return `
-        <article class="admin-card" data-request-id="${request.id}" style="cursor:pointer;">
-            <div class="admin-card-header">
-                <h3>${escapeHtmlAdmin(partnerName)} <span class="field-label" style="text-transform:none;">${escapeHtmlAdmin(request.subject)}</span></h3>
-                <span class="wd-plan-badge ${statusClass}">${escapeHtmlAdmin(request.status || 'Open')}</span>
-            </div>
-        </article>`;
-}
 
-function openSupportResponseModal(requestId) {
-    currentSupportRequestId = requestId;
-    supabaseClient
-        .from('partner_support_requests')
-        .select('*')
-        .eq('id', requestId)
-        .single()
-        .then(({ data: request }) => {
-            if (!request) return;
-            document.getElementById('supportResponseTitle').textContent = request.subject;
-            document.getElementById('supportResponseMessage').textContent = request.message;
-            document.getElementById('supportResponseText').value = request.admin_response || '';
-            document.getElementById('supportResponseError').style.display = 'none';
-            document.getElementById('supportResponseModal').style.display = 'flex';
-        });
-}
-
-async function submitSupportResponse() {
-    const text = document.getElementById('supportResponseText').value.trim();
-    const errorEl = document.getElementById('supportResponseError');
-    if (!text) {
-        errorEl.textContent = 'Write a response before sending.';
-        errorEl.style.display = 'block';
-        return;
-    }
-
-    const { error } = await supabaseClient
-        .from('partner_support_requests')
-        .update({
-            admin_response: text,
-            status: 'Resolved',
-            responded_at: new Date().toISOString()
-        })
-        .eq('id', currentSupportRequestId);
-
-    if (error) {
-        errorEl.textContent = 'Failed to send: ' + error.message;
-        errorEl.style.display = 'block';
-        return;
-    }
-
-    document.getElementById('supportResponseModal').style.display = 'none';
-    loadSupportRequestsTab();
-    updateSupportBellBadge();
-}
 
 async function loadActivityReportsTab() {
     const listEl = document.getElementById('activityReportsList');
