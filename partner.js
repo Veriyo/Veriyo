@@ -243,10 +243,99 @@ async function handleLogin(event) {
         return;
     }
 
-    loginBtn.disabled = false;
+loginBtn.disabled = false;
     loginBtn.textContent = 'Sign In';
     currentSession = data.session;
     await loadPartnerRecord(data.user.id, data.user.email);
+}
+
+async function generateUniquePartnerCode(fullName) {
+    const base = (fullName.split(' ')[0] || 'PARTNER').toUpperCase().replace(/[^A-Z]/g, '').slice(0, 6) || 'PARTNER';
+    for (let i = 0; i < 5; i++) {
+        const candidate = base + Math.floor(100 + Math.random() * 900);
+        const { data } = await supabaseClient.from('partners').select('id').eq('partner_code', candidate).maybeSingle();
+        if (!data) return candidate;
+    }
+    return base + Date.now().toString().slice(-5);
+}
+
+async function handlePartnerSignup(event) {
+    event.preventDefault();
+    const errorBox = document.getElementById('partnerAppError');
+    errorBox.textContent = '';
+
+    const fullName = document.getElementById('partnerAppFullName').value.trim();
+    const province = document.getElementById('partnerAppProvince').value;
+    const qualities = document.getElementById('partnerAppQualities').value.trim();
+    const experience = document.getElementById('partnerAppExperience').value.trim();
+    const notes = document.getElementById('partnerAppNotes').value.trim();
+    const email = document.getElementById('partnerAppEmail').value.trim();
+    const password = document.getElementById('partnerAppPassword').value;
+    const confirm = document.getElementById('partnerAppConfirm').value;
+
+    if (!fullName || !province || !qualities || !experience || !email) {
+        errorBox.textContent = 'Please fill in all required fields.';
+        return;
+    }
+    if (password.length < 8) {
+        errorBox.textContent = 'Password must be at least 8 characters.';
+        return;
+    }
+    if (password !== confirm) {
+        errorBox.textContent = 'Passwords do not match.';
+        return;
+    }
+
+    const submitBtn = document.getElementById('partnerAppSubmitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting…';
+
+    const { error: signUpErr } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { data: { display_name: fullName } }
+    });
+
+    if (signUpErr) {
+        errorBox.textContent = signUpErr.message || 'Could not create your account. Please try again.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application';
+        return;
+    }
+
+    const { error: signInErr, data: signInData } = await supabaseClient.auth.signInWithPassword({ email, password });
+    if (signInErr) {
+        errorBox.textContent = 'Account created, but we could not sign you in automatically. Please use "Continue to Your Account" to sign in.';
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Application';
+        return;
+    }
+
+    const userId = signInData.user.id;
+    const partnerCode = await generateUniquePartnerCode(fullName);
+
+    const { error: insertErr } = await supabaseClient.from('partners').insert({
+        user_id: userId,
+        full_name: fullName,
+        partner_code: partnerCode,
+        province: province,
+        qualities: qualities,
+        previous_experience: experience,
+        notes: notes || null,
+        email: email,
+        status: 'Pending'
+    });
+
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Submit Application';
+
+    if (insertErr) {
+        errorBox.textContent = 'Account created, but we could not save your application. Please contact support.';
+        return;
+    }
+
+    document.getElementById('signupView').style.display = 'none';
+    document.getElementById('signupSuccessView').style.display = '';
 }
 
 async function handleLogout() {
