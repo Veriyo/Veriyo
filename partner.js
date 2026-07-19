@@ -14,8 +14,26 @@ let allTasks = [];
 let completedTaskIds = new Set();
 let todayReportSubmitted = false;
 
+
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loginForm').addEventListener('submit', handleLogin);
+    document.getElementById('showLoginBtn').addEventListener('click', () => {
+        document.getElementById('partnerIntroView').style.display = 'none';
+        document.getElementById('loginView').style.display = '';
+    });
+    document.getElementById('showSignupBtn').addEventListener('click', () => {
+        document.getElementById('partnerIntroView').style.display = 'none';
+        document.getElementById('signupView').style.display = '';
+    });
+    document.getElementById('backToIntroFromLoginBtn').addEventListener('click', () => {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('partnerIntroView').style.display = '';
+    });
+    document.getElementById('backToIntroFromSignupBtn').addEventListener('click', () => {
+        document.getElementById('signupView').style.display = 'none';
+        document.getElementById('partnerIntroView').style.display = '';
+    });
+    document.getElementById('partnerAppForm').addEventListener('submit', handlePartnerSignup);
     document.getElementById('logoutNotApprovedBtn').addEventListener('click', handleLogout);
     document.getElementById('logoutTrialBtn').addEventListener('click', handleLogout);
     document.getElementById('portalLogoutBtn').addEventListener('click', handleLogout);
@@ -197,6 +215,8 @@ async function checkSession() {
     if (session) {
         currentSession = session;
         await loadPartnerRecord(session.user.id, session.user.email);
+    } else {
+        document.getElementById('partnerIntroView').style.display = '';
     }
 }
 
@@ -261,7 +281,7 @@ if (error || !data) {
 
     currentPartner = data;
 
-    if (data.status === 'Pending') {
+if (data.status === 'Pending' || data.status === 'Rejected') {
         document.getElementById('loginView').style.display = 'none';
         document.getElementById('notApprovedView').style.display = '';
         return;
