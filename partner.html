@@ -144,9 +144,9 @@
 <button id="addListingBtn" class="header-icon-btn" title="Add a workshop listing">
                     <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-addlisting"></use></svg>
                 </button>
-<a href="chat.html?mode=partner" class="header-icon-btn" title="Chat with Veriyo Admin">
+ <button type="button" id="partnerChatIconBtn" class="header-icon-btn" title="Chat with Veriyo Admin">
                     <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-chat-dots"></use></svg>
-                </a>
+                </button>
                 <div class="header-nav-menu-wrap">
                     <button type="button" id="navMenuToggle" class="header-icon-btn" title="Menu" aria-haspopup="true" aria-expanded="false">
                         <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-more"></use></svg>
@@ -157,8 +157,9 @@
                         <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="referral">Referral Link</button>
                         <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="handbook">Handbook</button>
                         <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="resources">Resources</button>
-                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="support">Support</button>
-                    </nav>
+                     <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="support">Support</button>
+                        <button type="button" class="partner-tab-btn header-nav-menu-item" data-tab="chat">Chat</button>
+                         </nav>
                 </div>
     <span class="partner-status-badge" id="partnerStatusBadge">Active</span>
                 <button id="portalLogoutBtn" class="btn btn-danger-outline">Sign Out</button>
@@ -184,7 +185,8 @@
             <button type="button" class="partner-tab-btn" data-tab="referral" id="tabReferral">Referral Link</button>
             <button type="button" class="partner-tab-btn" data-tab="handbook" id="tabHandbook">Handbook</button>
             <button type="button" class="partner-tab-btn" data-tab="resources" id="tabResources">Resources</button>
-            <button type="button" class="partner-tab-btn" data-tab="support" id="tabSupport">Support</button>
+           <button type="button" class="partner-tab-btn" data-tab="support" id="tabSupport">Support</button>
+            <button type="button" class="partner-tab-btn" data-tab="chat" id="tabChat">Chat</button>
         </nav>
 
   <!-- Mobile-only bottom bar: nav now lives in the header's three-dot
@@ -361,7 +363,7 @@
 
                 <!-- Quick Actions -->
                 <div class="partner-quick-actions">
-                    <a href="chat.html?mode=partner" class="btn btn-primary">Chat with Admin</a>
+                    <button class="btn btn-primary" id="switchToChatBtn">Chat with Admin</button>
                     <button class="btn btn-secondary" id="switchToSupportBtn">Submit Support Request</button>
                 </div>
             </div>
@@ -574,6 +576,21 @@ community boards and events.</p>
                             <p class="partner-no-data">Loading...</p>
                         </div>
                     </div>
+               </div>
+            </div>
+
+            <!-- CHAT TAB -->
+            <div id="panel-chat" class="partner-panel" style="display:none;">
+                <div id="pcPartnerThread" class="chat-thread" aria-live="polite" style="display:none;"></div>
+                <div id="pcPartnerEmpty" class="empty-state" style="display:none;">
+                    <div class="empty-icon">&#128172;</div>
+                    <p>No conversation with the administration yet.</p>
+                    <p style="font-size:0.95rem; margin-top:0.25rem;">Send a message below to get started.</p>
+                </div>
+                <div id="pcPartnerSendError" class="chat-send-error" style="display:none;"></div>
+                <div class="chat-input-row">
+                    <input type="text" id="pcPartnerInput" class="form-control chat-input" placeholder="Type a message…" autocomplete="off" maxlength="1000">
+                    <button id="pcPartnerSendBtn" class="btn btn-primary chat-send-btn">Send</button>
                 </div>
             </div>
 
@@ -645,5 +662,6 @@ community boards and events.</p>
     </div>
 
     <script src="partner.js"></script>
+    <script src="partner-chat.js"></script>
 </body>
 </html>
