@@ -10,8 +10,86 @@
 </head>
 <body style="padding-top:0;">
 
+<!-- INTRO VIEW: public, no sign-in required. Default landing state. -->
+    <div id="partnerIntroView" class="partner-trial-view">
+        <header class="partner-header">
+            <div class="partner-header-left">
+                <img src="logo.png" alt="Veriyo" class="partner-logo" />
+                <div>
+                    <h1>Become a Veriyo Partner</h1>
+                    <span class="partner-header-sub">Partner Programme</span>
+                </div>
+            </div>
+            <a href="welcome.html" class="btn btn-secondary-outline">Back to Veriyo</a>
+        </header>
+
+        <main class="partner-main">
+            <div class="partner-trial-card">
+                <section class="partner-trial-section">
+                    <h2>Welcome to Veriyo</h2>
+                    <p>Veriyo helps South African motorists find fair repair prices and trusted workshops. As a partner, you help connect motorists with this valuable service while earning from the results.</p>
+                </section>
+
+                <section class="partner-trial-section">
+                    <h2>How It Works</h2>
+                    <ul style="list-style:decimal; padding-left:1.5rem; line-height:2;">
+                        <li>Share your unique referral link with your community</li>
+                        <li>Motorists click your link to visit Veriyo</li>
+                        <li>When they submit prices or register workshops, you earn</li>
+                        <li>Track everything in your partner dashboard</li>
+                    </ul>
+                </section>
+
+                <section class="partner-trial-section">
+                    <h2>Your Responsibilities</h2>
+                    <ul style="list-style:disc; padding-left:1.5rem; line-height:2;">
+                        <li>Share Veriyo honestly and accurately</li>
+                        <li>Respond to questions from motorists</li>
+                        <li>Complete daily tasks and activity reports</li>
+                        <li>Maintain professional conduct at all times</li>
+                    </ul>
+                </section>
+
+                <section class="partner-trial-section">
+                    <h2>What NOT to Do</h2>
+                    <ul style="list-style:disc; padding-left:1.5rem; line-height:2; color:var(--danger-color);">
+                        <li>Do not spam or post in unrelated groups</li>
+                        <li>Do not make promises about specific earnings</li>
+                        <li>Do not misrepresent Veriyo's services</li>
+                        <li>Do not share other partners' information</li>
+                    </ul>
+                </section>
+
+                <section class="partner-trial-section">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="partner-faq-item">
+                        <strong>How do I earn?</strong>
+                        <p>You earn from referrals that convert to active users.</p>
+                    </div>
+                    <div class="partner-faq-item">
+                        <strong>When do I get paid?</strong>
+                        <p>Payments are processed monthly once you reach the minimum threshold.</p>
+                    </div>
+                    <div class="partner-faq-item">
+                        <strong>Can I see my statistics?</strong>
+                        <p>Yes, your dashboard shows all your referral activity in real-time.</p>
+                    </div>
+                </section>
+
+                <div class="partner-trial-actions">
+                    <h3>Ready to get started?</h3>
+                    <p>Already applied, or approved as a partner? Sign in below — otherwise, tell us a bit about yourself and apply.</p>
+                    <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-top:1rem;">
+                        <button type="button" id="showLoginBtn" class="btn btn-secondary" style="flex:1; min-width:200px;">Continue to Your Account</button>
+                        <button type="button" id="showSignupBtn" class="btn btn-primary" style="flex:1; min-width:200px;">Create Account</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
     <!-- LOGIN VIEW -->
-    <div id="loginView" class="partner-login-view">
+    <div id="loginView" class="partner-login-view" style="display:none;">
         <div class="partner-login-card">
             <div class="partner-login-logo">
                 <img src="logo.png" alt="Veriyo" />
@@ -30,7 +108,82 @@
                 </div>
                 <div id="loginError" class="partner-login-error" role="alert"></div>
                 <button type="submit" id="loginBtn" class="btn btn-primary btn-block">Sign In</button>
+                <button type="button" id="backToIntroFromLoginBtn" class="btn btn-secondary btn-block" style="margin-top:0.75rem;">&#8592; Back</button>
             </form>
+        </div>
+    </div>
+
+    <!-- SIGNUP / APPLICATION VIEW -->
+    <div id="signupView" class="partner-login-view" style="display:none;">
+        <div class="partner-login-card" style="max-width:520px;">
+            <div class="partner-login-logo">
+                <img src="logo.png" alt="Veriyo" />
+                <h1>Partner Application</h1>
+            </div>
+            <p class="partner-login-subtitle">Tell us a bit about yourself</p>
+
+            <form id="partnerAppForm" class="partner-login-form" autocomplete="on">
+                <div class="form-group">
+                    <label for="partnerAppFullName">Full Name</label>
+                    <input type="text" id="partnerAppFullName" class="form-control" required autocomplete="name" placeholder="Your full name" />
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppProvince">Province</label>
+                    <select id="partnerAppProvince" class="form-control" required>
+                        <option value="" disabled selected>Select province</option>
+                        <option value="Gauteng">Gauteng</option>
+                        <option value="Western Cape">Western Cape</option>
+                        <option value="KwaZulu-Natal">KwaZulu-Natal</option>
+                        <option value="Eastern Cape">Eastern Cape</option>
+                        <option value="Limpopo">Limpopo</option>
+                        <option value="Mpumalanga">Mpumalanga</option>
+                        <option value="North West">North West</option>
+                        <option value="Free State">Free State</option>
+                        <option value="Northern Cape">Northern Cape</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppQualities">Your Strengths / Qualities</label>
+                    <textarea id="partnerAppQualities" class="form-control" rows="2" required placeholder="e.g. Great communicator, active in my community, organised"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppExperience">Previous Experience</label>
+                    <textarea id="partnerAppExperience" class="form-control" rows="2" required placeholder="Any relevant sales, marketing or community experience"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppNotes">Anything else you'd like us to know? (optional)</label>
+                    <textarea id="partnerAppNotes" class="form-control" rows="2" placeholder="Optional notes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppEmail">Email</label>
+                    <input type="email" id="partnerAppEmail" class="form-control" required autocomplete="email" placeholder="you@email.com" />
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppPassword">Password</label>
+                    <input type="password" id="partnerAppPassword" class="form-control" required autocomplete="new-password" placeholder="At least 8 characters" />
+                </div>
+                <div class="form-group">
+                    <label for="partnerAppConfirm">Confirm Password</label>
+                    <input type="password" id="partnerAppConfirm" class="form-control" required autocomplete="new-password" placeholder="Re-enter your password" />
+                </div>
+                <div id="partnerAppError" class="partner-login-error" role="alert"></div>
+                <button type="submit" id="partnerAppSubmitBtn" class="btn btn-primary btn-block">Submit Application</button>
+                <button type="button" id="backToIntroFromSignupBtn" class="btn btn-secondary btn-block" style="margin-top:0.75rem;">&#8592; Back</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SIGNUP SUCCESS VIEW -->
+    <div id="signupSuccessView" class="partner-login-view" style="display:none;">
+        <div class="partner-login-card">
+            <div class="partner-login-logo">
+                <img src="logo.png" alt="Veriyo" />
+                <h1>Application Submitted</h1>
+            </div>
+            <p style="color:var(--text-secondary); text-align:center; line-height:1.6;">
+                Thanks — your partner application is under review. Come back and sign in in about 24 hours: if you've been approved, you'll go straight into your account. If it's still being reviewed, just check back again a little later.
+            </p>
+            <a href="partner.html" class="btn btn-primary btn-block" style="margin-top:1.5rem;">Done</a>
         </div>
     </div>
 
@@ -44,6 +197,9 @@
             <p style="color:var(--text-secondary); text-align:center; line-height:1.6;">
                 Your partner application is being reviewed. You will receive an email once your account is approved.
             </p>
+            <button id="logoutNotApprovedBtn" class="btn btn-secondary btn-block" style="margin-top:1.5rem;">Sign Out</button>
+        </div>
+    </div>
             <button id="logoutNotApprovedBtn" class="btn btn-secondary btn-block" style="margin-top:1.5rem;">Sign Out</button>
         </div>
     </div>
