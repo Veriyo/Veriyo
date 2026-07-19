@@ -26,20 +26,14 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('supportForm').addEventListener('submit', handleSupportRequest);
 document.getElementById('switchToSupportBtn').addEventListener('click', () => showTab('support'));
 
-    document.getElementById('earningsHowItWorksToggle').addEventListener('click', () => {
-        const btn = document.getElementById('earningsHowItWorksToggle');
-        const body = document.getElementById('earningsHowItWorksBody');
-        const isOpen = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', String(!isOpen));
-        body.hidden = isOpen;
-    });
+document.getElementById('earningsHowItWorksBtn').addEventListener('click', () => showTab('earnings-info'));
+    document.getElementById('backToDashboardFromEarningsBtn').addEventListener('click', () => showTab('dashboard'));
 
     document.getElementById('viewRecruitedWorkshopsBtn').addEventListener('click', () => {
         showTab('workshops');
         loadRecruitedWorkshops();
     });
     document.getElementById('backToDashboardBtn').addEventListener('click', () => showTab('dashboard'));
-
 
 
 document.querySelectorAll('.partner-tab-btn').forEach(btn => {
@@ -605,6 +599,22 @@ document.getElementById('refLinkClicks').textContent = totalVisitors.toLocaleStr
     document.getElementById('refLinkConversions').textContent = (currentPartner.total_conversions || 0).toLocaleString('en-ZA');
 }
 
+async function copyTextToClipboard(text, btn) {
+    try {
+        await navigator.clipboard.writeText(text);
+    } catch (e) {
+        const tmp = document.createElement('textarea');
+        tmp.value = text;
+        document.body.appendChild(tmp);
+        tmp.select();
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+    }
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 2000);
+}
+
 async function loadRecruitedWorkshops() {
     const listEl = document.getElementById('recruitedWorkshopsList');
     listEl.innerHTML = '<div class="partner-loading">Loading…</div>';
@@ -615,11 +625,18 @@ async function loadRecruitedWorkshops() {
         .eq('referral_source', currentPartner.partner_code)
         .order('created_at', { ascending: false });
 
-    if (error || !recruited || recruited.length === 0) {
-        listEl.innerHTML = '<div class="chat-conv-empty">No workshops have signed up through your link yet.</div>';
+if (error || !recruited || recruited.length === 0) {
+        const referralLink = 'https://veriyo.co.za/?ref=' + currentPartner.partner_code;
+        listEl.innerHTML =
+            '<div class="chat-conv-empty">' +
+            '<p style="margin-bottom:1rem;">You have no recruited workshops yet. Get workshops to sign up using your referral link to have recruited workshops.</p>' +
+            '<button type="button" class="btn btn-primary" id="copyReferralLinkEmptyBtn">Copy Referral Link</button>' +
+            '</div>';
+        document.getElementById('copyReferralLinkEmptyBtn').addEventListener('click', function () {
+            copyTextToClipboard(referralLink, this);
+        });
         return;
     }
-
     listEl.innerHTML = recruited.map(w => {
         const planLabel = w.plan
             ? '<span class="badge badge-success">' + escapeHtmlP(w.plan) + '</span>'
