@@ -618,7 +618,7 @@ button, input, select, textarea {
         padding-bottom: 80px;
     }
 .bottom-nav-links {
-    display: flex;
+    display: flex !important;
     justify-content: center;
     align-items: center;
     gap: clamp(1.5rem, 8vw, 4rem);
