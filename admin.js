@@ -89,6 +89,9 @@ document.querySelectorAll('.partner-mgmt-tab-btn').forEach(btn => {
 document.getElementById('partnerNotifBell').addEventListener('click', () => {
         switchPartnerMgmtTab('support');
     });
+    document.getElementById('partnerChatIconBtn').addEventListener('click', () => {
+        switchPartnerMgmtTab('chat');
+    });
     document.getElementById('activityReportModalClose').addEventListener('click', () => {
         document.getElementById('activityReportModal').style.display = 'none';
     });
@@ -268,6 +271,7 @@ function switchPartnerMgmtTab(tab) {
     document.getElementById('partnerMgmtPanelAnnouncements').style.display = tab === 'announcements' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelSupport').style.display = tab === 'support' ? 'block' : 'none';
     document.getElementById('partnerMgmtPanelReports').style.display = tab === 'reports' ? 'block' : 'none';
+ if (tab === 'chat') initAdminChatTab();
     if (tab === 'support') loadSupportRequestsTab();
     if (tab === 'reports') loadActivityReportsTab();
 }
@@ -451,10 +455,15 @@ const { data: partners } = await supabaseClient
 
     document.querySelectorAll('#supportRequestsList .support-open-chat-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const partnerUserId = e.target.closest('.admin-card').dataset.partnerUserId;
-            if (partnerUserId) window.location.href = 'chat.html?mode=admin&partner_id=' + encodeURIComponent(partnerUserId);
+            const card = e.target.closest('.admin-card');
+            const partnerUserId = card.dataset.partnerUserId;
+            const partnerName = card.dataset.partnerName;
+            if (!partnerUserId) return;
+            switchPartnerMgmtTab('chat');
+            openPartnerChatThread(partnerUserId, partnerName);
         });
     });
+
     document.querySelectorAll('#supportRequestsList .support-mark-resolved-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const requestId = e.target.closest('.admin-card').dataset.requestId;
@@ -473,7 +482,7 @@ function renderSupportCard(request, partnerName, partnerUserId) {
     const statusClass = isResolved || request.status === 'Closed' ? 'wd-plan-badge--dominant'
         : request.status === 'In Progress' ? 'wd-plan-badge--trusted' : 'wd-plan-badge--visible';
     return `
-        <article class="admin-card" data-request-id="${request.id}" data-partner-user-id="${partnerUserId || ''}">
+        <article class="admin-card" data-request-id="${request.id}" data-partner-user-id="${partnerUserId || ''}" data-partner-name="${escapeHtmlAdmin(partnerName)}">
             <div class="admin-card-header">
                 <h3>${escapeHtmlAdmin(partnerName)} <span class="field-label" style="text-transform:none;">${escapeHtmlAdmin(request.subject)}</span></h3>
                 <span class="wd-plan-badge ${statusClass}">${escapeHtmlAdmin(request.status || 'Open')}</span>
