@@ -89,12 +89,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!workshop.user_id) {
             // Unclaimed listing — no real owner behind it yet.
             chatBtn.style.display = 'none';
-        } else {
+      } else {
             const viewerIsWorkshop = viewerAccountType === 'workshop';
 
             if (viewerIsWorkshop) {
                 chatBtn.style.display = 'none';
             } else if (workshopId) {
+              chatBtn.style.display = '';
               chatBtn.addEventListener('click', async function () {
     if (viewerSession) {
         window.location.href = 'chat.html?workshop_id=' + encodeURIComponent(workshopId);
