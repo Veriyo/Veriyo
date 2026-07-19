@@ -1127,17 +1127,21 @@ button, input, select, textarea {
     font-size: 0.9rem;
 }
 .partner-resource-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    color: var(--primary-accent);
+    display: block;
+    text-align: center;
+    background-color: var(--primary-accent);
+    color: #10141c;
     font-weight: 600;
     font-size: 0.9rem;
     text-decoration: none;
     margin-top: 1rem;
+    padding: 0.65rem 1rem;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
 }
 .partner-resource-link:hover {
-    text-decoration: underline;
+    filter: brightness(1.1);
 }
 .partner-resources-placeholder {
     background-color: var(--surface-color);
@@ -1528,7 +1532,8 @@ button, input, select, textarea {
     border: none;
     color: var(--text-secondary);
     cursor: pointer;
-    padding: 0.4rem;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
