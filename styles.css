@@ -3751,8 +3751,25 @@ button, input, select, textarea {
     color: var(--primary-accent);
 }
 
-.profile-see-all {
+.profile-add-report-btn {
     margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--primary-accent);
+    color: var(--bg-color);
+    transition: var(--transition);
+}
+
+.profile-add-report-btn:hover {
+    opacity: 0.85;
+}
+
+.profile-see-all {
     flex-shrink: 0;
     color: var(--primary-accent);
     font-weight: 600;
