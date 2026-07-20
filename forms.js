@@ -240,7 +240,7 @@ const submitBtnElement = document.getElementById('submitWorkshopBtn');
         submitBtnElement.disabled = true;
         submitBtnElement.textContent = 'Submitting...';
 
-        const submission = {
+             const submission = {
             workshop_name: document.getElementById('workshopName')?.value.trim() || '',
             physical_address: document.getElementById('physicalAddress')?.value.trim() || '',
             suburb: document.getElementById('workshopSuburb')?.value.trim() || '',
@@ -265,6 +265,7 @@ const submitBtnElement = document.getElementById('submitWorkshopBtn');
             custom_service_price_1: parseInt(document.getElementById('customServicePrice1')?.value, 10) || 0,
             custom_service_name_2: document.getElementById('customServiceName2')?.value.trim() || '',
             custom_service_price_2: parseInt(document.getElementById('customServicePrice2')?.value, 10) || 0,
+            referral_source: localStorage.getItem('veriyo_ref') || null,
             status: 'Pending'
         };
 const { data, error } = await _supabase
