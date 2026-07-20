@@ -699,10 +699,9 @@ async function loadDashboardStats() {
     document.getElementById('statApprovedWorkshops').textContent = (currentPartner.total_approved_workshops || 0).toLocaleString('en-ZA');
 
     // Conversions = all users who signed via referral link
-    const { count: referralConversions } = await supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).neq('converted_status', 'Not Converted');
+    // Conversions = ONLY sign ups, never reports/listings, so it can never exceed clicks
     const { count: accountConversions } = await supabaseClient.from('account_profiles').select('user_id', { count: 'exact', head: true }).eq('referral_source', currentPartner.partner_code);
-    
-    const totalConversions = Math.max(referralConversions || 0, accountConversions || 0, currentPartner.total_conversions || 0);
+    const totalConversions = accountConversions || 0;
     const conversionRate = totalVisitors > 0 ? ((totalConversions / totalVisitors) * 100).toFixed(1) : '0';
     document.getElementById('statConversionRate').textContent = conversionRate + '%';
 
