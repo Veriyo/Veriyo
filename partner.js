@@ -273,8 +273,12 @@ async function handlePartnerSignup(event) {
     const password = document.getElementById('partnerAppPassword').value;
     const confirm = document.getElementById('partnerAppConfirm').value;
 
-    if (!fullName || !province || !qualities || !experience || !email) {
+if (!fullName || !province || !qualities || !experience || !email) {
         errorBox.textContent = 'Please fill in all required fields.';
+        return;
+    }
+    if (!document.getElementById('partnerAppConsent').checked) {
+        errorBox.textContent = 'Please agree to the Partner Agreement to continue.';
         return;
     }
     if (password.length < 8) {
