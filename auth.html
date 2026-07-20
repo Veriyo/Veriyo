@@ -342,14 +342,14 @@
             }
 
             const userId = signinData.user.id;
-            const { error: profileErr } = await _supabaseAuth.from('account_profiles').insert({
+                       const { error: profileErr } = await _supabaseAuth.from('account_profiles').insert({
                 user_id: userId,
                 account_type: selectedType,
                 first_name: selectedType === 'motorist' ? firstName : null,
                 last_name: selectedType === 'motorist' ? lastName : null,
-                workshop_name: selectedType === 'workshop' ? workshopName : null
+                workshop_name: selectedType === 'workshop' ? workshopName : null,
+                referral_source: localStorage.getItem('veriyo_ref') || null
             });
-
             if (profileErr) {
                 setError('signupError', 'Account created, but we could not save your profile details. Please contact support.');
                 btn.disabled = false;
