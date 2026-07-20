@@ -1986,7 +1986,7 @@ button, input, select, textarea {
     margin-bottom: 0.4rem;
 }
 
-.partner-login-form input {
+.partner-login-form input:not([type="checkbox"]) {
     width: 100%;
     padding: 0.75rem 0.9rem;
     background-color: var(--bg-color);
@@ -1997,10 +1997,16 @@ button, input, select, textarea {
     transition: var(--transition);
 }
 
-.partner-login-form input:focus {
+.partner-login-form input:not([type="checkbox"]):focus {
     outline: none;
     border-color: var(--secondary-accent);
     box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.15);
+}
+
+.partner-login-form input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--secondary-accent);
 }
 
 .partner-login-form input::placeholder {
