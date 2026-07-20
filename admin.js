@@ -700,7 +700,7 @@ async function handleAddListing(event) {
         guarantee_period: null,
         rmi_registered: null,
         written_quote: null,
-        email_address: null,
+        email_address: '',
         services: [],
         plan: 'Dominant',
         plan_price: 0,
