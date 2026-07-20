@@ -166,6 +166,12 @@
                     <label for="partnerAppConfirm">Confirm Password</label>
                     <input type="password" id="partnerAppConfirm" class="form-control" required autocomplete="new-password" placeholder="Re-enter your password" />
                 </div>
+                <div class="form-group" style="display:flex; align-items:flex-start; gap:8px;">
+    <input type="checkbox" id="partnerAppConsent" style="margin-top:3px; cursor:pointer;">
+    <label for="partnerAppConsent" style="font-weight:500; font-size:0.9rem; line-height:1.4;">
+        I have read and agree to the <a href="partner-agreement.html" target="_blank" style="color:var(--secondary-accent); text-decoration:underline;">Partner Agreement</a>.
+    </label>
+</div>
                 <div id="partnerAppError" class="partner-login-error" role="alert"></div>
                 <button type="submit" id="partnerAppSubmitBtn" class="btn btn-primary btn-block">Submit Application</button>
                 <button type="button" id="backToIntroFromSignupBtn" class="btn btn-secondary btn-block" style="margin-top:0.75rem;">&#8592; Back</button>
