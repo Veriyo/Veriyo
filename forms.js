@@ -26,6 +26,29 @@ document.addEventListener('DOMContentLoaded', () => {
  * Orchestrates behaviors specific to the Driver Submission module
  */
 function initRepairReportingModules(formNode) {
+    // Arrived via a workshop profile's "+" button — pre-fill the workshop's
+    // own columns (already on file in Workshopprofiles) and lock them, so
+    // the motorist only fills in what isn't already known about the workshop.
+    const _prefillWorkshopId = new URLSearchParams(window.location.search).get('workshop_id');
+    if (_prefillWorkshopId) {
+        _supabase.from('Workshopprofiles')
+            .select('workshop_name, suburb, city, province')
+            .eq('id', _prefillWorkshopId)
+            .single()
+            .then(({ data: w, error: wErr }) => {
+                if (wErr || !w) return;
+                const lock = (el) => { if (el) { el.style.backgroundColor = 'var(--bg-color)'; el.style.opacity = '0.75'; el.style.cursor = 'not-allowed'; } };
+                const nameEl = document.getElementById('workshopName');
+                const suburbEl = document.getElementById('suburb');
+                const cityEl = document.getElementById('city');
+                const provinceEl = document.getElementById('province');
+                if (nameEl) { nameEl.value = w.workshop_name || ''; nameEl.readOnly = true; lock(nameEl); }
+                if (suburbEl) { suburbEl.value = w.suburb || ''; suburbEl.readOnly = true; lock(suburbEl); }
+                if (cityEl) { cityEl.value = w.city || ''; cityEl.readOnly = true; lock(cityEl); }
+                if (provinceEl && w.province) { provinceEl.value = w.province; provinceEl.disabled = true; lock(provinceEl); }
+            });
+    }
+
     const characterTextArea = document.getElementById('additionalNotes');
     const counterDisplay = document.getElementById('charCount');
     const structuralReceiptToggle = document.getElementsByName('keptReceipt');
