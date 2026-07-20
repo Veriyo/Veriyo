@@ -358,11 +358,18 @@ async function submitListing(data) {
         submitBtn.disabled = true;
         submitBtn.textContent = editingListingId ? 'Saving…' : 'Submitting…';
 
-  const { error } = editingListingId
-            ? await _supabaseLW.from('Workshopprofiles').update(data).eq('id', editingListingId)
+  const referralCode = localStorage.getItem('veriyo_ref') || null;
+  const visitorId = localStorage.getItem('veriyo_visitor_id') || null;
+  const { data: insertedRow, error } = editingListingId
+            ? await _supabaseLW.from('Workshopprofiles').update(data).eq('id', editingListingId).select().single()
             : await _supabaseLW.from('Workshopprofiles').insert(Object.assign({}, data, {
-                referral_source: localStorage.getItem('veriyo_ref') || null
-            }));
+                referral_source: referralCode
+            })).select().single();
+  
+  // If this listing came from a partner link, mark that click as converted
+  if (!error && referralCode && visitorId) {
+    await _supabaseLW.from('partner_referrals').update({ converted_status: 'Workshop Registration', last_visit_at: new Date().toISOString() }).eq('partner_code', referralCode).eq('visitor_session_id', visitorId);
+  }
         if (error) {
             errorEl.textContent = 'Submission failed: ' + error.message + '. Please try again.';
             errorEl.style.display = 'block';
