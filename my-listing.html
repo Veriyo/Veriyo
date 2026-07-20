@@ -122,7 +122,47 @@
             if (s === 'rejected') return 'badge-danger';
             return 'badge-neutral';
         }
+function renderRenewalBanner(w) {
+            var existing = document.getElementById('whRenewalBanner');
+            if (!existing) {
+                existing = document.createElement('div');
+                existing.id = 'whRenewalBanner';
+                existing.style.marginTop = '0.75rem';
+                document.getElementById('whListingFound').insertBefore(existing, document.getElementById('whListingFound').firstChild);
+            }
+            var effectiveDate = new Date(w.renewed_at || w.created_at);
+            var expiresAt = new Date(effectiveDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+            var daysLeft = Math.ceil((expiresAt - new Date()) / (24 * 60 * 60 * 1000));
 
+            if (daysLeft > 7) {
+                existing.style.display = 'none';
+                return;
+            }
+            existing.style.display = 'block';
+            existing.innerHTML =
+                '<div style="background:rgba(212,160,23,0.12); border:1px solid var(--primary-accent); border-radius:var(--radius); padding:0.85rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap;">' +
+                '<p style="font-size:0.9rem; color:var(--text-primary); margin:0;">' +
+                (daysLeft > 0
+                    ? 'Your listing expires in ' + daysLeft + ' day' + (daysLeft === 1 ? '' : 's') + '. Renew now to stay visible on Veriyo.'
+                    : 'Your listing has expired and will be removed automatically. Renew now to keep it live.') +
+                '</p>' +
+                '<button id="whRenewBtn" class="btn btn-primary" style="font-size:0.85rem; padding:0.5rem 1rem;">Renew Listing</button>' +
+                '</div>';
+
+            document.getElementById('whRenewBtn').addEventListener('click', async function () {
+                this.disabled = true;
+                this.textContent = 'Renewing…';
+                var result = await _sb.from('Workshopprofiles').update({ renewed_at: new Date().toISOString() }).eq('id', w.id);
+                if (!result.error) {
+                    existing.style.display = 'none';
+                } else {
+                    this.disabled = false;
+                    this.textContent = 'Renew Listing';
+                }
+            });
+        }
+
+        function renderListingData(w) {
         function renderListingData(w) {
             document.getElementById('whListingLoading').style.display = 'none';
             document.getElementById('whLName').textContent = w.workshop_name || 'Your Workshop';
@@ -137,7 +177,8 @@
             document.getElementById('whLBadges').innerHTML = badgesHtml;
 document.getElementById('whLViewBtn').href = 'workshop-profile.html?id=' + encodeURIComponent(w.id);
             document.getElementById('whLUpdateBtn').href = 'list-workshop.html?edit=' + encodeURIComponent(w.id);
-            document.getElementById('whListingFound').style.display = 'block';
+document.getElementById('whListingFound').style.display = 'block';
+            renderRenewalBanner(w);
         }
 
         async function loadListing(session) {
@@ -147,7 +188,7 @@ document.getElementById('whLViewBtn').href = 'workshop-profile.html?id=' + encod
 
             var result = await _sb
                 .from('Workshopprofiles')
-                .select('id, workshop_name, suburb, city, province, status, plan')
+.select('id, workshop_name, suburb, city, province, status, plan, created_at, renewed_at')
                 .eq('user_id', session.user.id)
                 .limit(1);
 
