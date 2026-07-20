@@ -674,45 +674,44 @@ async function handleActivityReport(event) {
 
 async function loadDashboardStats() {
     const partnerId = currentPartner.id;
-
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-const [todayRes, weekRes, monthRes, allRes] = await Promise.all([
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', todayStart),
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', weekAgo),
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', monthAgo),
+    // Clicks now read from partner_referrals which is guaranteed to have last_visit_at
+    const [todayRes, weekRes, monthRes, allRes, allVisitorsRes] = await Promise.all([
+        supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', todayStart),
+        supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', weekAgo),
+        supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', monthAgo),
+        supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId),
         supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId)
     ]);
-    const todayVisitors = todayRes.count || 0;
-    const weekVisitors = weekRes.count || 0;
-    const monthVisitors = monthRes.count || 0;
-    const totalVisitors = allRes.count || 0;
 
-    document.getElementById('statTodayVisitors').textContent = todayVisitors.toLocaleString('en-ZA');
-    document.getElementById('statWeekVisitors').textContent = weekVisitors.toLocaleString('en-ZA');
-    document.getElementById('statMonthVisitors').textContent = monthVisitors.toLocaleString('en-ZA');
+    const totalVisitors = (allRes.count || 0) || (allVisitorsRes.count || 0);
+    document.getElementById('statTodayVisitors').textContent = (todayRes.count || 0).toLocaleString('en-ZA');
+    document.getElementById('statWeekVisitors').textContent = (weekRes.count || 0).toLocaleString('en-ZA');
+    document.getElementById('statMonthVisitors').textContent = (monthRes.count || 0).toLocaleString('en-ZA');
     document.getElementById('statTotalVisitors').textContent = totalVisitors.toLocaleString('en-ZA');
 
     document.getElementById('statMotoristReports').textContent = (currentPartner.total_motorist_submissions || 0).toLocaleString('en-ZA');
     document.getElementById('statWorkshopSignups').textContent = (currentPartner.total_workshop_signups || 0).toLocaleString('en-ZA');
     document.getElementById('statApprovedWorkshops').textContent = (currentPartner.total_approved_workshops || 0).toLocaleString('en-ZA');
 
-    const conversionRate = totalVisitors > 0
-        ? ((currentPartner.total_conversions || 0) / totalVisitors * 100).toFixed(1)
-        : '0';
+    // Conversions = all users who signed via referral link
+    const { count: referralConversions } = await supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).neq('converted_status', 'Not Converted');
+    const { count: accountConversions } = await supabaseClient.from('account_profiles').select('user_id', { count: 'exact', head: true }).eq('referral_source', currentPartner.partner_code);
+    
+    const totalConversions = Math.max(referralConversions || 0, accountConversions || 0, currentPartner.total_conversions || 0);
+    const conversionRate = totalVisitors > 0 ? ((totalConversions / totalVisitors) * 100).toFixed(1) : '0';
     document.getElementById('statConversionRate').textContent = conversionRate + '%';
 
     const earnings = parseFloat(currentPartner.estimated_earnings || 0);
-    document.getElementById('statEarnings').textContent =
-        new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(earnings);
+    document.getElementById('statEarnings').textContent = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(earnings);
 
-document.getElementById('refLinkClicks').textContent = totalVisitors.toLocaleString('en-ZA');
-    document.getElementById('refLinkConversions').textContent = (currentPartner.total_conversions || 0).toLocaleString('en-ZA');
+    document.getElementById('refLinkClicks').textContent = totalVisitors.toLocaleString('en-ZA');
+    document.getElementById('refLinkConversions').textContent = totalConversions.toLocaleString('en-ZA');
 }
-
 async function copyTextToClipboard(text, btn) {
     try {
         await navigator.clipboard.writeText(text);
