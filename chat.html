@@ -38,6 +38,7 @@
                 <h1 id="chatWorkshopName" class="chat-workshop-title">Loading…</h1>
             </div>
             <p style="font-size:0.78rem; color:var(--text-secondary); text-align:center; padding:0.4rem 0;">Messages in this conversation are automatically deleted after 7 days.</p>
+            <div id="chatThread" class="chat-thread" aria-live="polite"></div>
             <div id="chatSendError" class="chat-send-error" style="display:none;"></div>
             <div class="chat-input-row">
                 <input type="text" id="chatInput" class="form-control chat-input"
@@ -64,7 +65,8 @@
                         <span id="chatActiveMotrist"></span>
                         <button class="chat-close-thread" id="chatCloseThread" title="Close">&#10005;</button>
                     </div>
-<div id="pcPartnerThread" class="chat-thread" aria-live="polite" style="display:none;"></div>
+                    <p style="font-size:0.78rem; color:var(--text-secondary); text-align:center; padding:0.4rem 0;">Messages in this conversation are automatically deleted after 7 days.</p>
+<div id="chatManagerThread" class="chat-thread" aria-live="polite"></div>
                     <div id="chatManagerSendError" class="chat-send-error" style="display:none;"></div>
                     <div class="chat-input-row">
                         <input type="text" id="chatManagerInput" class="form-control chat-input"
