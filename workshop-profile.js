@@ -79,6 +79,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (claimBanner) claimBanner.style.display = 'none';
     }
 
+ // "+" report button — lets anyone (including a logged-out visitor) file
+    // a repair report for this specific workshop. Never offered to a
+    // workshop account viewing a profile, same rule as the Chat button below.
+    const addReportBtn = document.getElementById('addReportBtn');
+    if (addReportBtn && viewerAccountType !== 'workshop') {
+        addReportBtn.href = 'report.html?workshop_id=' + encodeURIComponent(workshopId);
+        addReportBtn.style.display = 'inline-flex';
+    }
+
     // Chat button visibility/handler.
     // Spec 8.14: unclaimed listings (no owner yet) never have Chat available.
     // New rule: a workshop account viewing a workshop profile never sees Chat —
