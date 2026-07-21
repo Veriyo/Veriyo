@@ -28,9 +28,14 @@
     }
 
 function renderQuickActions(container, actions) {
+        // Only the icons that were replaced with the new artwork (Chat, Update
+        // Details' pencil) get the larger size here; icon-addlisting and
+        // icon-listing, drawn by the same function, are left at 18px.
+        const largerIcons = ['icon-chat', 'icon-pencil'];
         container.innerHTML = actions.map(function (a) {
+            const iconSize = a.icon && largerIcons.indexOf(a.icon) !== -1 ? 24 : 18;
             const icon = a.icon
-                ? '<svg width="18" height="18" aria-hidden="true"><use href="icons.svg#' + a.icon + '"></use></svg>'
+                ? '<svg width="' + iconSize + '" height="' + iconSize + '" aria-hidden="true"><use href="icons.svg#' + a.icon + '"></use></svg>'
                 : '';
              return '<a href="' + a.href + '" class="btn ' + (a.primary ? 'btn-primary' : 'btn-secondary') + '">' + icon + escapeHtml(a.label) + '</a>';
         }).join('');

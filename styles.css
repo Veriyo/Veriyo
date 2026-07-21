@@ -623,7 +623,6 @@ button, input, select, textarea {
     align-items: center;
     gap: clamp(1.5rem, 8vw, 4rem);
     padding: 0.5rem 0;
-    visibility: visible;
 }
     .bottom-nav-legal {
         display: flex !important;
@@ -660,6 +659,7 @@ button, input, select, textarea {
     align-items: center;
     gap: clamp(1.5rem, 8vw, 4rem);
     padding: 0.5rem 0;
+    visibility: hidden;
 }
 
 .bottom-nav-legal {
@@ -1483,14 +1483,18 @@ button, input, select, textarea {
     font-size: 0.8rem;
     color: var(--text-secondary);
 }
-
 .admin-header-right {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
+.admin-tab-nav {
+    display: flex;
+}
+
 @media (max-width: 768px) {
+{
     .admin-header-right .header-nav-menu-wrap,
     .admin-header-right .header-avatar-wrap {
         display: block;
