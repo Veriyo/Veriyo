@@ -1494,7 +1494,6 @@ button, input, select, textarea {
 }
 
 @media (max-width: 768px) {
-{
     .admin-header-right .header-nav-menu-wrap,
     .admin-header-right .header-avatar-wrap {
         display: block;
