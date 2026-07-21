@@ -134,14 +134,20 @@ button, input, select, textarea {
 
 /* Icon sits directly on the card background — no separate highlighted badge */
 .wh-feature-icon {
-    width: 50px;
-    height: 50px;
+    width: 64px;
+    height: 64px;
     border-radius: 15px;
     background: var(--surface-color);
     color: var(--primary-accent);
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.wh-feature-icon svg {
+    width: 36px;
+    height: 36px;
+    display: block;
 }
 .wh-landing-checklist { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; margin: 0; padding: 0; }
 .wh-landing-checklist li { color: var(--text-secondary); font-size: 0.8rem; padding-left: 1.2rem; position: relative; }
