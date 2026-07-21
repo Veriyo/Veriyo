@@ -3900,6 +3900,19 @@ button, input, select, textarea {
     align-items: center;
     justify-content: center;
     margin-bottom: 1.1rem;
+      width: 64px;
+    height: 64px;
+}
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feature-icon-circle svg {
+    width: 36px;
+    height: 36px;
+    display: block;
+}
 }
 
 .feature-icon-circle svg { width: 24px; height: 24px; }
@@ -4035,7 +4048,19 @@ button, input, select, textarea {
     align-items: center;
     justify-content: center;
 }
+  width: 64px;
+    height: 64px;
 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.quick-action-icon svg {
+    width: 36px;
+    height: 36px;
+    display: block;
+}
 .quick-action-icon svg { width: 22px; height: 22px; }
 .quick-action-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.2rem; }
 .quick-action-card p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.4; }
