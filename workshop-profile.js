@@ -173,25 +173,36 @@ function renderProfile(w, submissions) {
         }
     }
 
-    // Render indicative pricing
+      // Render indicative pricing - supports new services array and legacy price_* columns
     const pricingContainer = document.getElementById('profilePricing');
-    const pricingItems = Object.entries(PRICE_LABELS).map(([key, label]) => {
-        const val = w[key];
-        if (!val || val === 0) return '';
-        const formatted = new Intl.NumberFormat('en-ZA', {
-            style: 'currency', currency: 'ZAR', minimumFractionDigits: 0
-        }).format(val);
-        return `
-            <div style="border-right:1px solid var(--border-color); padding-right:1rem;">
-                <p style="font-size:0.78rem; color:var(--text-secondary); font-weight:600;
-                    text-transform:uppercase; letter-spacing:0.5px;">${label}</p>
-                <p style="font-size:1.1rem; font-weight:700; color:var(--primary-accent);
-                    margin-top:0.25rem;">${formatted}</p>
-            </div>`;
-    }).filter(Boolean).join('');
+    let pricingHtml = '';
 
-    pricingContainer.innerHTML = pricingItems ||
-        '<p style="color:var(--text-secondary); font-size:0.9rem;">No pricing listed.</p>';
+    if (Array.isArray(w.services) && w.services.length > 0) {
+        pricingHtml = w.services.map(s => {
+            const name = s.service || s.name || 'Service';
+            const priceVal = Number(s.price || 0);
+            const formatted = priceVal > 0? new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(priceVal) : 'On request';
+            return `
+            <div style="border-right:1px solid var(--border-color); padding-right:1rem; margin-bottom:0.75rem;">
+                <p style="font-size:0.78rem; color:var(--text-secondary); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">${escapeP(name)}</p>
+                <p style="font-size:1.1rem; font-weight:700; color:var(--primary-accent); margin-top:0.25rem;">${formatted}</p>
+            </div>`;
+        }).join('');
+    } else {
+        // Legacy fallback for old listings that used price_oil_change etc
+        pricingHtml = Object.entries(PRICE_LABELS).map(([key, label]) => {
+            const val = w[key];
+            if (!val || val === 0) return '';
+            const formatted = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(val);
+            return `
+            <div style="border-right:1px solid var(--border-color); padding-right:1rem; margin-bottom:0.75rem;">
+                <p style="font-size:0.78rem; color:var(--text-secondary); font-weight:600; text-transform:uppercase; letter-spacing:0.5px;">${label}</p>
+                <p style="font-size:1.1rem; font-weight:700; color:var(--primary-accent); margin-top:0.25rem;">${formatted}</p>
+            </div>`;
+        }).filter(Boolean).join('');
+    }
+
+    pricingContainer.innerHTML = pricingHtml || '<p style="color:var(--text-secondary); font-size:0.9rem;">No pricing listed.</p>';
 
 // Render submissions (capped to 6 cards, with a "See all" link for the rest)
     const SUBMISSIONS_LIMIT = 6;
