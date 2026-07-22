@@ -698,10 +698,11 @@ async function loadDashboardStats() {
     document.getElementById('statWorkshopSignups').textContent = (currentPartner.total_workshop_signups || 0).toLocaleString('en-ZA');
     document.getElementById('statApprovedWorkshops').textContent = (currentPartner.total_approved_workshops || 0).toLocaleString('en-ZA');
 
-    // Conversions = all users who signed via referral link
-    // Conversions = ONLY sign ups, never reports/listings, so it can never exceed clicks
-    const { count: accountConversions } = await supabaseClient.from('account_profiles').select('user_id', { count: 'exact', head: true }).eq('referral_source', currentPartner.partner_code);
-    const totalConversions = accountConversions || 0;
+// Conversions = anyone who created an account (motorist or workshop)
+    // through this referral link. This reads straight off the partner's
+    // own record, which the database now updates automatically the
+    // moment someone signs up — the exact same number Admin sees.
+    const totalConversions = currentPartner.total_conversions || 0;
     const conversionRate = totalVisitors > 0 ? ((totalConversions / totalVisitors) * 100).toFixed(1) : '0';
     document.getElementById('statConversionRate').textContent = conversionRate + '%';
 
