@@ -169,9 +169,9 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
             closeAllDropdowns();
         });
 
-        if (bellEl) {
+if (bellEl) {
             bellEl.style.cursor = 'pointer';
-            bellEl.addEventListener('click', function (e) {
+            bellEl.addEventListener('click', async function (e) {
                 e.stopPropagation();
                 const existing = document.getElementById('veNotifPanel');
                 if (existing) {
@@ -202,9 +202,8 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
                     '  <button id="veNotifClose" style="background:none;border:none;color:var(--text-secondary);font-size:1.2rem;cursor:pointer;">&#10005;</button>',
                     '</div>',
                     '<div style="border-bottom:1px solid var(--border-color);margin-bottom:0.5rem;"></div>',
-                    '<div style="text-align:center;padding:2rem 1rem;color:var(--text-secondary);">',
-                    '  <div style="font-size:2rem;margin-bottom:0.75rem;">&#128276;</div>',
-                    '  <p style="font-size:0.9rem;line-height:1.6;">No notifications yet.</p>',
+                    '<div id="veNotifList" style="text-align:center;padding:2rem 1rem;color:var(--text-secondary);">',
+                    '  <p style="font-size:0.9rem;">Loading...</p>',
                     '</div>'
                 ].join('');
                 document.body.appendChild(panel);
@@ -216,6 +215,51 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
                         panel.remove();
                         document.removeEventListener('click', closePanel);
                     }
+                });
+
+                const listEl = document.getElementById('veNotifList');
+                const emptyState = [
+                    '<div style="font-size:2rem;margin-bottom:0.75rem;">&#128276;</div>',
+                    '<p style="font-size:0.9rem;line-height:1.6;">No notifications yet.</p>'
+                ].join('');
+
+                if (!myWorkshopId) {
+                    listEl.innerHTML = emptyState;
+                    return;
+                }
+
+                const { data: notifRows } = await _supabaseAuthNav
+                    .from('workshop_notifications')
+                    .select('id, submission_id, message, is_read, created_at')
+                    .eq('workshop_id', myWorkshopId)
+                    .order('created_at', { ascending: false })
+                    .limit(20);
+
+                if (!notifRows || notifRows.length === 0) {
+                    listEl.innerHTML = emptyState;
+                    return;
+                }
+
+                listEl.style.textAlign = 'left';
+                listEl.style.padding = '0';
+                listEl.innerHTML = notifRows.map(function (n) {
+                    return [
+                        '<a href="prices.html?report=' + encodeURIComponent(n.submission_id) + '" ',
+                        '   data-notif-id="' + n.id + '" class="veNotifItem"',
+                        '   style="display:block; padding:0.75rem; margin-bottom:0.5rem; border-radius:6px;',
+                        '   background:' + (n.is_read ? 'transparent' : 'var(--bg-color)') + ';',
+                        '   border:1px solid var(--border-color); text-decoration:none; color:var(--text-primary);">',
+                        '  <p style="font-size:0.85rem; line-height:1.4;">' + escapeHtml(n.message) + '</p>',
+                        '  <p style="font-size:0.72rem; color:var(--text-secondary); margin-top:0.3rem;">' + new Date(n.created_at).toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg', day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) + '</p>',
+                        '</a>'
+                    ].join('');
+                }).join('');
+
+                document.querySelectorAll('.veNotifItem').forEach(function (item) {
+                    item.addEventListener('click', async function () {
+                        const notifId = item.getAttribute('data-notif-id');
+                        await _supabaseAuthNav.from('workshop_notifications').update({ is_read: true }).eq('id', notifId);
+                    });
                 });
             });
         }
