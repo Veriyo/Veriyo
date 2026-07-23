@@ -172,6 +172,7 @@ const feltOverchargedRadio = document.querySelector('input[name="feltOvercharged
         const staffTreatmentRadio = document.querySelector('input[name="staffTreatment"]:checked');
 
         const submission = {
+                        workshop_id: _prefillWorkshopId || null,
             workshop_name: document.getElementById('workshopName')?.value.trim() || '',
             suburb: document.getElementById('suburb')?.value.trim() || '',
             city: document.getElementById('city')?.value.trim() || '',
