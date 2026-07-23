@@ -685,7 +685,7 @@ async function loadDashboardStats() {
         supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', weekAgo),
         supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId).gte('last_visit_at', monthAgo),
         supabaseClient.from('partner_referrals').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId),
-        supabaseClient.from('partner_visitors').select('id', { count: 'exact', head: true }).eq('partner_id', partnerId)
+    
     ]);
 
     const totalVisitors = (allRes.count || 0) || (allVisitorsRes.count || 0);
