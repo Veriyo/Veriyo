@@ -388,7 +388,7 @@ async function loadPartnersTab() {
     // partners has no total_visitors column — count real rows, same as
     // partner.js's own stats do for the partner viewing their own profile.
     const { data: visitorRows } = await supabaseClient
-        .from('partner_visitors')
+        .from('partner_referrals')
         .select('partner_id');
     const visitorCountByPartner = {};
     (visitorRows || []).forEach(v => {
