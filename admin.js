@@ -41,7 +41,7 @@ if (partnerLogoutBtn) partnerLogoutBtn.addEventListener('click', handleLogout);
         btn.addEventListener('click', showRoleChoice);
     });
 
-    const notifBell = document.getElementById('notifBell');
+const notifBell = document.getElementById('notifBell');
     const suggestionsPanel = document.getElementById('suggestionsPanel');
     notifBell.addEventListener('click', async () => {
         const isOpen = suggestionsPanel.style.display !== 'none';
@@ -50,6 +50,13 @@ if (partnerLogoutBtn) partnerLogoutBtn.addEventListener('click', handleLogout);
     });
 document.getElementById('suggestionsPanelClose').addEventListener('click', () => {
         suggestionsPanel.style.display = 'none';
+    });
+    document.getElementById('errorBell').addEventListener('click', () => {
+        document.getElementById('errorLogModal').style.display = 'flex';
+        loadErrorLog();
+    });
+    document.getElementById('errorLogModalClose').addEventListener('click', () => {
+        document.getElementById('errorLogModal').style.display = 'none';
     });
 
 document.getElementById('addListingBtn').addEventListener('click', () => {
@@ -236,8 +243,53 @@ function showRoleChoice() {
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('partnerView').classList.add('hidden');
     document.getElementById('roleChoiceView').classList.remove('hidden');
+    updateErrorBellBadge();
 }
 
+async function updateErrorBellBadge() {
+    const { count } = await supabaseClient
+        .from('error_logs')
+        .select('id', { count: 'exact', head: true })
+        .eq('resolved', false);
+    const badge = document.getElementById('errorBellBadge');
+    badge.textContent = count || 0;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+}
+
+async function loadErrorLog() {
+    const listEl = document.getElementById('errorLogList');
+    const emptyEl = document.getElementById('errorLogEmpty');
+    listEl.innerHTML = '';
+
+    const { data: errors } = await supabaseClient
+        .from('error_logs')
+        .select('*')
+        .eq('resolved', false)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+    if (!errors || errors.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+    }
+    emptyEl.style.display = 'none';
+
+    listEl.innerHTML = errors.map(e => `
+        <div class="admin-card" data-error-id="${e.id}" style="padding:1rem;">
+            <p style="font-weight:600; margin-bottom:0.35rem;">${escapeHtmlAdmin(e.message)}</p>
+            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">${escapeHtmlAdmin(e.page_url)} — ${new Date(e.created_at).toLocaleString()}</p>
+            <button type="button" class="btn btn-secondary-outline error-resolve-btn" style="width:100%;">Mark Resolved</button>
+        </div>`).join('');
+
+    document.querySelectorAll('#errorLogList .error-resolve-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const errorId = e.target.closest('[data-error-id]').dataset.errorId;
+            await supabaseClient.from('error_logs').update({ resolved: true }).eq('id', errorId);
+            loadErrorLog();
+            updateErrorBellBadge();
+        });
+    });
+}
 function showDashboard() {
     document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('partnerView').classList.add('hidden');
