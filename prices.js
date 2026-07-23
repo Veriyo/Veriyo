@@ -10,7 +10,7 @@ const _supabasePrices = supabase.createClient(supabaseUrl, supabaseKey)
 let liveDataset = [];
 
 let isMotoristViewer = false;
-
+let myWorkshopId = null;
 document.addEventListener('DOMContentLoaded', async () => {
 if (document.getElementById('pricesContainer')) {
         const { data: { session: pricesSession } } = await _supabasePrices.auth.getSession();
@@ -21,6 +21,18 @@ if (document.getElementById('pricesContainer')) {
                 .eq('user_id', pricesSession.user.id)
                 .single();
             isMotoristViewer = !!(viewerProfile && viewerProfile.account_type === 'motorist');
+
+            // Needed to gate the "Respond to this report" button — only the
+            // workshop a report is actually about should ever see it, and
+            // motorists must never see it at all.
+            if (!isMotoristViewer) {
+                const { data: myWorkshopRows } = await _supabasePrices
+                    .from('Workshopprofiles')
+                    .select('id')
+                    .eq('user_id', pricesSession.user.id)
+                    .limit(1);
+                myWorkshopId = (myWorkshopRows && myWorkshopRows.length > 0) ? myWorkshopRows[0].id : null;
+            }
         }
 
         initPriceListingFilters();
@@ -35,6 +47,7 @@ if (document.getElementById('pricesContainer')) {
 const normalizedLive = data.map(row => ({
                 id: row.id,
                 status: 'Approved',
+                workshopId: row.workshop_id || null,
                 carMake: row.car_make || '',
                 carModel: row.car_model || '',
                 year: row.car_year || '',
@@ -52,12 +65,25 @@ const normalizedLive = data.map(row => ({
                 staffTreatmentReason: row.staff_treatment_reason || '',
 notes: row.notes || '',
                 timestamp: row.repair_date || '',
+                workshopResponse: null,
                 recentlyActive: row.updated_at
                     ? (new Date() - new Date(row.updated_at)) < 7 * 24 * 60 * 60 * 1000
                     : false
             }));
 
             liveDataset = normalizedLive;
+
+            // Attach any existing workshop response for each report
+            const submissionIds = normalizedLive.map(r => r.id);
+            if (submissionIds.length > 0) {
+                const { data: responseRows } = await _supabasePrices
+                    .from('report_responses')
+                    .select('submission_id, response_text')
+                    .in('submission_id', submissionIds);
+                const responseBySubmission = {};
+                (responseRows || []).forEach(r => { responseBySubmission[r.submission_id] = r.response_text; });
+                liveDataset = liveDataset.map(r => ({ ...r, workshopResponse: responseBySubmission[r.id] || null }));
+            }
 
             // Re-render with the combined dataset now available
             processingPipeAndRender();
@@ -70,6 +96,17 @@ notes: row.notes || '',
                     opt.value = s;
                     suburbList.appendChild(opt);
                 });
+            }
+
+            // Deep link from a workshop notification: jump straight to
+            // responding to the specific report that was flagged
+            const reportParam = new URLSearchParams(window.location.search).get('report');
+            if (reportParam && myWorkshopId) {
+                const targetId = parseInt(reportParam, 10);
+                const targetEntry = liveDataset.find(e => e.id === targetId);
+                if (targetEntry && targetEntry.workshopId === myWorkshopId) {
+                    openRespondModal(targetId);
+                }
             }
         } else {
             // Fallback rendering phase if live download encounters no records
@@ -259,6 +296,16 @@ const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops')
                 })()}
 
 <div class="card-date">Repaired: ${calculatedDateStr}</div>
+                ${entry.workshopResponse ? `<div class="card-workshop-response" style="margin-top:0.6rem; padding:0.6rem 0.75rem; background:var(--bg-color); border-left:3px solid var(--primary-accent); border-radius:4px;">
+                    <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-secondary); margin-bottom:0.25rem;">Response from the workshop</p>
+                    <p style="font-size:0.85rem; color:var(--text-primary); white-space:pre-wrap;">${escapeHTML(entry.workshopResponse)}</p>
+                </div>` : ''}
+                ${(!isMotoristViewer && myWorkshopId && entry.workshopId && entry.workshopId === myWorkshopId) ? `<button onclick="openRespondModal(${entry.id})"
+                    style="background:none; border:none; color:var(--primary-accent);
+                    font-size:0.75rem; cursor:pointer; padding:0; margin-top:0.4rem;
+                    text-decoration:underline; font-weight:600;">
+                    ${entry.workshopResponse ? 'Edit your response' : 'Respond to this report'}
+                </button>` : ''}
                 ${isMotoristViewer ? '' : `<button onclick="openClaimModal('${escapeHTML(entry.workshopName)}')"
                     style="background:none; border:none; color:var(--text-secondary);
                     font-size:0.75rem; cursor:pointer; padding:0; margin-top:0.25rem;
@@ -312,7 +359,39 @@ const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops')
         document.body.appendChild(modal);
     }
 }
-
+// Inject respond-to-report modal if not already present
+    if (!document.getElementById('respondModal')) {
+        const modal = document.createElement('div');
+        modal.id = 'respondModal';
+        modal.style.cssText = `display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7);
+            z-index:9999; align-items:center; justify-content:center;`;
+        modal.innerHTML = `
+            <div style="background:var(--surface-color); border:1px solid var(--border-color);
+                border-radius:var(--radius); padding:2rem; max-width:420px; width:90%; position:relative;">
+                <button onclick="closeRespondModal()" style="position:absolute; top:1rem; right:1rem;
+                    background:none; border:none; color:var(--text-secondary); font-size:1.2rem;
+                    cursor:pointer;">✕</button>
+                <h3 style="margin-bottom:1rem; font-size:1.1rem;">Respond to This Report</h3>
+                <p style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:0.75rem;">
+                    Share your side of the story. This will be shown publicly under the report.
+                </p>
+                <div class="form-group">
+                    <textarea id="respondText" class="form-control" rows="5" maxlength="800"
+                        placeholder="e.g. We reached out to this customer and..."></textarea>
+                </div>
+                <p id="respondError" style="display:none; color:var(--danger-color);
+                    font-size:0.82rem; margin-top:0.5rem;"></p>
+                <button onclick="submitReportResponse()"
+                    id="respondSubmitBtn"
+                    style="margin-top:1rem; width:100%; background:var(--primary-accent);
+                    color:#000; border:none; padding:0.75rem; border-radius:var(--radius);
+                    font-weight:700; cursor:pointer;">
+                    Submit Response
+                </button>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
 function openClaimModal(workshopName) {
     const modal = document.getElementById('claimModal');
     document.getElementById('claimWorkshopName').value = workshopName;
@@ -364,7 +443,64 @@ async function submitClaim() {
     }
 }
 
+let _respondSubmissionId = null;
 
+function openRespondModal(submissionId) {
+    _respondSubmissionId = submissionId;
+    const entry = liveDataset.find(e => e.id === submissionId);
+    document.getElementById('respondText').value = (entry && entry.workshopResponse) || '';
+    document.getElementById('respondError').style.display = 'none';
+    document.getElementById('respondSubmitBtn').textContent = 'Submit Response';
+    document.getElementById('respondSubmitBtn').disabled = false;
+    document.getElementById('respondModal').style.display = 'flex';
+}
+
+function closeRespondModal() {
+    document.getElementById('respondModal').style.display = 'none';
+    _respondSubmissionId = null;
+}
+
+async function submitReportResponse() {
+    const text = document.getElementById('respondText').value.trim();
+    const errorEl = document.getElementById('respondError');
+    const btn = document.getElementById('respondSubmitBtn');
+
+    if (!text) {
+        errorEl.textContent = 'Please enter a response before submitting.';
+        errorEl.style.display = 'block';
+        return;
+    }
+    if (!myWorkshopId || !_respondSubmissionId) {
+        errorEl.textContent = 'Unable to submit — please refresh and try again.';
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+
+    const { error } = await _supabasePrices
+        .from('report_responses')
+        .upsert([{
+            submission_id: _respondSubmissionId,
+            workshop_id: myWorkshopId,
+            response_text: text
+        }], { onConflict: 'submission_id' });
+
+    if (error) {
+        errorEl.textContent = 'Submission failed. Please try again.';
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Submit Response';
+        return;
+    }
+
+    const idx = liveDataset.findIndex(e => e.id === _respondSubmissionId);
+    if (idx !== -1) liveDataset[idx].workshopResponse = text;
+
+    btn.textContent = 'Response Submitted ✓';
+    setTimeout(() => { closeRespondModal(); processingPipeAndRender(); }, 1000);
+}
 /**
  * Contextual Badge styling assignments
  * Quote difference badges removed — field dropped from submissions.
