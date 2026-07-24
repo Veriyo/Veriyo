@@ -213,10 +213,10 @@ function buildBubble(msg, currentUserId, mode) {
         document.getElementById('chatLoading').style.display = 'none';
         document.title = 'Workshop Chat — Veriyo';
 
-        // Find this manager's workshop by email
+// Find this manager's workshop by email
         const { data: workshopArr } = await _supabaseChat
             .from('Workshopprofiles')
-            .select('id, workshop_name')
+            .select('id, workshop_name, plan')
             .eq('email_address', session.user.email)
             .limit(1);
 
@@ -227,6 +227,36 @@ function buildBubble(msg, currentUserId, mode) {
 
         const myWorkshop = workshopArr[0];
         subtitleEl.textContent = myWorkshop.workshop_name;
+
+        // Free-tier workshops can't read or reply — that's the whole point
+        // of the locked inbox. Motorists can still send (initMotoristView
+        // is untouched); the messages just sit here until upgrade.
+        if (!myWorkshop.plan || myWorkshop.plan === 'Visible') {
+            const { data: lockedMsgs } = await _supabaseChat
+                .from('chats')
+                .select('motorist_id')
+                .eq('workshop_id', myWorkshop.id)
+                .eq('sender', 'motorist');
+
+            const customerCount = new Set((lockedMsgs || []).map(m => m.motorist_id)).size;
+
+            view.innerHTML = `
+                <div style="text-align:center; padding:3rem 1.5rem; max-width:420px; margin:0 auto;">
+                    <div style="font-size:2.5rem; margin-bottom:1rem;">&#128274;</div>
+                    <h2 style="font-size:1.2rem; margin-bottom:0.75rem;">
+                        ${customerCount > 0
+                            ? customerCount + (customerCount === 1 ? ' customer has' : ' customers have') + ' tried to message you'
+                            : 'Chat is locked on the Visible plan'}
+                    </h2>
+                    <p style="color:var(--text-secondary); font-size:0.92rem; line-height:1.6; margin-bottom:1.5rem;">
+                        ${customerCount > 0
+                            ? 'Upgrade to Growth or Premium to read what they said and reply.'
+                            : 'Upgrade to Growth or Premium so motorists can chat with you directly.'}
+                    </p>
+                    <a href="mailto:privacy@veriyo.co.za?subject=Upgrade%20my%20Veriyo%20plan" class="btn btn-primary">Upgrade My Plan</a>
+                </div>`;
+            return;
+        }
         // Mark messages as read now, so the unread badge/dot elsewhere clear
         // as soon as the workshop opens Messages rather than at next login.
 localStorage.setItem('veriyo_chat_read_' + myWorkshop.id, new Date().toISOString());
