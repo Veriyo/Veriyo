@@ -314,8 +314,8 @@ let lwSession = null;
             written_quote: document.querySelector('input[name="lwQuote"]:checked')?.value || 'No',
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
             guarantee_period: gp || null,
-            services: addedServices,
-            plan: 'Dominant',
+services: addedServices,
+            plan: 'Visible',
             plan_price: 0,
             status: 'Pending',
             source: 'Workshop Registered'
