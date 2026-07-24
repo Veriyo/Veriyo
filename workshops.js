@@ -125,15 +125,37 @@ function sortWorkshops(workshops, avgMap) {
         }).join('');
     }
 
+function populateSuburbOptions(province) {
+        const suburbSelect = document.getElementById('wdSuburb');
+        if (!suburbSelect) return;
+        const relevant = province
+            ? allWorkshops.filter(function (w) { return (w.province || '') === province; })
+            : allWorkshops;
+        const uniqueSuburbs = Array.from(new Set(relevant.map(function (w) { return w.suburb; }).filter(Boolean))).sort();
+        suburbSelect.innerHTML = '<option value="">All Suburbs</option>' +
+            uniqueSuburbs.map(function (s) { return '<option value="' + escapeHtml(s) + '">' + escapeHtml(s) + '</option>'; }).join('');
+    }
+
     function applyFilters() {
         const query = (document.getElementById('wdSearch').value || '').toLowerCase().trim();
         const province = document.getElementById('wdProvince').value || '';
+        const suburb = document.getElementById('wdSuburb') ? document.getElementById('wdSuburb').value : '';
 
         let filtered = allWorkshops;
 
         if (province) {
             filtered = filtered.filter(function (w) {
                 return (w.province || '') === province;
+            });
+        }
+
+        // Reach: once a suburb is picked, Free/Growth only show if they're
+        // actually in it. Premium ("Dominant") is province-wide, so it
+        // keeps showing even for suburbs it isn't physically in.
+        if (suburb) {
+            filtered = filtered.filter(function (w) {
+                if ((w.suburb || '') === suburb) return true;
+                return DOMINANT_PLAN_ENABLED && (w.plan || '').trim() === 'Dominant';
             });
         }
 
@@ -159,14 +181,19 @@ function sortWorkshops(workshops, avgMap) {
         const workshops = wsResult.data || [];
         const submissions = subResult.data || [];
 
-        avgRatingMap = calcRatings(workshops, submissions);
+avgRatingMap = calcRatings(workshops, submissions);
         allWorkshops = sortWorkshops(workshops, avgRatingMap);
 
+        populateSuburbOptions('');
         renderGrid(allWorkshops);
 
         document.getElementById('wdSearch').addEventListener('input', applyFilters);
-        document.getElementById('wdProvince').addEventListener('change', applyFilters);
-
+        document.getElementById('wdProvince').addEventListener('change', function () {
+            populateSuburbOptions(document.getElementById('wdProvince').value);
+            document.getElementById('wdSuburb').value = '';
+            applyFilters();
+        });
+        document.getElementById('wdSuburb').addEventListener('change', applyFilters);
         document.getElementById('wdShareBtn').addEventListener('click', function () {
             navigator.clipboard.writeText('https://veriyo.co.za/list-workshop.html').then(function () {
                 const confirm = document.getElementById('wdShareConfirm');
