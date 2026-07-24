@@ -337,6 +337,39 @@ function planBadgeClass(plan) {
         : 'wd-plan-badge--visible';
 }
 
+// Manual plan assignment — used until PayFast is wired up (no business
+// account exists yet to receive payments through). Admin picks a plan
+// after a workshop pays via EFT/invoice; the price is editable in case
+// of a negotiated/discounted deal.
+const PLAN_PRICE_DEFAULTS = { Visible: 0, Trusted: 249, Dominant: 599 };
+
+async function handleWorkshopPlanSave(id) {
+    const selects = document.querySelectorAll(`[data-plan-select="${id}"]`);
+    const priceInputs = document.querySelectorAll(`[data-plan-price="${id}"]`);
+    const saveBtns = document.querySelectorAll(`[data-save-plan="${id}"]`);
+    if (selects.length === 0) return;
+
+    const newPlan = selects[0].value;
+    const newPrice = parseInt(priceInputs[0]?.value, 10) || 0;
+
+    saveBtns.forEach(btn => { btn.disabled = true; btn.textContent = 'Saving...'; });
+
+    const { error } = await supabaseClient
+        .from('Workshopprofiles')
+        .update({ plan: newPlan, plan_price: newPrice, renewed_at: new Date().toISOString() })
+        .eq('id', id);
+
+    saveBtns.forEach(btn => {
+        btn.disabled = false;
+        btn.textContent = error ? 'Failed — retry' : 'Saved ✓';
+    });
+
+    if (!error) {
+        const record = liveWorkshopRecords.find(r => r.id === id);
+        if (record) { record.plan = newPlan; record.plan_price = newPrice; }
+        setTimeout(() => { saveBtns.forEach(btn => { btn.textContent = 'Save Plan'; }); }, 1500);
+    }
+}
 async function loadPartnersTab() {
     const listEl = document.getElementById('partnerCardsList');
     const emptyEl = document.getElementById('partnerCardsEmpty');
@@ -753,13 +786,12 @@ async function handleAddListing(event) {
         rmi_registered: null,
         written_quote: null,
         email_address: '',
-        services: [],
-        plan: 'Dominant',
+services: [],
+        plan: 'Visible',
         plan_price: 0,
         user_id: null,
         status: 'Approved',
         source: 'Admin Added'
-    };
 
     if (!listing.workshop_name || !listing.suburb || !listing.city || !listing.province) {
         errorEl.textContent = 'Workshop name, suburb, city, and province are required.';
@@ -1172,12 +1204,22 @@ function renderLiveWorkshopListings() {
     if (tableWrap) tableWrap.classList.remove('hidden');
     if (cardsContainer) cardsContainer.classList.remove('hidden');
 
-    tableBody.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopTableRow(record)).join('');
+tableBody.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopTableRow(record)).join('');
     cardsContainer.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopCard(record)).join('');
 
     liveWorkshopRecords.forEach(record => {
         const deleteBtns = document.querySelectorAll(`[data-delete-live-workshop="${record.id}"]`);
         deleteBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopDelete(record.id)));
+
+        const planSelects = document.querySelectorAll(`[data-plan-select="${record.id}"]`);
+        planSelects.forEach(sel => sel.addEventListener('change', () => {
+            const priceInputs = document.querySelectorAll(`[data-plan-price="${record.id}"]`);
+            const defaultPrice = PLAN_PRICE_DEFAULTS[sel.value] ?? 0;
+            priceInputs.forEach(inp => { inp.value = defaultPrice; });
+        }));
+
+        const savePlanBtns = document.querySelectorAll(`[data-save-plan="${record.id}"]`);
+        savePlanBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopPlanSave(record.id)));
     });
 }
 
@@ -1190,6 +1232,17 @@ function buildLiveWorkshopTableRow(record) {
             <td data-label="Contact">${escapeHTML(displayValue(record.contact_number))}</td>
             <td data-label="Specialisation">${escapeHTML(displayValue(record.specialisation))}</td>
             <td data-label="Email">${escapeHTML(displayValue(record.email_address))}</td>
+            <td data-label="Plan">
+                <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
+                    <select class="form-control" data-plan-select="${record.id}" style="max-width:150px;">
+                        <option value="Visible" ${(!record.plan || record.plan === 'Visible') ? 'selected' : ''}>Visible</option>
+                        <option value="Trusted" ${record.plan === 'Trusted' ? 'selected' : ''}>Trusted</option>
+                        <option value="Dominant" ${record.plan === 'Dominant' ? 'selected' : ''}>Dominant</option>
+                    </select>
+                    <input type="number" class="form-control" data-plan-price="${record.id}" value="${record.plan_price ?? 0}" min="0" step="1" style="max-width:90px;">
+                    <button class="btn btn-approve" data-save-plan="${record.id}">Save</button>
+                </div>
+            </td>
             <td data-label="Actions">
                 <div class="action-buttons">
                     <button class="btn btn-reject" data-delete-live-workshop="${record.id}">Delete</button>
@@ -1223,6 +1276,18 @@ function buildLiveWorkshopCard(record) {
                     <span class="field-label">Email</span>
                     <span class="field-value">${escapeHTML(displayValue(record.email_address))}</span>
                 </div>
+                <div class="admin-card-field" style="grid-column:1 / -1;">
+                    <span class="field-label">Plan</span>
+                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.35rem;">
+                        <select class="form-control" data-plan-select="${record.id}" style="max-width:170px;">
+                            <option value="Visible" ${(!record.plan || record.plan === 'Visible') ? 'selected' : ''}>Visible (Free)</option>
+                            <option value="Trusted" ${record.plan === 'Trusted' ? 'selected' : ''}>Trusted (Growth)</option>
+                            <option value="Dominant" ${record.plan === 'Dominant' ? 'selected' : ''}>Dominant (Premium)</option>
+                        </select>
+                        <input type="number" class="form-control" data-plan-price="${record.id}" value="${record.plan_price ?? 0}" min="0" step="1" style="max-width:100px;">
+                        <button class="btn btn-approve" data-save-plan="${record.id}">Save Plan</button>
+                    </div>
+                </div>
             </div>
             <div class="action-buttons">
                 <button class="btn btn-reject" data-delete-live-workshop="${record.id}">Delete</button>
@@ -1230,7 +1295,6 @@ function buildLiveWorkshopCard(record) {
         </article>
     `;
 }
-
 function buildWorkshopTableRow(record) {
     const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
     return `
