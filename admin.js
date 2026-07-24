@@ -41,7 +41,7 @@ if (partnerLogoutBtn) partnerLogoutBtn.addEventListener('click', handleLogout);
         btn.addEventListener('click', showRoleChoice);
     });
 
-const notifBell = document.getElementById('notifBell');
+    const notifBell = document.getElementById('notifBell');
     const suggestionsPanel = document.getElementById('suggestionsPanel');
     notifBell.addEventListener('click', async () => {
         const isOpen = suggestionsPanel.style.display !== 'none';
@@ -50,13 +50,6 @@ const notifBell = document.getElementById('notifBell');
     });
 document.getElementById('suggestionsPanelClose').addEventListener('click', () => {
         suggestionsPanel.style.display = 'none';
-    });
-    document.getElementById('errorBell').addEventListener('click', () => {
-        document.getElementById('errorLogModal').style.display = 'flex';
-        loadErrorLog();
-    });
-    document.getElementById('errorLogModalClose').addEventListener('click', () => {
-        document.getElementById('errorLogModal').style.display = 'none';
     });
 
 document.getElementById('addListingBtn').addEventListener('click', () => {
@@ -243,53 +236,8 @@ function showRoleChoice() {
     document.getElementById('dashboardView').classList.add('hidden');
     document.getElementById('partnerView').classList.add('hidden');
     document.getElementById('roleChoiceView').classList.remove('hidden');
-    updateErrorBellBadge();
 }
 
-async function updateErrorBellBadge() {
-    const { count } = await supabaseClient
-        .from('error_logs')
-        .select('id', { count: 'exact', head: true })
-        .eq('resolved', false);
-    const badge = document.getElementById('errorBellBadge');
-    badge.textContent = count || 0;
-    badge.style.display = count > 0 ? 'flex' : 'none';
-}
-
-async function loadErrorLog() {
-    const listEl = document.getElementById('errorLogList');
-    const emptyEl = document.getElementById('errorLogEmpty');
-    listEl.innerHTML = '';
-
-    const { data: errors } = await supabaseClient
-        .from('error_logs')
-        .select('*')
-        .eq('resolved', false)
-        .order('created_at', { ascending: false })
-        .limit(50);
-
-    if (!errors || errors.length === 0) {
-        emptyEl.style.display = 'block';
-        return;
-    }
-    emptyEl.style.display = 'none';
-
-    listEl.innerHTML = errors.map(e => `
-        <div class="admin-card" data-error-id="${e.id}" style="padding:1rem;">
-            <p style="font-weight:600; margin-bottom:0.35rem;">${escapeHtmlAdmin(e.message)}</p>
-            <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.5rem;">${escapeHtmlAdmin(e.page_url)} — ${new Date(e.created_at).toLocaleString()}</p>
-            <button type="button" class="btn btn-secondary-outline error-resolve-btn" style="width:100%;">Mark Resolved</button>
-        </div>`).join('');
-
-    document.querySelectorAll('#errorLogList .error-resolve-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-            const errorId = e.target.closest('[data-error-id]').dataset.errorId;
-            await supabaseClient.from('error_logs').update({ resolved: true }).eq('id', errorId);
-            loadErrorLog();
-            updateErrorBellBadge();
-        });
-    });
-}
 function showDashboard() {
     document.getElementById('roleChoiceView').classList.add('hidden');
     document.getElementById('partnerView').classList.add('hidden');
@@ -337,57 +285,6 @@ function planBadgeClass(plan) {
         : 'wd-plan-badge--visible';
 }
 
-// Manual plan assignment — used until PayFast is wired up (no business
-// account exists yet to receive payments through). Admin picks a plan
-// after a workshop pays via EFT/invoice; the price is editable in case
-// of a negotiated/discounted deal.
-const PLAN_PRICE_DEFAULTS = { Visible: 0, Trusted: 249, Dominant: 599 };
-
-async function handleWorkshopPlanSave(id) {
-    const selects = document.querySelectorAll(`[data-plan-select="${id}"]`);
-    const priceInputs = document.querySelectorAll(`[data-plan-price="${id}"]`);
-    const saveBtns = document.querySelectorAll(`[data-save-plan="${id}"]`);
-    if (selects.length === 0) return;
-
-    const newPlan = selects[0].value;
-    const newPrice = parseInt(priceInputs[0]?.value, 10) || 0;
-
-    saveBtns.forEach(btn => { btn.disabled = true; btn.textContent = 'Saving...'; });
-
-    const { error } = await supabaseClient
-        .from('Workshopprofiles')
-        .update({ plan: newPlan, plan_price: newPrice, renewed_at: new Date().toISOString() })
-        .eq('id', id);
-
-    // The DB enforces the 3-per-suburb Premium cap and rejects the write
-    // with this message — catch it here and offer the waitlist instead
-    // of just showing a generic failure.
-    if (error && /Premium slots are full/.test(error.message || '')) {
-        saveBtns.forEach(btn => { btn.disabled = false; btn.textContent = 'Save Plan'; });
-        const record = liveWorkshopRecords.find(r => r.id === id);
-        const wantsWaitlist = confirm(
-            'Premium is sold out (3/3) in this suburb. Add "' + (record ? record.workshop_name : 'this workshop') + '" to the waitlist instead?'
-        );
-        if (wantsWaitlist && record) {
-            const { error: waitlistError } = await supabaseClient
-                .from('premium_waitlist')
-                .upsert([{ workshop_id: id, suburb: record.suburb }], { onConflict: 'workshop_id' });
-            alert(waitlistError ? 'Failed to add to waitlist. Please try again.' : 'Added to the Premium waitlist for ' + record.suburb + '.');
-        }
-        return;
-    }
-
-    saveBtns.forEach(btn => {
-        btn.disabled = false;
-        btn.textContent = error ? 'Failed — retry' : 'Saved ✓';
-    });
-
-    if (!error) {
-        const record = liveWorkshopRecords.find(r => r.id === id);
-        if (record) { record.plan = newPlan; record.plan_price = newPrice; }
-        setTimeout(() => { saveBtns.forEach(btn => { btn.textContent = 'Save Plan'; }); }, 1500);
-    }
-}
 async function loadPartnersTab() {
     const listEl = document.getElementById('partnerCardsList');
     const emptyEl = document.getElementById('partnerCardsEmpty');
@@ -439,7 +336,7 @@ async function loadPartnersTab() {
     // partners has no total_visitors column — count real rows, same as
     // partner.js's own stats do for the partner viewing their own profile.
     const { data: visitorRows } = await supabaseClient
-        .from('partner_referrals')
+        .from('partner_visitors')
         .select('partner_id');
     const visitorCountByPartner = {};
     (visitorRows || []).forEach(v => {
@@ -804,12 +701,13 @@ async function handleAddListing(event) {
         rmi_registered: null,
         written_quote: null,
         email_address: '',
-services: [],
-        plan: 'Visible',
+        services: [],
+        plan: 'Dominant',
         plan_price: 0,
         user_id: null,
         status: 'Approved',
         source: 'Admin Added'
+    };
 
     if (!listing.workshop_name || !listing.suburb || !listing.city || !listing.province) {
         errorEl.textContent = 'Workshop name, suburb, city, and province are required.';
@@ -1222,22 +1120,12 @@ function renderLiveWorkshopListings() {
     if (tableWrap) tableWrap.classList.remove('hidden');
     if (cardsContainer) cardsContainer.classList.remove('hidden');
 
-tableBody.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopTableRow(record)).join('');
+    tableBody.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopTableRow(record)).join('');
     cardsContainer.innerHTML = liveWorkshopRecords.map(record => buildLiveWorkshopCard(record)).join('');
 
     liveWorkshopRecords.forEach(record => {
         const deleteBtns = document.querySelectorAll(`[data-delete-live-workshop="${record.id}"]`);
         deleteBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopDelete(record.id)));
-
-        const planSelects = document.querySelectorAll(`[data-plan-select="${record.id}"]`);
-        planSelects.forEach(sel => sel.addEventListener('change', () => {
-            const priceInputs = document.querySelectorAll(`[data-plan-price="${record.id}"]`);
-            const defaultPrice = PLAN_PRICE_DEFAULTS[sel.value] ?? 0;
-            priceInputs.forEach(inp => { inp.value = defaultPrice; });
-        }));
-
-        const savePlanBtns = document.querySelectorAll(`[data-save-plan="${record.id}"]`);
-        savePlanBtns.forEach(btn => btn.addEventListener('click', () => handleWorkshopPlanSave(record.id)));
     });
 }
 
@@ -1250,17 +1138,6 @@ function buildLiveWorkshopTableRow(record) {
             <td data-label="Contact">${escapeHTML(displayValue(record.contact_number))}</td>
             <td data-label="Specialisation">${escapeHTML(displayValue(record.specialisation))}</td>
             <td data-label="Email">${escapeHTML(displayValue(record.email_address))}</td>
-            <td data-label="Plan">
-                <div style="display:flex; gap:0.4rem; align-items:center; flex-wrap:wrap;">
-                    <select class="form-control" data-plan-select="${record.id}" style="max-width:150px;">
-                        <option value="Visible" ${(!record.plan || record.plan === 'Visible') ? 'selected' : ''}>Visible</option>
-                        <option value="Trusted" ${record.plan === 'Trusted' ? 'selected' : ''}>Trusted</option>
-                        <option value="Dominant" ${record.plan === 'Dominant' ? 'selected' : ''}>Dominant</option>
-                    </select>
-                    <input type="number" class="form-control" data-plan-price="${record.id}" value="${record.plan_price ?? 0}" min="0" step="1" style="max-width:90px;">
-                    <button class="btn btn-approve" data-save-plan="${record.id}">Save</button>
-                </div>
-            </td>
             <td data-label="Actions">
                 <div class="action-buttons">
                     <button class="btn btn-reject" data-delete-live-workshop="${record.id}">Delete</button>
@@ -1294,18 +1171,6 @@ function buildLiveWorkshopCard(record) {
                     <span class="field-label">Email</span>
                     <span class="field-value">${escapeHTML(displayValue(record.email_address))}</span>
                 </div>
-                <div class="admin-card-field" style="grid-column:1 / -1;">
-                    <span class="field-label">Plan</span>
-                    <div style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap; margin-top:0.35rem;">
-                        <select class="form-control" data-plan-select="${record.id}" style="max-width:170px;">
-                            <option value="Visible" ${(!record.plan || record.plan === 'Visible') ? 'selected' : ''}>Visible (Free)</option>
-                            <option value="Trusted" ${record.plan === 'Trusted' ? 'selected' : ''}>Trusted (Growth)</option>
-                            <option value="Dominant" ${record.plan === 'Dominant' ? 'selected' : ''}>Dominant (Premium)</option>
-                        </select>
-                        <input type="number" class="form-control" data-plan-price="${record.id}" value="${record.plan_price ?? 0}" min="0" step="1" style="max-width:100px;">
-                        <button class="btn btn-approve" data-save-plan="${record.id}">Save Plan</button>
-                    </div>
-                </div>
             </div>
             <div class="action-buttons">
                 <button class="btn btn-reject" data-delete-live-workshop="${record.id}">Delete</button>
@@ -1313,6 +1178,7 @@ function buildLiveWorkshopCard(record) {
         </article>
     `;
 }
+
 function buildWorkshopTableRow(record) {
     const location = [record.suburb, record.city, record.province].filter(Boolean).join(', ');
     return `
