@@ -359,6 +359,24 @@ async function handleWorkshopPlanSave(id) {
         .update({ plan: newPlan, plan_price: newPrice, renewed_at: new Date().toISOString() })
         .eq('id', id);
 
+    // The DB enforces the 3-per-suburb Premium cap and rejects the write
+    // with this message — catch it here and offer the waitlist instead
+    // of just showing a generic failure.
+    if (error && /Premium slots are full/.test(error.message || '')) {
+        saveBtns.forEach(btn => { btn.disabled = false; btn.textContent = 'Save Plan'; });
+        const record = liveWorkshopRecords.find(r => r.id === id);
+        const wantsWaitlist = confirm(
+            'Premium is sold out (3/3) in this suburb. Add "' + (record ? record.workshop_name : 'this workshop') + '" to the waitlist instead?'
+        );
+        if (wantsWaitlist && record) {
+            const { error: waitlistError } = await supabaseClient
+                .from('premium_waitlist')
+                .upsert([{ workshop_id: id, suburb: record.suburb }], { onConflict: 'workshop_id' });
+            alert(waitlistError ? 'Failed to add to waitlist. Please try again.' : 'Added to the Premium waitlist for ' + record.suburb + '.');
+        }
+        return;
+    }
+
     saveBtns.forEach(btn => {
         btn.disabled = false;
         btn.textContent = error ? 'Failed — retry' : 'Saved ✓';
