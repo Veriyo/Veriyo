@@ -10,7 +10,7 @@
   // Paused until there's enough traffic to justify it — set this back to
     // true to re-enable Dominant-tier sorting, badges, and highlighting.
     // Nothing else below needs to change.
-    const DOMINANT_PLAN_ENABLED = false;
+const DOMINANT_PLAN_ENABLED = true;
     const PLAN_ORDER = { 'Dominant': 3, 'Trusted': 2, 'Visible': 1 };
 
     function escapeHtml(str) {
