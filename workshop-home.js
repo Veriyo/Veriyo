@@ -87,11 +87,13 @@ statusCard.innerHTML =
             '  <a href="my-listing.html" class="btn btn-secondary" style="font-size:0.85rem;">View My Listing</a>' +
             '</div>';
 
+const isFreePlan = !myWorkshop.plan || myWorkshop.plan === 'Visible';
+
 renderQuickActions(actionsEl, [
             { href: 'my-listing.html', label: 'View My Listing', primary: true, icon: 'icon-listing' },
-            { href: 'chat.html?mode=workshop', label: 'Open Chat', primary: false, icon: 'icon-chat' },
+            { href: 'chat.html?mode=workshop', label: isFreePlan ? 'Messages (Locked)' : 'Open Chat', primary: false, icon: 'icon-chat' },
 { href: editHref, label: 'Update Details', primary: false, icon: 'icon-pencil' }
-]);
+].concat(isFreePlan ? [{ href: 'mailto:upgrade@veriyo.co.za?subject=Upgrade%20my%20Veriyo%20plan', label: 'Upgrade My Plan', primary: true, icon: null }] : []));
 
         // Services You Offer — real services only, capped at 5, no icons invented.
         const allServices = [
@@ -128,30 +130,32 @@ highlightsListEl.innerHTML = highlights.map(function (h) {
         }
 
 
-// Unread chat count (spec 3.4 "Unread Chat Count").
-        // Cutoff is the later of last sign-in and the last time this workshop
-        // opened its Messages, so the badge clears once messages are read
-        // instead of persisting until the next login.
+// Unread chat count (spec 3.4 "Unread Chat Count"). Free-tier workshops
+        // never get a "last read" marker set — chat.js locks their inbox and
+        // returns before that code runs — so for them this counts every
+        // motorist message ever received, not just the delta since last read.
         const lastRead = localStorage.getItem('veriyo_chat_read_' + myWorkshop.id);
         const lastLogin = session.user.last_sign_in_at || new Date(0).toISOString();
         const since = (lastRead && lastRead > lastLogin) ? lastRead : lastLogin;
-        const { data: unread } = await _sb
+        let unreadQuery = _sb
             .from('chats')
             .select('id')
             .eq('workshop_id', myWorkshop.id)
-            .eq('sender', 'motorist')
-            .gt('created_at', since);
+            .eq('sender', 'motorist');
+        if (!isFreePlan) unreadQuery = unreadQuery.gt('created_at', since);
+        const { data: unread } = await unreadQuery;
 
         if (unread && unread.length > 0) {
             const countBadge = document.createElement('span');
-            countBadge.className = 'badge badge-neutral';
+            countBadge.className = 'badge ' + (isFreePlan ? 'badge-danger' : 'badge-neutral');
             countBadge.style.marginLeft = '0.5rem';
-            countBadge.textContent = unread.length + ' unread';
+            countBadge.textContent = isFreePlan
+                ? unread.length + ' waiting — upgrade to read'
+                : unread.length + ' unread';
             const chatAction = actionsEl.querySelector('a[href^="chat.html"]');
             if (chatAction) chatAction.after(countBadge);
         }
     }
-
     document.addEventListener('DOMContentLoaded', async function () {
         const { data: { session } } = await _sb.auth.getSession();
 
