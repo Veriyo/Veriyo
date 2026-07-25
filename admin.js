@@ -756,8 +756,10 @@ services: [],
         plan: 'Visible',
         plan_price: 0,
         user_id: null,
-        status: 'Approved',
+status: 'Approved',
         source: 'Admin Added'
+    };
+
     if (!listing.workshop_name || !listing.suburb || !listing.city || !listing.province) {
         errorEl.textContent = 'Workshop name, suburb, city, and province are required.';
         errorEl.style.display = 'block';
