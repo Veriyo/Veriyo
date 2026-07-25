@@ -834,13 +834,31 @@ async function loadPendingMotoristSubmissions() {
         .or('status.is.null,status.eq.Pending')
         .order('id', { ascending: false });
 
-    if (error) {
+if (error) {
         statusMsg.textContent = 'Failed to load submissions. Please try refreshing.';
         statusMsg.className = 'status-message status-error';
         return;
     }
 
-    pendingMotoristRecords = data || [];
+    let records = data || [];
+
+    // Premium ("Dominant") workshops get their reports reviewed first —
+    // resolving them faster matters more for a paying workshop's
+    // reputation/response than for a free listing.
+    const workshopIds = [...new Set(records.map(r => r.workshop_id).filter(Boolean))];
+    if (workshopIds.length > 0) {
+        const { data: premiumWorkshops } = await supabaseClient
+            .from('Workshopprofiles')
+            .select('id')
+            .eq('plan', 'Dominant')
+            .in('id', workshopIds);
+        const premiumIdSet = new Set((premiumWorkshops || []).map(w => w.id));
+        records = records
+            .map((r, idx) => Object.assign({}, r, { _premiumReport: premiumIdSet.has(r.workshop_id) }, { _idx: idx }))
+            .sort((a, b) => (b._premiumReport - a._premiumReport) || (a._idx - b._idx));
+    }
+
+    pendingMotoristRecords = records;
     if (currentTab === 'motorist') {
         statusMsg.textContent = '';
         statusMsg.className = 'status-message';
@@ -899,8 +917,8 @@ function buildMotoristTableRow(record) {
 function buildMotoristCard(record) {
     return `
         <article class="admin-card" data-record-id="${record.id}">
-            <div class="admin-card-header">
-                <h3>${escapeHTML(displayValue(record.workshop_name))}</h3>
+<div class="admin-card-header">
+                <h3>${escapeHTML(displayValue(record.workshop_name))}${record._premiumReport ? ' <span class="wd-plan-badge wd-plan-badge--dominant" style="font-size:0.65rem; vertical-align:middle;">Premium</span>' : ''}</h3>
                 <span class="admin-card-date">${formatDate(record.repair_date)}</span>
             </div>
             <div class="admin-card-grid">
