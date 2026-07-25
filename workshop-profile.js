@@ -131,7 +131,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 function renderProfile(w, submissions) {
     document.title = `${w.workshop_name} — Veriyo`;
 
-    document.getElementById('profileName').textContent = w.workshop_name || 'Unnamed Workshop';
+document.getElementById('profileName').textContent = w.workshop_name || 'Unnamed Workshop';
+
+    if (w.photo_url) {
+        const heroPhoto = document.getElementById('profileHeroPhoto');
+        heroPhoto.src = w.photo_url;
+        heroPhoto.alt = w.workshop_name || 'Workshop photo';
+        heroPhoto.style.display = 'block';
+    }
     document.getElementById('profileLocation').textContent =
         [w.suburb, w.city, w.province].filter(Boolean).join(', ');
     document.getElementById('profileHours').textContent = w.operating_hours || 'Not specified';
