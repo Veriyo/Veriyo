@@ -290,16 +290,13 @@ if (subtitleEl) subtitleEl.textContent = 'Update your details below. Changes app
         if (submitBtn) submitBtn.textContent = 'Save Changes for Review';
     }
 
-    function populateFormForEdit(w) {
+function populateFormForEdit(w) {
         document.getElementById('lwName').value = w.workshop_name || '';
-        document.getElementById('lwAddress').value = w.physical_address || '';
         document.getElementById('lwSuburb').value = w.suburb || '';
         document.getElementById('lwCity').value = w.city || '';
         document.getElementById('lwProvince').value = w.province || '';
-        document.getElementById('lwContact').value = w.contact_number || '';
         document.getElementById('lwHours').value = w.operating_hours || '';
         document.getElementById('lwYears').value = w.years_operation || '';
-
         const specs = (w.specialisation || '').split(',').map(function (s) { return s.trim(); });
         document.querySelectorAll('input[name="lwSpec"]').forEach(function (box) {
             box.checked = specs.includes(box.value);
@@ -322,8 +319,7 @@ addedServices = Array.isArray(w.services) ? w.services.slice() : [];
         SERVICE_LIMIT = SERVICE_LIMIT_BY_PLAN[w.plan] || SERVICE_LIMIT_BY_PLAN.Visible;
         renderServiceCards();
 
-        // Real photos are a paid-plan feature. Free-tier editors see an
-        // upgrade note instead of the upload control.
+// Real photos: Growth + Premium. Bio/specialisation text: Premium only.
         existingPhotoUrl = w.photo_url || null;
         const photoWrap = document.getElementById('lwPhotoWrap');
         const photoUpsell = document.getElementById('lwPhotoUpsell');
@@ -338,6 +334,14 @@ addedServices = Array.isArray(w.services) ? w.services.slice() : [];
                 previewWrap.style.display = 'block';
             }
         }
+
+        const isPremiumPlan = w.plan === 'Dominant';
+        const bioWrap = document.getElementById('lwBioWrap');
+        const bioUpsell = document.getElementById('lwBioUpsell');
+        if (bioWrap) bioWrap.style.display = isPremiumPlan ? 'block' : 'none';
+        if (bioUpsell) bioUpsell.style.display = isPremiumPlan ? 'none' : 'block';
+        const bioInput = document.getElementById('lwBio');
+        if (bioInput) bioInput.value = w.description || '';
     }
 
     // ─── FORM VALIDATION & SUBMISSION ───────────────────────────────────────────
@@ -346,13 +350,11 @@ addedServices = Array.isArray(w.services) ? w.services.slice() : [];
         const specs = Array.from(document.querySelectorAll('input[name="lwSpec"]:checked')).map(function (el) { return el.value; });
 const gp = document.getElementById('lwGuaranteePeriod').value.trim();
 
-        const base = {
+const base = {
             workshop_name: document.getElementById('lwName').value.trim(),
-            physical_address: document.getElementById('lwAddress').value.trim(),
             suburb: document.getElementById('lwSuburb').value.trim(),
             city: document.getElementById('lwCity').value.trim(),
             province: document.getElementById('lwProvince').value,
-            contact_number: document.getElementById('lwContact').value.trim(),
             email_address: lwSession ? lwSession.user.email : '',
             user_id: lwSession ? lwSession.user.id : null,
             operating_hours: document.getElementById('lwHours').value.trim(),
@@ -361,10 +363,18 @@ const gp = document.getElementById('lwGuaranteePeriod').value.trim();
             rmi_registered: document.querySelector('input[name="lwRmi"]:checked')?.value || 'No',
             written_quote: document.querySelector('input[name="lwQuote"]:checked')?.value || 'No',
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
-guarantee_period: gp || null,
+            guarantee_period: gp || null,
 services: addedServices
         };
 
+        // Premium-only. The field itself is hidden for everyone else, so
+        // there's nothing to collect for a non-Premium editor — leaving
+        // description off the payload entirely means .update() never
+        // touches the column for them, rather than silently blanking it.
+        const bioWrap = document.getElementById('lwBioWrap');
+        if (bioWrap && bioWrap.style.display !== 'none') {
+            base.description = document.getElementById('lwBio').value.trim() || null;
+        }
         if (!editingListingId) {
             // Only a brand-new signup starts on the free plan and needs
             // admin approval. Editing an existing listing must never touch
@@ -384,12 +394,10 @@ services: addedServices
         const errorEl = document.getElementById('lwFormError');
         errorEl.style.display = 'none';
 
-        if (!data.workshop_name) { showFormError('Workshop name is required.'); return false; }
-        if (!data.physical_address) { showFormError('Physical address is required.'); return false; }
+if (!data.workshop_name) { showFormError('Workshop name is required.'); return false; }
         if (!data.suburb) { showFormError('Suburb is required.'); return false; }
         if (!data.city) { showFormError('City is required.'); return false; }
         if (!data.province) { showFormError('Please select a province.'); return false; }
-        if (!data.contact_number) { showFormError('Contact number is required.'); return false; }
         if (!data.operating_hours) { showFormError('Operating hours are required.'); return false; }
 
         const consent = document.getElementById('lwConsent');
