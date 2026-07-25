@@ -3545,6 +3545,29 @@ button, input, select, textarea {
     flex-wrap: wrap;
 }
 
+/* Fixed width AND height (not max-height) so object-fit: cover always
+   fills the box completely, regardless of the source photo's own
+   dimensions — this is what stops the white letterboxing. On mobile it's
+   full-width; above the existing 640px breakpoint it becomes a fixed
+   square that sits to the left, since .profile-hero is already a flex
+   row there and .profile-hero-body already takes the remaining space. */
+.profile-hero-photo {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    flex-shrink: 0;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 641px) {
+    .profile-hero-photo {
+        width: 240px;
+        height: 240px;
+        margin-bottom: 0;
+    }
+}
+
 .profile-rating-badge {
     position: absolute;
     top: 1rem;
