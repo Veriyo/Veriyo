@@ -93,8 +93,7 @@ renderQuickActions(actionsEl, [
             { href: 'my-listing.html', label: 'View My Listing', primary: true, icon: 'icon-listing' },
             { href: 'chat.html?mode=workshop', label: isFreePlan ? 'Messages (Locked)' : 'Open Chat', primary: false, icon: 'icon-chat' },
 { href: editHref, label: 'Update Details', primary: false, icon: 'icon-pencil' }
-].concat(isFreePlan ? [{ href: 'mailto:upgrade@veriyo.co.za?subject=Upgrade%20my%20Veriyo%20plan', label: 'Upgrade My Plan', primary: true, icon: null }] : []));
-
+].concat(isFreePlan ? [{ href: 'mailto:privacy@veriyo.co.za?subject=Upgrade%20my%20Veriyo%20plan', label: 'Upgrade My Plan', primary: true, icon: null }] : []));
         // Services You Offer — real services only, capped at 5, no icons invented.
         const allServices = [
             myWorkshop.price_oil_change != null ? 'Oil Change' : null,
