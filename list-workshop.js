@@ -8,15 +8,32 @@
     const _supabaseLW = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 let lwSession = null;
-    let addedServices = [];
-    const SERVICE_LIMIT = 8;
+let addedServices = [];
+    // Plan-gated service cap. New signups are always on the free Visible
+    // plan (3), so that's the default; editing an existing paid listing
+    // raises this once populateFormForEdit sees the real plan.
+    let SERVICE_LIMIT = 3;
+    const SERVICE_LIMIT_BY_PLAN = { Visible: 3, Trusted: 8, Dominant: 25 };
     let searchResultsVisible = false;
     let editingListingId = null;
-
-    function escapeHtml(str) {
+    let selectedPhotoFile = null;
+    let existingPhotoUrl = null;
+function escapeHtml(str) {
         return String(str || '')
             .replace(/&/g, '&amp;').replace(/</g, '&lt;')
             .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    async function uploadWorkshopPhoto(file, workshopId) {
+        const fileName = workshopId + '/' + Date.now() + '_' + file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+        const { error } = await _supabaseLW.storage
+            .from('workshop-photos')
+            .upload(fileName, file);
+        if (error) {
+            console.error('Photo upload error:', error);
+            return null;
+        }
+        return _supabaseLW.storage.from('workshop-photos').getPublicUrl(fileName).data.publicUrl;
     }
 
     // ─── WORKSHOP SEARCH ─────────────────────────────────────────────────────
@@ -136,11 +153,24 @@ let lwSession = null;
             });
         });
 
-        const addRow = document.getElementById('lwServiceAddRow');
+const addRow = document.getElementById('lwServiceAddRow');
+        let limitHint = document.getElementById('lwServiceLimitHint');
         if (addedServices.length >= SERVICE_LIMIT) {
             if (addRow) addRow.style.display = 'none';
+            if (!limitHint && addRow && addRow.parentNode) {
+                limitHint = document.createElement('p');
+                limitHint.id = 'lwServiceLimitHint';
+                limitHint.style.cssText = 'font-size:0.8rem; color:var(--text-secondary); margin-top:0.5rem;';
+                addRow.parentNode.insertBefore(limitHint, addRow.nextSibling);
+            }
+            if (limitHint) {
+                limitHint.textContent = SERVICE_LIMIT >= SERVICE_LIMIT_BY_PLAN.Dominant
+                    ? 'You have reached the service limit for this plan.'
+                    : 'You have reached your plan\'s service limit (' + SERVICE_LIMIT + '). Upgrade to list more.';
+            }
         } else {
             if (addRow) addRow.style.display = 'flex';
+            if (limitHint) limitHint.textContent = '';
         }
     }
 
@@ -256,7 +286,7 @@ let lwSession = null;
         const subtitleEl = document.getElementById('lwFormSubtitle');
         const submitBtn = document.getElementById('lwSubmitBtn');
         if (titleEl) titleEl.textContent = 'Edit Your Workshop';
-        if (subtitleEl) subtitleEl.textContent = 'Update your details below. Changes are reviewed before going live again.';
+if (subtitleEl) subtitleEl.textContent = 'Update your details below. Changes apply immediately once saved.';
         if (submitBtn) submitBtn.textContent = 'Save Changes for Review';
     }
 
@@ -288,17 +318,35 @@ let lwSession = null;
             document.getElementById('lwGuaranteePeriod').value = w.guarantee_period || '';
         }
 
-        addedServices = Array.isArray(w.services) ? w.services.slice() : [];
+addedServices = Array.isArray(w.services) ? w.services.slice() : [];
+        SERVICE_LIMIT = SERVICE_LIMIT_BY_PLAN[w.plan] || SERVICE_LIMIT_BY_PLAN.Visible;
         renderServiceCards();
+
+        // Real photos are a paid-plan feature. Free-tier editors see an
+        // upgrade note instead of the upload control.
+        existingPhotoUrl = w.photo_url || null;
+        const photoWrap = document.getElementById('lwPhotoWrap');
+        const photoUpsell = document.getElementById('lwPhotoUpsell');
+        const isPaidPlan = w.plan && w.plan !== 'Visible';
+        if (photoWrap) photoWrap.style.display = isPaidPlan ? 'block' : 'none';
+        if (photoUpsell) photoUpsell.style.display = isPaidPlan ? 'none' : 'block';
+        if (isPaidPlan && existingPhotoUrl) {
+            const previewWrap = document.getElementById('lwPhotoPreviewWrap');
+            const preview = document.getElementById('lwPhotoPreview');
+            if (previewWrap && preview) {
+                preview.src = existingPhotoUrl;
+                previewWrap.style.display = 'block';
+            }
+        }
     }
 
     // ─── FORM VALIDATION & SUBMISSION ───────────────────────────────────────────
 
     function collectFormData() {
         const specs = Array.from(document.querySelectorAll('input[name="lwSpec"]:checked')).map(function (el) { return el.value; });
-        const gp = document.getElementById('lwGuaranteePeriod').value.trim();
+const gp = document.getElementById('lwGuaranteePeriod').value.trim();
 
-        return {
+        const base = {
             workshop_name: document.getElementById('lwName').value.trim(),
             physical_address: document.getElementById('lwAddress').value.trim(),
             suburb: document.getElementById('lwSuburb').value.trim(),
@@ -313,13 +361,23 @@ let lwSession = null;
             rmi_registered: document.querySelector('input[name="lwRmi"]:checked')?.value || 'No',
             written_quote: document.querySelector('input[name="lwQuote"]:checked')?.value || 'No',
             guarantee_work: document.querySelector('input[name="lwGuarantee"]:checked')?.value || 'No',
-            guarantee_period: gp || null,
-services: addedServices,
-            plan: 'Visible',
-            plan_price: 0,
-            status: 'Pending',
-            source: 'Workshop Registered'
+guarantee_period: gp || null,
+services: addedServices
         };
+
+        if (!editingListingId) {
+            // Only a brand-new signup starts on the free plan and needs
+            // admin approval. Editing an existing listing must never touch
+            // plan, plan_price, or status — those belong to whatever admin
+            // already set, paid or not, and editing your hours shouldn't
+            // silently downgrade or unpublish you.
+            base.plan = 'Visible';
+            base.plan_price = 0;
+            base.status = 'Pending';
+            base.source = 'Workshop Registered';
+        }
+
+        return base;
     }
 
     function validateForm(data) {
@@ -358,6 +416,21 @@ async function submitListing(data) {
         submitBtn.disabled = true;
         submitBtn.textContent = editingListingId ? 'Saving…' : 'Submitting…';
 
+        // Only ever reached in edit mode, since the upload field is hidden
+        // for new (always-Free) signups. Storage RLS is the real gate on
+        // whether this succeeds — a Free-tier workshop's upload is
+        // rejected server-side even if this ran.
+        if (selectedPhotoFile && editingListingId) {
+            const photoErrorEl = document.getElementById('lwPhotoError');
+            const uploadedUrl = await uploadWorkshopPhoto(selectedPhotoFile, editingListingId);
+            if (uploadedUrl) {
+                data.photo_url = uploadedUrl;
+            } else if (photoErrorEl) {
+                photoErrorEl.textContent = 'Photo upload failed — your other details will still be saved.';
+                photoErrorEl.style.display = 'block';
+            }
+        }
+
   const referralCode = localStorage.getItem('veriyo_ref') || null;
   const visitorId = localStorage.getItem('veriyo_visitor_id') || null;
   const { data: insertedRow, error } = editingListingId
@@ -381,7 +454,7 @@ async function submitListing(data) {
             if (editingListingId) {
                 document.querySelector('#lw-success-section h3').textContent = 'Changes Submitted!';
                 document.querySelector('#lw-success-section p').textContent =
-                    'Your updated details have been sent for review. Your listing will stay live with its previous details until the update is approved.';
+'Your updated details are live. Your plan and listing status were not affected.';
             }
         }
     }
@@ -452,10 +525,37 @@ const editParam = new URLSearchParams(window.location.search).get('edit');
             });
         }
 
-        // Add service button
+// Add service button
         const addServiceBtn = document.getElementById('lwAddServiceBtn');
         if (addServiceBtn) {
             addServiceBtn.addEventListener('click', addService);
+        }
+
+        // Workshop photo upload (Growth/Premium only — field is hidden
+        // entirely for Free-tier editors via populateFormForEdit)
+        const photoInput = document.getElementById('lwPhotoInput');
+        if (photoInput) {
+            photoInput.addEventListener('change', function () {
+                const errorEl = document.getElementById('lwPhotoError');
+                errorEl.style.display = 'none';
+                const file = photoInput.files && photoInput.files[0];
+                if (!file) return;
+
+                if (file.size > 5 * 1024 * 1024) {
+                    errorEl.textContent = 'Photo must be under 5MB.';
+                    errorEl.style.display = 'block';
+                    photoInput.value = '';
+                    return;
+                }
+
+                selectedPhotoFile = file;
+                const previewWrap = document.getElementById('lwPhotoPreviewWrap');
+                const preview = document.getElementById('lwPhotoPreview');
+                if (previewWrap && preview) {
+                    preview.src = URL.createObjectURL(file);
+                    previewWrap.style.display = 'block';
+                }
+            });
         }
 
         // Location button
