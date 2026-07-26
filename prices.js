@@ -11,6 +11,7 @@ let liveDataset = [];
 
 let isMotoristViewer = false;
 let myWorkshopId = null;
+let myWorkshopPlan = null;
 document.addEventListener('DOMContentLoaded', async () => {
 if (document.getElementById('pricesContainer')) {
         const { data: { session: pricesSession } } = await _supabasePrices.auth.getSession();
@@ -24,17 +25,19 @@ if (document.getElementById('pricesContainer')) {
 
             // Needed to gate the "Respond to this report" button — only the
             // workshop a report is actually about should ever see it, and
-            // motorists must never see it at all.
+            // only on a paid plan. Every workshop gets notified when a
+            // report about them is approved; only Growth/Premium can
+            // actually respond.
             if (!isMotoristViewer) {
                 const { data: myWorkshopRows } = await _supabasePrices
                     .from('Workshopprofiles')
-                    .select('id')
+                    .select('id, plan')
                     .eq('user_id', pricesSession.user.id)
                     .limit(1);
                 myWorkshopId = (myWorkshopRows && myWorkshopRows.length > 0) ? myWorkshopRows[0].id : null;
+                myWorkshopPlan = (myWorkshopRows && myWorkshopRows.length > 0) ? myWorkshopRows[0].plan : null;
             }
         }
-
         initPriceListingFilters();
         // Fetch live verified records from Supabase and merge with hardcoded set
         const { data, error } = await _supabasePrices
@@ -100,8 +103,8 @@ notes: row.notes || '',
 
             // Deep link from a workshop notification: jump straight to
             // responding to the specific report that was flagged
-            const reportParam = new URLSearchParams(window.location.search).get('report');
-            if (reportParam && myWorkshopId) {
+const reportParam = new URLSearchParams(window.location.search).get('report');
+            if (reportParam && myWorkshopId && myWorkshopPlan && myWorkshopPlan !== 'Visible') {
                 const targetId = parseInt(reportParam, 10);
                 const targetEntry = liveDataset.find(e => e.id === targetId);
                 if (targetEntry && targetEntry.workshopId === myWorkshopId) {
@@ -300,12 +303,15 @@ const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops')
                     <p style="font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.03em; color:var(--text-secondary); margin-bottom:0.25rem;">Response from the workshop</p>
                     <p style="font-size:0.85rem; color:var(--text-primary); white-space:pre-wrap;">${escapeHTML(entry.workshopResponse)}</p>
                 </div>` : ''}
-                ${(!isMotoristViewer && myWorkshopId && entry.workshopId && entry.workshopId === myWorkshopId) ? `<button onclick="openRespondModal(${entry.id})"
+${(!isMotoristViewer && myWorkshopId && entry.workshopId && entry.workshopId === myWorkshopId && myWorkshopPlan && myWorkshopPlan !== 'Visible') ? `<button onclick="openRespondModal(${entry.id})"
                     style="background:none; border:none; color:var(--primary-accent);
                     font-size:0.75rem; cursor:pointer; padding:0; margin-top:0.4rem;
                     text-decoration:underline; font-weight:600;">
                     ${entry.workshopResponse ? 'Edit your response' : 'Respond to this report'}
                 </button>` : ''}
+                ${(!isMotoristViewer && myWorkshopId && entry.workshopId && entry.workshopId === myWorkshopId && (!myWorkshopPlan || myWorkshopPlan === 'Visible')) ? `<p style="font-size:0.75rem; color:var(--text-secondary); margin-top:0.4rem;">
+                    This report is about your workshop. <a href="mailto:privacy@veriyo.co.za?subject=Upgrade%20my%20Veriyo%20plan" style="color:var(--secondary-accent); text-decoration:underline;">Upgrade</a> to respond to it.
+                </p>` : ''}
                 ${isMotoristViewer ? '' : `<button onclick="openClaimModal('${escapeHTML(entry.workshopName)}')"
                     style="background:none; border:none; color:var(--text-secondary);
                     font-size:0.75rem; cursor:pointer; padding:0; margin-top:0.25rem;
