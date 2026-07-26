@@ -630,8 +630,8 @@ button, input, select, textarea {
     gap: clamp(1.5rem, 8vw, 4rem);
     padding: 0.5rem 0;
 }
-    .bottom-nav-legal {
-        display: flex !important;
+.bottom-nav-legal {
+        display: none !important;
     }
     .bottom-nav-item {
         padding: 0.4rem 0.25rem;
