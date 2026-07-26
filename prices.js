@@ -101,15 +101,23 @@ notes: row.notes || '',
                 });
             }
 
-            // Deep link from a workshop notification: jump straight to
-            // responding to the specific report that was flagged
-const reportParam = new URLSearchParams(window.location.search).get('report');
-            if (reportParam && myWorkshopId && myWorkshopPlan && myWorkshopPlan !== 'Visible') {
+// Deep link from a workshop notification: jump to and
+            // highlight the specific report that was flagged, so they
+            // can actually read it first. Responding is a separate,
+            // deliberate click on the existing "Respond to this report"
+            // button on the card itself — never auto-opened.
+            const reportParam = new URLSearchParams(window.location.search).get('report');
+            if (reportParam) {
                 const targetId = parseInt(reportParam, 10);
-                const targetEntry = liveDataset.find(e => e.id === targetId);
-                if (targetEntry && targetEntry.workshopId === myWorkshopId) {
-                    openRespondModal(targetId);
-                }
+                setTimeout(() => {
+                    const targetCard = document.querySelector(`[data-submission-id="${targetId}"]`);
+                    if (targetCard) {
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetCard.style.outline = '2px solid var(--primary-accent)';
+                        targetCard.style.outlineOffset = '4px';
+                        setTimeout(() => { targetCard.style.outline = ''; targetCard.style.outlineOffset = ''; }, 4000);
+                    }
+                }, 100);
             }
         } else {
             // Fallback rendering phase if live download encounters no records
@@ -258,8 +266,8 @@ const pricingFairnessMarkup = entry.feltOvercharged === true
 const savedWorkshops = JSON.parse(localStorage.getItem('veriyo_saved_workshops') || '[]');
         const isSaved = savedWorkshops.includes(entry.id);
 
-        return `
-            <article class="price-card">
+return `
+            <article class="price-card" data-submission-id="${entry.id}">
                 <div class="card-header">
                     <div>
                         <h3 class="workshop-title">${entry.recentlyActive ? '<span style="color:var(--success-color); font-size:0.7rem; margin-right:0.4rem;">●</span>' : ''}${escapeHTML(entry.workshopName)}</h3>
