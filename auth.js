@@ -228,9 +228,9 @@ if (bellEl) {
                     return;
                 }
 
-                const { data: notifRows } = await _supabaseAuthNav
+const { data: notifRows } = await _supabaseAuthNav
                     .from('workshop_notifications')
-                    .select('id, submission_id, message, is_read, created_at')
+                    .select('id, submission_id, type, message, is_read, created_at')
                     .eq('workshop_id', myWorkshopId)
                     .order('created_at', { ascending: false })
                     .limit(20);
@@ -243,8 +243,11 @@ if (bellEl) {
                 listEl.style.textAlign = 'left';
                 listEl.style.padding = '0';
                 listEl.innerHTML = notifRows.map(function (n) {
+                    const notifLink = n.type === 'chat_locked'
+                        ? 'chat.html?mode=workshop'
+                        : 'prices.html?report=' + encodeURIComponent(n.submission_id);
                     return [
-                        '<a href="prices.html?report=' + encodeURIComponent(n.submission_id) + '" ',
+                        '<a href="' + notifLink + '" ',
                         '   data-notif-id="' + n.id + '" class="veNotifItem"',
                         '   style="display:block; padding:0.75rem; margin-bottom:0.5rem; border-radius:6px;',
                         '   background:' + (n.is_read ? 'transparent' : 'var(--bg-color)') + ';',
