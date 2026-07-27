@@ -3555,6 +3555,7 @@ button, input, select, textarea {
     width: 100%;
     aspect-ratio: 1 / 1;
     height: auto;
+       align-self: flex-start;
     object-fit: cover;
     object-position: center 65%;
     border-radius: var(--radius);
