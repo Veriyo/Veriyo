@@ -133,8 +133,7 @@ function renderProfile(w, submissions) {
 
 document.getElementById('profileName').textContent = w.workshop_name || 'Unnamed Workshop';
 
-    if (w.photo_url) {
-// After
+
 if (w.photo_url && w.plan && w.plan !== 'Visible') {
     const heroPhoto = document.getElementById('profileHeroPhoto');
     heroPhoto.src = w.photo_url;
