@@ -30,8 +30,17 @@
             color: var(--text-secondary);
             font-size: 1.05rem;
             text-align: center;
-            margin-bottom: 3rem;
+            margin-bottom: 0.75rem;
             max-width: 440px;
+        }
+        .welcome-subtag {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            text-align: center;
+            margin-bottom: 3rem;
         }
         .welcome-cards {
             display: flex;
@@ -111,8 +120,42 @@
             opacity: 0.85;
             transform: translateY(-2px);
         }
-        .welcome-footer-note {
+        .welcome-benefits {
+            display: flex;
+            gap: 0.75rem;
+            width: 100%;
+            max-width: 640px;
             margin-top: 2.5rem;
+        }
+        .welcome-benefit {
+            flex: 1;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.1rem 1rem;
+            text-align: center;
+        }
+        .welcome-benefit h3 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+        }
+        .welcome-benefit p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .welcome-mission-note {
+            max-width: 480px;
+            margin-top: 1.75rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-align: center;
+            line-height: 1.5;
+        }
+        .welcome-footer-note {
+            margin-top: 2rem;
             font-size: 0.8rem;
             color: var(--text-secondary);
             text-align: center;
@@ -136,11 +179,24 @@
             .welcome-card p { font-size: 0.78rem; line-height: 1.35; margin-bottom: 0.2rem; }
             .welcome-card-motorist .welcome-card-btn,
             .welcome-card-manager .welcome-card-btn { padding: 0.5rem 1.2rem; font-size: 0.82rem; }
+            .welcome-subtag { margin-bottom: 1.5rem; font-size: 0.75rem; }
+            .welcome-benefits { flex-direction: column; gap: 0.6rem; margin-top: 1.5rem; }
+            .welcome-benefit { padding: 0.85rem 1rem; }
+            .welcome-mission-note { font-size: 0.78rem; margin-top: 1.25rem; }
             .welcome-footer-note { margin-top: 1rem; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
+<nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo">
+            <img src="logo.png" alt="Veriyo">
+        </a>
+        <div class="nav-auth-item">
+            <a href="auth.html" class="nav-signin-link">Sign In</a>
+        </div>
+    </nav>
+
     <div id="welcomeLoading" style="min-height:calc(100vh - 60px); display:flex; align-items:center; justify-content:center; color:var(--text-secondary);">
         Loading…
     </div>
@@ -152,27 +208,50 @@
             <h1>Veriyo</h1>
         </div>
         <p class="welcome-tagline">
-            South Africa's trusted platform for transparent car repair pricing.
-            Welcome — choose how you'd like to continue.
+            Car repair pricing in South Africa is rarely upfront. Veriyo makes it visible —
+            real prices from real drivers, so you know what's fair before you pay.
         </p>
+        <p class="welcome-subtag">Choose how you'd like to continue.</p>
         <div class="welcome-cards">
             <div class="welcome-card welcome-card-motorist">
                 <div class="welcome-card-icon">&#128663;</div>
                 <h2>I'm a Motorist</h2>
-                <p>Browse real repair prices paid by drivers across South Africa,
-                or report your own experience to help others.</p>
+                <p>Compare real repair prices paid by other South African drivers,
+                and report your own experience to help the next person avoid overpaying.</p>
                 <a href="motorist-home.html" class="welcome-card-btn">Continue as Motorist</a>
             </div>
             <div class="welcome-card welcome-card-manager">
                 <div class="welcome-card-icon">&#128295;</div>
                 <h2>I'm a Workshop Manager</h2>
-                <p>List your workshop, publish your service pricing, and build
-                credibility with verified South African vehicle owners.</p>
+                <p>List your workshop, publish honest pricing, and earn the trust of
+                drivers who are comparing their options before they choose you.</p>
                 <a href="workshop-home.html" class="welcome-card-btn">Continue as Workshop</a>
             </div>
         </div>
+
+        <div class="welcome-benefits">
+            <div class="welcome-benefit">
+                <h3>Real Prices</h3>
+                <p>Actual amounts drivers paid — not estimates.</p>
+            </div>
+            <div class="welcome-benefit">
+                <h3>No Guessing</h3>
+                <p>Compare workshops before you commit to one.</p>
+            </div>
+            <div class="welcome-benefit">
+                <h3>Open Pricing</h3>
+                <p>Workshops publish their rates for everyone to see.</p>
+            </div>
+        </div>
+
+        <p class="welcome-mission-note">
+            Veriyo exists to make repair pricing clear for every South African driver —
+            and to give honest workshops a place to prove it.
+        </p>
+
         <p class="welcome-footer-note">
             &copy; Veriyo | Built for South African drivers &nbsp;&middot;&nbsp;
+            <a href="help.html">Help</a> &nbsp;&middot;&nbsp;
             <a href="privacy.html">Privacy Policy</a>
         </p>
     </main>
