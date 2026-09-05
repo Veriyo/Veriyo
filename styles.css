@@ -61,10 +61,10 @@ button, input, select, textarea {
 
 /* Home Page UI Components */
 .hero {
-    text-align: center;
-    padding: 4rem 1rem;
+    text-align: left;
+    padding: 4rem 1rem 4rem 0;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .hero h1 {
@@ -83,7 +83,8 @@ button, input, select, textarea {
 .cta-group {
     display: flex;
     gap: 1.5rem;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
 }
 
 .hero-split {
@@ -1265,73 +1266,6 @@ button, input, select, textarea {
     }
 }
 
-/* ==========================================================================
-   Floating Help Button & Modal
-   ========================================================================== */
-
-.help-float-btn {
-    position: fixed;
-    top: 72px;
-    right: 1rem;
-    z-index: 990;
-    background: var(--danger-color);
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    padding: 0.4rem 0.9rem;
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    transition: var(--transition);
-}
-
-.help-float-btn:hover {
-    opacity: 0.9;
-    transform: translateY(-1px);
-}
-
-.help-float-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 5000;
-    background: rgba(0,0,0,0.65);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-}
-
-.help-float-modal.hidden {
-    display: none !important;
-}
-
-.help-float-modal-inner {
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 2rem;
-    max-width: 400px;
-    width: 100%;
-    text-align: center;
-    position: relative;
-}
-
-.help-float-close {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 1rem;
-    cursor: pointer;
-    transition: color 0.15s;
-}
-
-.help-float-close:hover {
-    color: var(--text-primary);
-}
 /* ==========================================================================
    Admin Dashboard
    ========================================================================== */
