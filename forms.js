@@ -10,6 +10,14 @@ const _supabase = supabase.createClient(supabaseUrl, supabaseKey)
 const _refParam = new URLSearchParams(window.location.search).get('ref');
 if (_refParam) localStorage.setItem('veriyo_ref', _refParam);
 
+// Reports stay submittable while signed out, but tagging a report with the
+// signed-in user's id (when there is one) is what lets the motorist
+// homepage's "Recent Activity" panel show a person their own reports later.
+async function _currentUserId() {
+    const { data } = await _supabase.auth.getSession();
+    return data && data.session ? data.session.user.id : null;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const reportRepairForm = document.getElementById('reportRepairForm');
     const listWorkshopForm = document.getElementById('listWorkshopForm');
@@ -173,6 +181,7 @@ const feltOverchargedRadio = document.querySelector('input[name="feltOvercharged
 
         const submission = {
                         workshop_id: _prefillWorkshopId || null,
+            user_id: await _currentUserId(),
             workshop_name: document.getElementById('workshopName')?.value.trim() || '',
             suburb: document.getElementById('suburb')?.value.trim() || '',
             city: document.getElementById('city')?.value.trim() || '',
