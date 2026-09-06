@@ -22,6 +22,17 @@
             letter-spacing: 0.05em;
             margin: 0 0 1rem;
         }
+        .activity-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-item-title { font-size: 0.9rem; font-weight: 600; margin: 0 0 0.15rem; }
+        .activity-item-meta { font-size: 0.8rem; color: var(--text-secondary); margin: 0; }
     </style>
 </head>
 <body>
@@ -162,7 +173,7 @@
                 </div>
                 <div class="dashboard-panel">
                     <h3>Recent Activity</h3>
-                    <div class="empty-state" style="padding:1.5rem 0.5rem;">
+                    <div id="recentActivityPanel" class="empty-state" style="padding:1.5rem 0.5rem;">
                         <p style="font-size:0.9rem;">Nothing to show yet — your searches and reports will appear here.</p>
                     </div>
                 </div>
@@ -290,7 +301,57 @@
             const firstName = profile && profile.first_name ? profile.first_name : 'there';
             document.getElementById('heroHeading').textContent = 'Hey there, ' + firstName + ' 👋';
             document.getElementById('heroSubtitle').textContent = 'Find fair repair prices, trusted workshops and share your experience.';
+
+            loadRecentActivity(session);
         })();
+
+        // Replaces the static "nothing to show yet" placeholder with the
+        // motorist's own recent repair reports, once we know who they are.
+        async function loadRecentActivity(session) {
+            const panel = document.getElementById('recentActivityPanel');
+            if (!panel) return;
+
+            const { data, error } = await _supabaseSuggestions
+                .from('Submissions')
+                .select('workshop_name, repair_type, amount_paid, status, created_at')
+                .eq('user_id', session.user.id)
+                .not('repair_type', 'is', null)
+                .order('created_at', { ascending: false })
+                .limit(5);
+
+            if (error || !data || data.length === 0) return; // keep the existing placeholder text
+
+            function escHtml(s) {
+                return String(s || '')
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+            function badgeClass(status) {
+                const s = (status || '').toLowerCase();
+                if (s === 'approved') return 'badge-success';
+                if (s === 'rejected') return 'badge-danger';
+                return 'badge-neutral';
+            }
+            function timeAgo(iso) {
+                const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+                if (days <= 0) return 'Today';
+                if (days === 1) return 'Yesterday';
+                if (days < 30) return days + ' days ago';
+                const months = Math.floor(days / 30);
+                return months + ' month' + (months === 1 ? '' : 's') + ' ago';
+            }
+
+            panel.className = '';
+            panel.innerHTML = data.map(function (r) {
+                return '<div class="activity-item">' +
+                    '<div>' +
+                        '<p class="activity-item-title">' + escHtml(r.repair_type) + ' at ' + escHtml(r.workshop_name) + '</p>' +
+                        '<p class="activity-item-meta">R' + Number(r.amount_paid || 0).toLocaleString('en-ZA') + ' &middot; ' + timeAgo(r.created_at) + '</p>' +
+                    '</div>' +
+                    '<span class="badge ' + badgeClass(r.status) + '">' + escHtml(r.status || 'Pending') + '</span>' +
+                '</div>';
+            }).join('');
+        }
 
         // Decorative search bar on the signed-in dashboard — routes into the
         // existing Prices page, where the real filtering already lives.
