@@ -3878,8 +3878,16 @@ button, input, select, textarea {
 .feature-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.4rem; }
 .feature-card p { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; }
 
-@media (max-width: 900px) { .feature-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) {
+    .feature-grid { grid-template-columns: repeat(2, 1fr); }
+    .feature-icon-circle { width: 56px; height: 56px; }
+    .feature-icon-circle svg { width: 32px; height: 32px; }
+}
+@media (max-width: 560px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .feature-icon-circle { width: 48px; height: 48px; }
+    .feature-icon-circle svg { width: 28px; height: 28px; }
+}
 
 /* Value / info banner — used for "Be a smarter car owner", "List your workshop", thank-you strips */
 .value-banner {
