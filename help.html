@@ -7,7 +7,6 @@
     <title>Emergency Repair Help - Veriyo</title>
     <link rel="stylesheet" href="styles.css">
   <style>
-    /* Reset to match screenshot */
     :root{
         --bg-color: #1A2637;
         --surface-color: #1E2D43;
@@ -16,49 +15,24 @@
         --text-secondary: #8AA0B8;
         --primary-accent: #FFC44D;
         --blue: #6FA8FF;
-        --blue-dark: #1E3A5F;
     }
+    *{ box-sizing:border-box; }
+    html{ -webkit-text-size-adjust:100%; }
     body{
         margin:0;
         background: var(--bg-color);
         font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        overflow-x:hidden;
     }
 
-    /* Top error banner - exactly like screenshot - REMOVE IF NOT NEEDED */
-    .top-error-bar{
-        background:#1E2D40;
-        border-bottom:1px solid #25364F;
-        color:#A8B8CC;
-        font-size:0.85rem;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:0.6rem;
-        padding:0.7rem 1rem;
-        position:relative;
-    }
-    .top-error-bar svg{ flex-shrink:0 }
-    .top-error-bar .try-again{
-        position:absolute;
-        right:1.2rem;
-        display:flex;
-        align-items:center;
-        gap:0.35rem;
-        color:#8DB1E0;
-        font-size:0.85rem;
-        cursor:pointer;
-        text-decoration:none;
-    }
-
-    /* HERO - PRECISE MATCH */
+    /* HERO - fluid, never stacks */
     .help-hero{
         position:relative;
         overflow:hidden;
         background:#0F1C2E;
-        padding: 2.2rem 1.5rem 1.9rem;
+        padding: clamp(1.4rem, 3vw, 2.2rem) clamp(0.8rem, 2.5vw, 1.5rem) clamp(1.2rem, 2.5vw, 1.9rem);
         border-bottom:1px solid #1E2E44;
     }
-    /* Blue diagonal stripes left - solid like image */
     .help-hero-stripe{
         position:absolute;
         left:-6%;
@@ -71,11 +45,9 @@
             #20406F 34% 62%, 
             transparent 62% 100%);
         transform: skewX(-18deg);
-        opacity:1;
         pointer-events:none;
         z-index:0;
     }
-    /* Right side breakdown image */
     .help-hero-bg{
         position:absolute;
         right:0;
@@ -114,76 +86,86 @@
         display:flex;
         align-items:center;
         justify-content:center;
-        gap:0.8rem;
+        gap: clamp(0.45rem, 1.5vw, 0.8rem);
         margin-bottom:0.2rem;
     }
     .help-hero-icon-row svg{
         color:#FFC233;
-        width:42px;
-        height:42px;
+        width: clamp(26px, 5vw, 42px);
+        height: clamp(26px, 5vw, 42px);
         flex-shrink:0;
     }
     .help-hero h1{
-        font-size:2.35rem;
+        font-size: clamp(1.25rem, 3.2vw + 0.4rem, 2.35rem);
         font-weight:800;
         margin:0;
         line-height:1.15;
         color:#F0F4FA;
         letter-spacing:-0.02em;
+        white-space:nowrap;
     }
     .help-blue{ color: var(--blue); }
 
     .help-hero-sub{
         color:#9CB0C7;
-        font-size:1.05rem;
-        margin:0.55rem 0 1.6rem;
+        font-size: clamp(0.82rem, 1.6vw + 0.3rem, 1.05rem);
+        margin: clamp(0.3rem, 1vw, 0.55rem) 0 clamp(0.9rem, 2vw, 1.6rem);
         font-weight:400;
     }
 
+    /* Features - KEEP ROW, SCALE DOWN */
     .help-hero-features{
-        display:flex;
+        display:flex !important;
+        flex-direction:row !important;
+        flex-wrap:nowrap !important;
         align-items:flex-start;
         justify-content:center;
         gap:0;
         margin:0 auto;
         max-width:700px;
+        width:100%;
     }
     .help-hero-feature{
         display:flex;
         align-items:flex-start;
-        gap:0.65rem;
+        gap: clamp(0.35rem, 0.8vw, 0.65rem);
         text-align:left;
-        padding:0 1.7rem;
+        padding:0 clamp(0.5rem, 1.8vw, 1.7rem);
         border-right:1px solid rgba(255,255,255,0.08);
+        flex:1 1 0;
+        min-width:0;
     }
     .help-hero-feature:last-child{ border-right:none; }
     .help-hero-feature svg{
         color: var(--blue);
         flex-shrink:0;
         margin-top:0.15rem;
-        width:26px;
-        height:26px;
+        width: clamp(16px, 2.8vw, 26px);
+        height: clamp(16px, 2.8vw, 26px);
     }
     .help-hero-feature strong{
         display:block;
         color:#D7E2F0;
-        font-size:0.88rem;
+        font-size: clamp(0.68rem, 1.1vw + 0.3rem, 0.88rem);
         font-weight:600;
         line-height:1.2;
+        white-space:nowrap;
     }
     .help-hero-feature span{
         color:#7E91A8;
-        font-size:0.76rem;
+        font-size: clamp(0.58rem, 0.9vw + 0.25rem, 0.76rem);
         line-height:1.3;
         display:block;
         margin-top:0.15rem;
+        white-space:nowrap;
     }
 
-    /* FORM CARD - PRECISE MATCH */
+    /* FORM - fluid */
     .help-container{
         max-width: 700px;
-        margin: 1.8rem auto 2.5rem;
-        padding:0 1rem;
+        width: min(700px, calc(100% - 1.5rem));
+        margin: clamp(1rem, 3vw, 1.8rem) auto clamp(1.5rem, 3vw, 2.5rem);
+        padding:0;
         position:relative;
         z-index:1;
     }
@@ -191,17 +173,17 @@
         background:#1E2D43;
         border:1px solid #2A3E5E;
         border-radius:12px;
-        padding:1.5rem;
+        padding: clamp(1rem, 2.5vw, 1.5rem);
         box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
-    .form-group{ margin-bottom:1.25rem; }
-    .form-group:last-of-type{ margin-bottom:1.35rem; }
+    .form-group{ margin-bottom: clamp(0.9rem, 2vw, 1.25rem); }
+    .form-group:last-of-type{ margin-bottom: clamp(0.9rem, 2vw, 1.35rem); }
     .form-group label{
         display:flex;
         align-items:center;
         gap:0.55rem;
         font-weight:600;
-        font-size:0.92rem;
+        font-size: clamp(0.82rem, 1.2vw + 0.4rem, 0.92rem);
         margin-bottom:0.5rem;
         color:#E6EEF7;
     }
@@ -218,32 +200,29 @@
         padding:0.82rem 0.95rem;
         border:1px solid #2D415E;
         border-radius:8px;
-        font-size:0.93rem;
+        font-size: clamp(0.84rem, 1vw + 0.4rem, 0.93rem);
         background:#162233;
         color:#C9D6E6;
         transition:border-color 0.2s, box-shadow 0.2s;
-        box-sizing:border-box;
         font-family:inherit;
     }
     .form-group select{
         appearance:none;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237E91A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237E91A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
         background-repeat:no-repeat;
         background-position: right 0.9rem center;
         padding-right:2.2rem;
     }
-    .form-group ::placeholder{ color:#6B7E96; }
+    .form-group textarea{
+        min-height: clamp(80px, 15vw, 105px);
+        resize:vertical;
+    }
     .form-group select:focus,
     .form-group input:focus,
     .form-group textarea:focus{
         outline:none;
-        border-color:#3A5A85;
-        box-shadow:0 0 0 3px rgba(111,168,255,0.12);
-    }
-    .form-group textarea{
-        min-height:96px;
-        resize:vertical;
-        line-height:1.45;
+        border-color: var(--blue);
+        box-shadow:0 0 0 3px rgba(111,168,255,0.15);
     }
 
     .btn-search{
@@ -251,37 +230,54 @@
         align-items:center;
         justify-content:center;
         gap:0.6rem;
-        background:#FFC44D;
-        color:#121A28;
-        padding:0.88rem 2rem;
+        background: var(--primary-accent);
+        color:#101828;
+        padding: clamp(0.7rem, 1.5vw, 0.9rem) 1.5rem;
         border:none;
         border-radius:8px;
-        font-size:0.96rem;
+        font-size: clamp(0.88rem, 1.1vw + 0.4rem, 1rem);
         font-weight:700;
         cursor:pointer;
         width:100%;
-        transition: transform 0.1s, filter 0.15s;
-        letter-spacing:0.01em;
+        transition: opacity 0.2s, transform 0.1s;
     }
-    .btn-search:hover{ filter:brightness(0.95); transform: translateY(-1px); }
-    .btn-search svg{ width:18px; height:18px; }
+    .btn-search:hover{ opacity:0.88; transform:translateY(-1px); }
 
-    /* Hide old split layout */
-    .hero-split{ display:none !important; }
-    .hero-split-image{ display:none !important; }
-
-    @media (max-width: 768px){
-        .help-hero{ padding:1.8rem 1rem 1.5rem; }
-        .help-hero-bg{ width:100%; opacity:0.35; }
-        .help-hero h1{ font-size:1.7rem; }
+    /* OVERRIDE any external styles.css mobile rules that stack */
+    @media (max-width: 900px){
+        .help-hero .hero-split{ display:none !important; }
         .help-hero-features{
-            flex-direction:column;
-            align-items:flex-start;
-            gap:1rem;
-            padding-left:0.5rem;
+            display:flex !important;
+            flex-direction:row !important;
         }
-        .help-hero-feature{ border-right:none; padding:0; border:none; }
-        .top-error-bar .try-again{ display:none; }
+        .help-hero-feature{
+            max-width:none !important;
+            width:auto !important;
+        }
+        .help-hero-content{ text-align:center !important; }
+    }
+    /* Small phones - keep row but allow slightly smaller */
+    @media (max-width: 480px){
+        .help-hero{ padding: 1rem 0.6rem 0.9rem; }
+        .help-hero-bg{ width:52%; opacity:0.85; }
+        .help-hero-stripe{ width:40%; left:-10%; }
+        .help-hero-features{
+            gap:0;
+            justify-content:space-between;
+        }
+        .help-hero-feature{
+            padding:0 0.45rem;
+            gap:0.35rem;
+        }
+        .help-hero-feature strong,
+        .help-hero-feature span{
+            white-space:normal;
+            line-height:1.15;
+        }
+    }
+    @media (max-width: 360px){
+        .help-hero h1{ font-size: clamp(1.05rem, 4.5vw, 1.25rem); }
+        .help-hero-feature{ padding:0 0.35rem; }
     }
   </style>
 </head>
@@ -298,43 +294,35 @@
         </ul>
     </nav>
 
-    <!-- OPTIONAL: remove this if you don't want exact screenshot match -->
-    <div class="top-error-bar">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8B8CC" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 6 9 6 9H0s6-2 6-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-        <span>Something went wrong on this page. Our team has been notified — please try refreshing.</span>
-        <a class="try-again" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.7 1 6.3 2.7L21 8V3h-5l2.7 2.7A7 7 0 1 0 21 12z"/></svg> Try Again</a>
-    </div>
-
     <header class="help-hero">
         <div class="help-hero-stripe" aria-hidden="true"></div>
         <div class="help-hero-bg" aria-hidden="true">
-            <!-- Replace motorist-hero.jpg with your breakdown image that has the red triangle -->
             <img src="motorist-hero.jpg" alt="">
         </div>
 
         <div class="help-hero-content">
             <div class="help-hero-icon-row">
-                <svg width="42" height="42" aria-hidden="true"><use href="icons.svg#icon-alert"></use></svg>
+                <svg aria-hidden="true"><use href="icons.svg#icon-alert"></use></svg>
                 <h1>Emergency <span class="help-blue">Repair Help</span></h1>
             </div>
             <p class="help-hero-sub">Find workshops near you for urgent repairs</p>
             <div class="help-hero-features">
                 <div class="help-hero-feature">
-                    <svg width="26" height="26" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>
+                    <svg aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>
                     <div>
                         <strong>Quick access</strong>
                         <span>Find nearby workshops</span>
                     </div>
                 </div>
                 <div class="help-hero-feature">
-                    <svg width="26" height="26" aria-hidden="true"><use href="icons.svg#icon-shield-check"></use></svg>
+                    <svg aria-hidden="true"><use href="icons.svg#icon-shield-check"></use></svg>
                     <div>
                         <strong>Trusted professionals</strong>
                         <span>Verified and reliable</span>
                     </div>
                 </div>
                 <div class="help-hero-feature">
-                    <svg width="26" height="26" aria-hidden="true"><use href="icons.svg#icon-clock"></use></svg>
+                    <svg aria-hidden="true"><use href="icons.svg#icon-clock"></use></svg>
                     <div>
                         <strong>Get back on the road</strong>
                         <span>Fast, efficient help</span>
@@ -347,7 +335,7 @@
     <main class="help-container">
         <form id="helpForm" class="help-form">
             <div class="form-group">
-                <label for="repairType"><svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>Repair Type</label>
+                <label for="repairType"><svg aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>Repair Type</label>
                 <select id="repairType" required>
                     <option value="">Select repair type...</option>
                     <option value="Oil Change">Oil Change</option>
@@ -363,11 +351,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="problemDescription"><svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>Problem Description</label>
+                <label for="problemDescription"><svg aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>Problem Description</label>
                 <textarea id="problemDescription" placeholder="Briefly describe your vehicle problem..." required></textarea>
             </div>
             <div class="form-group">
-                <label for="suburb"><svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>Your Suburb</label>
+                <label for="suburb"><svg aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>Your Suburb</label>
                 <input type="text" id="suburb" placeholder="Enter your suburb..." required>
             </div>
             <button type="submit" class="btn-search"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-search"></use></svg>Find Workshops</button>
