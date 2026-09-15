@@ -1,7 +1,17 @@
 // Initialize Supabase client
+// Guarded: on a slow or flaky connection, this script can run before the
+// Supabase CDN <script> tag above it has actually finished loading, which
+// left `window.supabase` undefined here and threw immediately — an
+// uncaught error at page load, which is exactly what was triggering the
+// site's global red "Something went wrong" banner on this page. That
+// banner isn't a deliberate design element; it's a real crash. Falling
+// back to null here lets searchWorkshops() below degrade to
+// showNoResults() instead of taking the whole page down with it.
 const SUPABASE_URL = 'https://xxigkehuqtwaihyxaahk.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc';
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = (window.supabase && typeof window.supabase.createClient === 'function')
+    ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    : null;
 // DOM Elements
 const helpForm = document.getElementById('helpForm');
 const repairTypeSelect = document.getElementById('repairType');
