@@ -7,409 +7,283 @@
     <title>Emergency Repair Help - Veriyo</title>
     <link rel="stylesheet" href="styles.css">
   <style>
-    .help-blue {
-        color: #3B82F6;
+    /* Reset to match screenshot */
+    :root{
+        --bg-color: #1A2637;
+        --surface-color: #1E2D43;
+        --border-color: #2B3E59;
+        --text-primary: #E8EEF3;
+        --text-secondary: #8AA0B8;
+        --primary-accent: #FFC44D;
+        --blue: #6FA8FF;
+        --blue-dark: #1E3A5F;
     }
-
-    /* Emergency Repair hero */
-    .help-hero {
-        position: relative;
-        overflow: hidden;
+    body{
+        margin:0;
         background: var(--bg-color);
-        padding-top: 70px;
+        font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
 
-    /* Softer diagonal blue accent */
-    .help-hero-stripe {
-        position: absolute;
-        top: -25%;
-        left: -14%;
-        width: 42%;
-        height: 150%;
-        background: linear-gradient(
-            135deg,
-            transparent 0%,
-            transparent 40%,
-            rgba(59, 130, 246, 0.04) 42%,
-            rgba(59, 130, 246, 0.20) 48%,
-            rgba(59, 130, 246, 0.20) 55%,
-            rgba(59, 130, 246, 0.06) 61%,
-            transparent 64%,
-            transparent 100%
-        );
-        filter: blur(2px);
-        pointer-events: none;
+    /* Top error banner - exactly like screenshot - REMOVE IF NOT NEEDED */
+    .top-error-bar{
+        background:#1E2D40;
+        border-bottom:1px solid #25364F;
+        color:#A8B8CC;
+        font-size:0.85rem;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:0.6rem;
+        padding:0.7rem 1rem;
+        position:relative;
+    }
+    .top-error-bar svg{ flex-shrink:0 }
+    .top-error-bar .try-again{
+        position:absolute;
+        right:1.2rem;
+        display:flex;
+        align-items:center;
+        gap:0.35rem;
+        color:#8DB1E0;
+        font-size:0.85rem;
+        cursor:pointer;
+        text-decoration:none;
     }
 
-    .help-hero .hero-split {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 3rem 1.5rem 2.75rem;
-        position: relative;
-        z-index: 1;
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 4rem;
+    /* HERO - PRECISE MATCH */
+    .help-hero{
+        position:relative;
+        overflow:hidden;
+        background:#0F1C2E;
+        padding: 2.2rem 1.5rem 1.9rem;
+        border-bottom:1px solid #1E2E44;
     }
-
-    .hero-split-text {
-        flex: 1;
-        min-width: 0;
+    /* Blue diagonal stripes left - solid like image */
+    .help-hero-stripe{
+        position:absolute;
+        left:-6%;
+        top:0;
+        bottom:0;
+        width:34%;
+        background: linear-gradient(105deg, 
+            #1D3A66 0% 22%, 
+            transparent 22% 34%, 
+            #20406F 34% 62%, 
+            transparent 62% 100%);
+        transform: skewX(-18deg);
+        opacity:1;
+        pointer-events:none;
+        z-index:0;
     }
-
-    .help-hero-icon-row {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.65rem;
-        margin-bottom: 0.25rem;
+    /* Right side breakdown image */
+    .help-hero-bg{
+        position:absolute;
+        right:0;
+        top:0;
+        bottom:0;
+        width:44%;
+        z-index:0;
+        pointer-events:none;
     }
-
-    .help-hero-icon-row svg {
-        color: #E5A900;
-        flex-shrink: 0;
-        margin-top: 0.35rem;
+    .help-hero-bg img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        object-position: center 40%;
+        display:block;
+        opacity:0.9;
     }
-
-    .help-hero h1 {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin: 0;
-        line-height: 1.15;
-        color: var(--text-primary);
-    }
-
-    .help-hero-sub {
-        color: var(--text-secondary);
-        font-size: 1.1rem;
-        margin: 0.85rem 0 2rem;
-    }
-
-    .help-hero-features {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.35rem 2rem;
-    }
-
-    .help-hero-feature {
-        display: flex;
-        align-items: flex-start;
-        gap: 0.7rem;
-        max-width: 240px;
-    }
-
-    .help-hero-feature svg {
-        color: #3B82F6;
-        flex-shrink: 0;
-        margin-top: 0.15rem;
-    }
-
-    .help-hero-feature strong {
-        display: block;
-        color: var(--text-primary);
-        font-size: 0.95rem;
-    }
-
-    .help-hero-feature span {
-        color: var(--text-secondary);
-        font-size: 0.82rem;
-    }
-
-    /* Workshop image + gradient fade */
-    .hero-split-image {
-        flex: 0 0 440px;
-        position: relative;
-        overflow: hidden;
-        border-radius: 16px;
-    }
-
-    .hero-split-image::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-
+    .help-hero-bg::after{
+        content:"";
+        position:absolute;
+        inset:0;
         background:
-            linear-gradient(
-                90deg,
-                var(--bg-color) 0%,
-                rgba(9, 15, 30, 0.72) 5%,
-                rgba(9, 15, 30, 0.20) 22%,
-                transparent 42%
-            ),
-            linear-gradient(
-                180deg,
-                rgba(9, 15, 30, 0.08) 0%,
-                transparent 35%,
-                rgba(9, 15, 30, 0.25) 100%
-            );
+            linear-gradient(90deg, #0F1C2E 0%, #0F1C2E 8%, rgba(15,28,46,0.85) 18%, rgba(15,28,46,0.35) 38%, transparent 62%),
+            linear-gradient(180deg, rgba(15,28,46,0.25) 0%, transparent 40%, rgba(15,28,46,0.35) 100%);
     }
 
-    .hero-split-image img {
-        width: 100%;
-        height: 300px;
-        object-fit: cover;
-        object-position: center;
-        border-radius: 16px;
-        display: block;
+    .help-hero-content{
+        position:relative;
+        z-index:2;
+        max-width: 860px;
+        margin:0 auto;
+        text-align:center;
     }
 
-    /* Form */
-    .help-container {
-        max-width: 900px;
-        margin: 1.25rem auto 2rem;
-        padding: 0 1rem;
+    .help-hero-icon-row{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:0.8rem;
+        margin-bottom:0.2rem;
+    }
+    .help-hero-icon-row svg{
+        color:#FFC233;
+        width:42px;
+        height:42px;
+        flex-shrink:0;
+    }
+    .help-hero h1{
+        font-size:2.35rem;
+        font-weight:800;
+        margin:0;
+        line-height:1.15;
+        color:#F0F4FA;
+        letter-spacing:-0.02em;
+    }
+    .help-blue{ color: var(--blue); }
+
+    .help-hero-sub{
+        color:#9CB0C7;
+        font-size:1.05rem;
+        margin:0.55rem 0 1.6rem;
+        font-weight:400;
     }
 
-    .help-form {
-        background: var(--surface-color);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 2rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        margin-bottom: 2rem;
+    .help-hero-features{
+        display:flex;
+        align-items:flex-start;
+        justify-content:center;
+        gap:0;
+        margin:0 auto;
+        max-width:700px;
+    }
+    .help-hero-feature{
+        display:flex;
+        align-items:flex-start;
+        gap:0.65rem;
+        text-align:left;
+        padding:0 1.7rem;
+        border-right:1px solid rgba(255,255,255,0.08);
+    }
+    .help-hero-feature:last-child{ border-right:none; }
+    .help-hero-feature svg{
+        color: var(--blue);
+        flex-shrink:0;
+        margin-top:0.15rem;
+        width:26px;
+        height:26px;
+    }
+    .help-hero-feature strong{
+        display:block;
+        color:#D7E2F0;
+        font-size:0.88rem;
+        font-weight:600;
+        line-height:1.2;
+    }
+    .help-hero-feature span{
+        color:#7E91A8;
+        font-size:0.76rem;
+        line-height:1.3;
+        display:block;
+        margin-top:0.15rem;
     }
 
-    .form-group {
-        margin-bottom: 1.5rem;
+    /* FORM CARD - PRECISE MATCH */
+    .help-container{
+        max-width: 700px;
+        margin: 1.8rem auto 2.5rem;
+        padding:0 1rem;
+        position:relative;
+        z-index:1;
     }
-
-    .form-group label {
-        display: flex;
-        align-items: center;
-        gap: 0.55rem;
-        font-weight: 600;
-        margin-bottom: 0.5rem;
-        color: var(--text-primary);
+    .help-form{
+        background:#1E2D43;
+        border:1px solid #2A3E5E;
+        border-radius:12px;
+        padding:1.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
-
-    .form-group label svg {
-        color: #3B82F6;
-        flex-shrink: 0;
+    .form-group{ margin-bottom:1.25rem; }
+    .form-group:last-of-type{ margin-bottom:1.35rem; }
+    .form-group label{
+        display:flex;
+        align-items:center;
+        gap:0.55rem;
+        font-weight:600;
+        font-size:0.92rem;
+        margin-bottom:0.5rem;
+        color:#E6EEF7;
     }
-
+    .form-group label svg{
+        color: var(--blue);
+        flex-shrink:0;
+        width:20px;
+        height:20px;
+    }
     .form-group select,
     .form-group input,
-    .form-group textarea {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 1rem;
-        background: var(--bg-color);
-        color: var(--text-primary);
-        transition: border-color 0.2s, box-shadow 0.2s;
+    .form-group textarea{
+        width:100%;
+        padding:0.82rem 0.95rem;
+        border:1px solid #2D415E;
+        border-radius:8px;
+        font-size:0.93rem;
+        background:#162233;
+        color:#C9D6E6;
+        transition:border-color 0.2s, box-shadow 0.2s;
+        box-sizing:border-box;
+        font-family:inherit;
     }
-
+    .form-group select{
+        appearance:none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237E91A8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat:no-repeat;
+        background-position: right 0.9rem center;
+        padding-right:2.2rem;
+    }
+    .form-group ::placeholder{ color:#6B7E96; }
     .form-group select:focus,
     .form-group input:focus,
-    .form-group textarea:focus {
-        outline: none;
-        border-color: var(--primary-accent);
-        box-shadow: 0 0 0 3px rgba(212,160,23,0.15);
+    .form-group textarea:focus{
+        outline:none;
+        border-color:#3A5A85;
+        box-shadow:0 0 0 3px rgba(111,168,255,0.12);
+    }
+    .form-group textarea{
+        min-height:96px;
+        resize:vertical;
+        line-height:1.45;
     }
 
-    .form-group textarea {
-        min-height: 100px;
-        resize: vertical;
+    .btn-search{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:0.6rem;
+        background:#FFC44D;
+        color:#121A28;
+        padding:0.88rem 2rem;
+        border:none;
+        border-radius:8px;
+        font-size:0.96rem;
+        font-weight:700;
+        cursor:pointer;
+        width:100%;
+        transition: transform 0.1s, filter 0.15s;
+        letter-spacing:0.01em;
     }
+    .btn-search:hover{ filter:brightness(0.95); transform: translateY(-1px); }
+    .btn-search svg{ width:18px; height:18px; }
 
-    /* Gold CTA */
-    .btn-search {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.6rem;
-        background: var(--primary-accent);
-        color: #000;
-        padding: 0.875rem 2rem;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-        width: 100%;
-        transition: background-color 0.2s, transform 0.1s;
-    }
+    /* Hide old split layout */
+    .hero-split{ display:none !important; }
+    .hero-split-image{ display:none !important; }
 
-    .btn-search:hover {
-        opacity: 0.85;
-        transform: translateY(-1px);
-    }
-
-    .btn-search:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    /* Results */
-    .results-section {
-        margin-top: 2rem;
-    }
-
-    .results-header {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--text-primary);
-    }
-
-    .workshop-card {
-        background: var(--surface-color);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-        padding: 1.5rem;
-        margin-bottom: 1rem;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        transition: box-shadow 0.2s;
-    }
-
-    .workshop-card:hover {
-        box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    }
-
-    .workshop-name {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .workshop-details {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .workshop-detail {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-    }
-
-    .workshop-rating {
-        background: var(--primary-accent);
-        color: #000;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 0.875rem;
-    }
-
-    .btn-chat {
-        display: inline-block;
-        background: var(--success-color);
-        color: #fff;
-        padding: 0.625rem 1.5rem;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: opacity 0.2s;
-    }
-
-    .btn-chat:hover {
-        opacity: 0.85;
-    }
-
-    .no-results {
-        text-align: center;
-        padding: 3rem 2rem;
-        background: var(--surface-color);
-        border: 1px solid var(--border-color);
-        border-radius: 12px;
-    }
-
-    .no-results h3 {
-        color: var(--text-primary);
-        margin-bottom: 0.5rem;
-    }
-
-    .no-results p {
-        color: var(--text-secondary);
-    }
-
-    .loading {
-        text-align: center;
-        padding: 2rem;
-    }
-
-    .loading-spinner {
-        border: 3px solid var(--border-color);
-        border-top: 3px solid var(--primary-accent);
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-        margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .hidden {
-        display: none;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-        .help-hero-stripe {
-            opacity: 0.5;
+    @media (max-width: 768px){
+        .help-hero{ padding:1.8rem 1rem 1.5rem; }
+        .help-hero-bg{ width:100%; opacity:0.35; }
+        .help-hero h1{ font-size:1.7rem; }
+        .help-hero-features{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:1rem;
+            padding-left:0.5rem;
         }
-
-        .help-hero .hero-split {
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .hero-split-image {
-            flex-basis: auto;
-            width: 100%;
-        }
-
-        .hero-split-image img {
-            height: 260px;
-        }
-
-        .help-hero-features {
-            grid-template-columns: 1fr;
-        }
+        .help-hero-feature{ border-right:none; padding:0; border:none; }
+        .top-error-bar .try-again{ display:none; }
     }
-
-    @media (max-width: 600px) {
-        .help-hero {
-            padding-top: 55px;
-        }
-
-        .help-hero .hero-split {
-            padding: 2rem 1rem 2rem;
-        }
-
-        .help-hero h1 {
-            font-size: 2rem;
-        }
-
-        .help-hero-sub {
-            font-size: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-split-image img {
-            height: 220px;
-        }
-
-        .help-form {
-            padding: 1.25rem;
-        }
-    }
-</style>
+  </style>
 </head>
 <body>
 <nav class="navbar navbar--top">
@@ -424,41 +298,48 @@
         </ul>
     </nav>
 
+    <!-- OPTIONAL: remove this if you don't want exact screenshot match -->
+    <div class="top-error-bar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8B8CC" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 7 6 9 6 9H0s6-2 6-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span>Something went wrong on this page. Our team has been notified — please try refreshing.</span>
+        <a class="try-again" href="#"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.5 0 4.7 1 6.3 2.7L21 8V3h-5l2.7 2.7A7 7 0 1 0 21 12z"/></svg> Try Again</a>
+    </div>
+
     <header class="help-hero">
         <div class="help-hero-stripe" aria-hidden="true"></div>
-        <div class="hero-split">
-            <div class="hero-split-text">
-                <div class="help-hero-icon-row">
-                    <svg width="34" height="34" aria-hidden="true"><use href="icons.svg#icon-alert"></use></svg>
-                    <h1>Emergency <span class="help-blue">Repair Help</span></h1>
-                </div>
-                <p class="help-hero-sub">Find workshops near you for urgent repairs</p>
-                <div class="help-hero-features">
-                    <div class="help-hero-feature">
-                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>
-                        <div>
-                            <strong>Quick access</strong>
-                            <span>Find nearby workshops</span>
-                        </div>
-                    </div>
-                    <div class="help-hero-feature">
-                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-shield-check"></use></svg>
-                        <div>
-                            <strong>Trusted professionals</strong>
-                            <span>Verified and reliable</span>
-                        </div>
-                    </div>
-                    <div class="help-hero-feature">
-                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-clock"></use></svg>
-                        <div>
-                            <strong>Get back on the road</strong>
-                            <span>Fast, efficient help</span>
-                        </div>
-                    </div>
-                </div>
+        <div class="help-hero-bg" aria-hidden="true">
+            <!-- Replace motorist-hero.jpg with your breakdown image that has the red triangle -->
+            <img src="motorist-hero.jpg" alt="">
+        </div>
+
+        <div class="help-hero-content">
+            <div class="help-hero-icon-row">
+                <svg width="42" height="42" aria-hidden="true"><use href="icons.svg#icon-alert"></use></svg>
+                <h1>Emergency <span class="help-blue">Repair Help</span></h1>
             </div>
-            <div class="hero-split-image">
-                <img src="motorist-hero.jpg" alt="Mechanic working on a vehicle in a workshop">
+            <p class="help-hero-sub">Find workshops near you for urgent repairs</p>
+            <div class="help-hero-features">
+                <div class="help-hero-feature">
+                    <svg width="26" height="26" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>
+                    <div>
+                        <strong>Quick access</strong>
+                        <span>Find nearby workshops</span>
+                    </div>
+                </div>
+                <div class="help-hero-feature">
+                    <svg width="26" height="26" aria-hidden="true"><use href="icons.svg#icon-shield-check"></use></svg>
+                    <div>
+                        <strong>Trusted professionals</strong>
+                        <span>Verified and reliable</span>
+                    </div>
+                </div>
+                <div class="help-hero-feature">
+                    <svg width="26" height="26" aria-hidden="true"><use href="icons.svg#icon-clock"></use></svg>
+                    <div>
+                        <strong>Get back on the road</strong>
+                        <span>Fast, efficient help</span>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -466,7 +347,7 @@
     <main class="help-container">
         <form id="helpForm" class="help-form">
             <div class="form-group">
-                <label for="repairType"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>Repair Type</label>
+                <label for="repairType"><svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>Repair Type</label>
                 <select id="repairType" required>
                     <option value="">Select repair type...</option>
                     <option value="Oil Change">Oil Change</option>
@@ -482,11 +363,11 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="problemDescription"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>Problem Description</label>
+                <label for="problemDescription"><svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>Problem Description</label>
                 <textarea id="problemDescription" placeholder="Briefly describe your vehicle problem..." required></textarea>
             </div>
             <div class="form-group">
-                <label for="suburb"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>Your Suburb</label>
+                <label for="suburb"><svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>Your Suburb</label>
                 <input type="text" id="suburb" placeholder="Enter your suburb..." required>
             </div>
             <button type="submit" class="btn-search"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-search"></use></svg>Find Workshops</button>
@@ -497,7 +378,6 @@
             <div id="resultsContainer"></div>
         </section>
     </main>
-
 
 <nav class="bottom-nav">
         <div class="bottom-nav-links">
