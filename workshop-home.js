@@ -49,7 +49,7 @@ function renderQuickActions(container, actions) {
 
 const { data: rows } = await _sb
             .from('Workshopprofiles')
-            .select('id, workshop_name, suburb, city, province, status, plan, rmi_registered, written_quote, guarantee_work, guarantee_period, price_oil_change, price_minor_service, price_major_service, price_alignment, price_brake_pads, price_diagnostic, custom_service_name_1, custom_service_name_2')
+            .select('id, workshop_name, suburb, city, province, status, plan, rmi_registered, written_quote, guarantee_work, guarantee_period, price_oil_change, price_minor_service, price_major_service, price_alignment, price_brake_pads, price_diagnostic, custom_service_name_1, custom_service_name_2, signboard_photo_url, interior_photo_url')
             .eq('user_id', session.user.id)
             .limit(1);
 
@@ -68,26 +68,31 @@ renderQuickActions(actionsEl, [
             return;
         }
 
-const location = [myWorkshop.suburb, myWorkshop.city, myWorkshop.province].filter(Boolean).join(', ');
+        const location = [myWorkshop.suburb, myWorkshop.city, myWorkshop.province].filter(Boolean).join(', ');
         const editHref = 'list-workshop.html?edit=' + encodeURIComponent(myWorkshop.id);
 
-        // Text callout in place of an image — shows their actual plan tier
-        // rather than a picture, since no images are used here.
-statusCard.innerHTML =
-            '<div style="background:var(--bg-color); border:1px solid var(--border-color); border-radius:var(--radius); padding:0.9rem 1.1rem; text-align:center; min-width:120px;">' +
-'  <p style="font-size:0.75rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:0.25rem;">Your Plan</p>' +
-            '  <p style="font-size:1.05rem; font-weight:700; color:var(--primary-accent);">' + escapeHtml(myWorkshop.plan || 'Not set') + '</p>' +
+        // Shows the workshop's own signboard/interior photo — this data was
+        // already being fetched nowhere before, and the .image-placeholder
+        // classes below already existed in styles.css for exactly this, just
+        // never wired up. Falls back to a plain icon if neither photo is set.
+        const photoUrl = myWorkshop.signboard_photo_url || myWorkshop.interior_photo_url;
+        const photoMarkup = photoUrl
+            ? '<img class="image-placeholder-photo" src="' + escapeHtml(photoUrl) + '" alt="' + escapeHtml(myWorkshop.workshop_name) + '">'
+            : '<div class="image-placeholder-icon"><svg width="64" height="64" aria-hidden="true"><use href="icons.svg#icon-building"></use></svg></div>';
+
+        statusCard.innerHTML =
+            '<div class="image-placeholder image-placeholder--small">' + photoMarkup + '</div>' +
+            '<div class="listing-status-info">' +
+            '  <h3>' + escapeHtml(myWorkshop.workshop_name) + '</h3>' +
+            '  <p>' + escapeHtml(location) + '</p>' +
+            '  <p style="margin-top:0.4rem;"><span class="badge badge-neutral" style="font-size:0.72rem;">' + escapeHtml(myWorkshop.plan || 'Plan not set') + '</span></p>' +
             '</div>' +
-            '<div style="flex:1; min-width:180px;">' +
-            '  <p style="font-size:1.05rem; font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">' + escapeHtml(myWorkshop.workshop_name) + '</p>' +
-            '  <p style="font-size:0.92rem; color:var(--text-secondary);">' + escapeHtml(location) + '</p>' +
-            '</div>' +
-            '<div style="display:flex; flex-direction:column; align-items:flex-end; gap:0.6rem;">' +
+            '<div class="listing-status-actions">' +
             '  <span class="badge ' + statusBadgeClass(myWorkshop.status) + '">' + escapeHtml(myWorkshop.status || 'Pending') + '</span>' +
             '  <a href="my-listing.html" class="btn btn-secondary" style="font-size:0.85rem;">View My Listing</a>' +
             '</div>';
 
-const isFreePlan = !myWorkshop.plan || myWorkshop.plan === 'Visible';
+        const isFreePlan = !myWorkshop.plan || myWorkshop.plan === 'Visible';
 
 renderQuickActions(actionsEl, [
             { href: 'my-listing.html', label: 'View My Listing', primary: true, icon: 'icon-listing' },
@@ -106,9 +111,35 @@ renderQuickActions(actionsEl, [
             myWorkshop.custom_service_name_2 || null
         ].filter(Boolean).slice(0, 5);
 
-// Fixed value-proposition checklist for this card — not sourced
-        // from workshop record fields.
-        const highlights = ['Prices Visible to Motorists', 'Fast Response to Enquiries', 'Trusted by Local Customers'];
+// Real trust signals only — sourced from fields the workshop actually
+        // filled in, plus a genuine average rating computed the same way the
+        // public workshop profile page computes it (Submissions table,
+        // Approved status, matched by workshop name). Previously this was a
+        // fixed, unverifiable list ("Fast Response to Enquiries", "Trusted
+        // by Local Customers") that wasn't tied to anything real.
+        const { data: ratingSubs } = await _sb
+            .from('Submissions')
+            .select('rating')
+            .eq('status', 'Approved')
+            .ilike('workshop_name', myWorkshop.workshop_name);
+        const ratedSubs = (ratingSubs || []).filter(function (s) { return s.rating && s.rating > 0; });
+
+        const highlights = [];
+        if (ratedSubs.length > 0) {
+            const avg = ratedSubs.reduce(function (sum, s) { return sum + s.rating; }, 0) / ratedSubs.length;
+            highlights.push('★ ' + avg.toFixed(1) + ' Average Rating (' + ratedSubs.length + (ratedSubs.length === 1 ? ' review' : ' reviews') + ')');
+        }
+        if (myWorkshop.rmi_registered === 'Yes') highlights.push('RMI Registered Workshop');
+        if (myWorkshop.written_quote === 'Yes') highlights.push('Written Quotes Provided');
+        if (myWorkshop.guarantee_work === 'Yes') {
+            highlights.push(myWorkshop.guarantee_period ? 'Guarantee on Work: ' + myWorkshop.guarantee_period : 'Guarantee on All Work');
+        }
+        highlights.push('Prices Visible to Motorists on Veriyo');
+        // Nudge, not filler — shown only once, when there's nothing else to
+        // show yet, and it points at something real they can go do.
+        if (highlights.length === 1) {
+            highlights.push('Add RMI registration, a written quote, or a work guarantee on your listing to stand out more');
+        }
         const detailColumns = document.getElementById('whDetailColumns');
         const servicesListEl = document.getElementById('whServicesList');
         const highlightsListEl = document.getElementById('whHighlightsList');
@@ -121,7 +152,7 @@ renderQuickActions(actionsEl, [
                     return '<li style="padding:0.5rem 0; border-bottom:1px solid var(--border-color); font-size:0.9rem; color:var(--text-primary);">' + escapeHtml(s) + '</li>';
                 }).join('')
                 : '<li style="color:var(--text-secondary); font-size:0.9rem;">No services added yet.</li>';
-highlightsListEl.innerHTML = highlights.map(function (h) {
+            highlightsListEl.innerHTML = highlights.map(function (h) {
                 return '<li style="display:flex; align-items:center; gap:0.6rem; padding:0.5rem 0; font-size:0.9rem; color:var(--text-primary);">' +
                     '<svg width="18" height="18" style="color:var(--success-color); flex-shrink:0;" aria-hidden="true"><use href="icons.svg#icon-check-circle"></use></svg>' +
                     escapeHtml(h) + '</li>';
