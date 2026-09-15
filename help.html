@@ -7,21 +7,50 @@
     <title>Emergency Repair Help - Veriyo</title>
     <link rel="stylesheet" href="styles.css">
     <style>
-        .urgent-header {
-            background: var(--danger-color);
-            color: #fff;
-            padding: 1.5rem 2rem;
-            text-align: center;
+        /* New blue accent for this page only — nothing already in the
+           site's palette (gold, teal, red, green) reads as "blue"; the
+           closest existing color is the indigo used for a single plan
+           badge elsewhere, but that leans too purple next to the
+           reference image's clearly blue tone. Everything else below
+           (background, surface, borders, text) reuses the existing
+           tokens as-is. */
+        .help-blue { color: #3B82F6; }
+
+        .help-hero {
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-color);
+            padding-top: 70px; /* clears the fixed top navbar, same offset the old header used */
         }
-        .urgent-header h1 {
-            margin: 0;
-            font-size: 1.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
+        .help-hero-stripe {
+            position: absolute;
+            top: -15%;
+            left: -8%;
+            width: 40%;
+            height: 130%;
+            background: linear-gradient(135deg,
+                transparent 0%, transparent 42%,
+                rgba(59,130,246,0.30) 44%, rgba(59,130,246,0.30) 56%,
+                transparent 58%, transparent 100%);
+            pointer-events: none;
         }
-        .urgent-header .urgent-icon { font-size: 2rem; }
+        .help-hero .hero-split { max-width: 1100px; margin: 0 auto; padding: 3rem 1.5rem 2.5rem; position: relative; z-index: 1; }
+        .help-hero-icon-row { display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.25rem; }
+        .help-hero-icon-row svg { color: var(--primary-accent); flex-shrink: 0; }
+        .help-hero h1 { font-size: 2.5rem; font-weight: 800; margin: 0; line-height: 1.15; color: var(--text-primary); }
+        .help-hero-sub { color: var(--text-secondary); font-size: 1.1rem; margin: 0.85rem 0 2rem; }
+        .help-hero-features { display: flex; gap: 2rem; flex-wrap: wrap; }
+        .help-hero-feature { display: flex; align-items: flex-start; gap: 0.7rem; max-width: 220px; }
+        .help-hero-feature svg { color: #3B82F6; flex-shrink: 0; margin-top: 0.15rem; }
+        .help-hero-feature strong { display: block; color: var(--text-primary); font-size: 0.95rem; }
+        .help-hero-feature span { color: var(--text-secondary); font-size: 0.82rem; }
+        .hero-split-image { flex: 1; min-width: 260px; }
+        .hero-split-image img { width: 100%; height: 320px; object-fit: cover; border-radius: 16px; display: block; }
+        .form-group label svg { color: #3B82F6; flex-shrink: 0; }
+        .btn-search { display: flex; align-items: center; justify-content: center; gap: 0.6rem; }
+        @media (max-width: 900px) {
+            .help-hero-stripe { display: none; }
+        }
         .help-container {
             max-width: 900px;
             margin: 2rem auto;
@@ -37,7 +66,9 @@
         }
         .form-group { margin-bottom: 1.5rem; }
         .form-group label {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
             color: var(--text-primary);
@@ -145,27 +176,61 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar--top" style="background:var(--danger-color);">
+<nav class="navbar navbar--top">
         <a href="welcome.html" class="nav-logo">
             <img src="logo.png" alt="Veriyo">
         </a>
         <ul class="nav-links">
-            <li><a href="motorist-home.html" style="color:rgba(255,255,255,0.85);">Home</a></li>
-            <li><a href="prices.html" style="color:rgba(255,255,255,0.85);">Prices</a></li>
-            <li><a href="report.html" style="color:rgba(255,255,255,0.85);">Report</a></li>
-            <li><a href="workshops.html" style="color:rgba(255,255,255,0.85);">Workshops</a></li>
+            <li><a href="motorist-home.html">Home</a></li>
+            <li><a href="prices.html">Prices</a></li>
+            <li><a href="report.html">Report</a></li>
+            <li><a href="workshops.html">Workshops</a></li>
         </ul>
     </nav>
 
-    <header class="urgent-header" style="margin-top:70px;">
-        <h1><span class="urgent-icon">&#9888;</span> Emergency Repair Help</h1>
-        <p>Find workshops near you for urgent repairs</p>
+    <header class="help-hero">
+        <div class="help-hero-stripe" aria-hidden="true"></div>
+        <div class="hero-split">
+            <div class="hero-split-text">
+                <div class="help-hero-icon-row">
+                    <svg width="34" height="34" aria-hidden="true"><use href="icons.svg#icon-alert"></use></svg>
+                    <h1>Emergency <span class="help-blue">Repair Help</span></h1>
+                </div>
+                <p class="help-hero-sub">Find workshops near you for urgent repairs</p>
+                <div class="help-hero-features">
+                    <div class="help-hero-feature">
+                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>
+                        <div>
+                            <strong>Quick access</strong>
+                            <span>Find nearby workshops</span>
+                        </div>
+                    </div>
+                    <div class="help-hero-feature">
+                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-shield-check"></use></svg>
+                        <div>
+                            <strong>Trusted professionals</strong>
+                            <span>Verified and reliable</span>
+                        </div>
+                    </div>
+                    <div class="help-hero-feature">
+                        <svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-clock"></use></svg>
+                        <div>
+                            <strong>Get back on the road</strong>
+                            <span>Fast, efficient help</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-split-image">
+                <img src="motorist-hero.jpg" alt="Mechanic working on a vehicle in a workshop">
+            </div>
+        </div>
     </header>
 
     <main class="help-container">
         <form id="helpForm" class="help-form">
             <div class="form-group">
-                <label for="repairType">Repair Type</label>
+                <label for="repairType"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg>Repair Type</label>
                 <select id="repairType" required>
                     <option value="">Select repair type...</option>
                     <option value="Oil Change">Oil Change</option>
@@ -181,14 +246,14 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="problemDescription">Problem Description</label>
+                <label for="problemDescription"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-report"></use></svg>Problem Description</label>
                 <textarea id="problemDescription" placeholder="Briefly describe your vehicle problem..." required></textarea>
             </div>
             <div class="form-group">
-                <label for="suburb">Your Suburb</label>
+                <label for="suburb"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-location"></use></svg>Your Suburb</label>
                 <input type="text" id="suburb" placeholder="Enter your suburb..." required>
             </div>
-            <button type="submit" class="btn-search">Find Workshops</button>
+            <button type="submit" class="btn-search"><svg width="18" height="18" aria-hidden="true"><use href="icons.svg#icon-search"></use></svg>Find Workshops</button>
         </form>
 
         <section id="resultsSection" class="results-section hidden">
