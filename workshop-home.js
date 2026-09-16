@@ -59,8 +59,8 @@ const { data: rows } = await _sb
 
         if (!myWorkshop) {
             statusCard.innerHTML =
-                '<p style="color:var(--text-primary); margin-bottom:0.5rem;">You have not created a workshop listing yet.</p>' +
-                '<p style="color:var(--text-secondary); font-size:0.9rem;">Create one to start building your presence on Veriyo.</p>';
+                '<p style="color:var(--text-primary); margin-bottom:0.5rem;">Motorists searching for a workshop right now can\'t see you yet.</p>' +
+                '<p style="color:var(--text-secondary); font-size:0.9rem;">Create your listing to start showing up in their search.</p>';
 renderQuickActions(actionsEl, [
                 { href: 'list-workshop.html', label: 'Create My Listing', primary: true, icon: 'icon-addlisting' }
             ]);
