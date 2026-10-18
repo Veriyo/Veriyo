@@ -56,6 +56,7 @@
         const bottomNavEl = document.querySelector('.bottom-nav-links');
         if (topNavEl) topNavEl.style.visibility = 'visible';
         if (bottomNavEl) bottomNavEl.style.visibility = 'visible';
+        document.dispatchEvent(new Event('veriyo:navigation-ready'));
     }
 
     document.addEventListener('DOMContentLoaded', async function () {
@@ -136,12 +137,9 @@ const myWorkshopId = (workshopData && workshopData.length > 0) ? workshopData[0]
         const li = document.createElement('li');
         li.className = 'nav-auth-item';
         li.innerHTML = [
-            '<span id="navChat" class="nav-chat-icon" title="Messages">',
-            '  <svg width="20" height="20" aria-hidden="true"><use href="icons.svg#icon-chat"></use></svg>',
-            '</span>',
-            '<span id="navBell" class="nav-bell" title="Notifications">&#128276;</span>',
+            '<button type="button" id="navBell" class="nav-bell" aria-label="Notifications" title="Notifications"><svg width="22" height="22" aria-hidden="true"><use href="icons.svg#icon-bell"></use></svg></button>',
             '<div class="nav-avatar-wrap">',
-            '  <div id="navAvatar" class="nav-avatar" title="Account">' + initials + '</div>',
+            '  <button type="button" id="navAvatar" class="nav-avatar" aria-label="Account" title="Account">' + initials + '</button>',
             '  <div class="nav-avatar-dropdown" id="navAvatarDropdown" style="display:none;">',
             '    <div class="nav-dropdown-email">' + escapeHtml(userEmail) + '</div>',
             '    <a href="auth.html" class="nav-dropdown-item">My Profile</a>',
@@ -274,13 +272,11 @@ const { data: notifRows } = await _supabaseAuthNav
             }
         );
 
+        document.dispatchEvent(new Event('veriyo:navigation-ready'));
         const chatEl = document.getElementById('navChat');
         if (chatEl) {
             chatEl.style.cursor = 'pointer';
-            chatEl.addEventListener('click', function (e) {
-                e.stopPropagation();
-                window.location.href = myWorkshopId ? 'chat.html?mode=workshop' : 'chat.html';
-            });
+            chatEl.href = myWorkshopId ? 'chat.html?mode=workshop' : 'chat.html';
         }
 
 if (myWorkshopId) {
