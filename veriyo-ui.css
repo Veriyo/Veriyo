@@ -41,35 +41,35 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
 .btn-secondary { color: var(--text-primary); border-color: var(--border-color); background: var(--surface-color); }
 .btn-secondary:hover { border-color: var(--primary-accent); background: var(--ui-tint); }
 /* One header shared by both journeys. Route links live in the drawer and dock. */
-.veriyo-shell { padding-top: 76px; padding-bottom: 104px; }
+.veriyo-shell { padding-top: 56px; padding-bottom: 80px; font-size: 14px; }
 .veriyo-shell .navbar--top {
-    height: 76px; padding: 0 max(20px, calc((100vw - 1200px) / 2));
-    gap: 14px; justify-content: flex-start; background: var(--surface-color);
+    height: 56px; padding: 0 max(16px, calc((100vw - 1200px) / 2));
+    gap: 10px; justify-content: flex-start; background: var(--surface-color);
 }
 .veriyo-shell .navbar--top > .nav-links { display: none; }
 .veriyo-shell .nav-logo { gap: 1px; flex-shrink: 0; }
-.veriyo-shell .nav-logo .veriyo-brand-mark { height: 38px; width: 49px; object-fit: cover; border-radius: 8px; }
-.veriyo-wordmark { font-size: 27px; font-weight: 750; letter-spacing: -1.4px; color: var(--text-primary); }
+.veriyo-shell .nav-logo .veriyo-brand-mark { height: 28px; width: 36px; object-fit: cover; border-radius: 8px; }
+.veriyo-wordmark { font-size: 22px; font-weight: 750; letter-spacing: -1px; color: var(--text-primary); }
 .veriyo-menu-toggle, .veriyo-theme-toggle, .veriyo-menu-close {
-    width: 42px; height: 42px; border: 1px solid var(--border-color); border-radius: 11px;
+    width: 36px; height: 36px; border: 1px solid var(--border-color); border-radius: 11px;
     color: var(--text-primary); background: var(--surface-color); display: grid; place-items: center; cursor: pointer; flex-shrink: 0;
 }
 .veriyo-menu-toggle:hover, .veriyo-theme-toggle:hover, .veriyo-menu-close:hover { background: var(--ui-tint); }
 .veriyo-theme-toggle { margin-left: auto; }
 .veriyo-shell .navbar--top > .nav-auth-item {
-    position: static !important; transform: none !important; display: flex; order: 4; align-items: center; gap: 12px; list-style: none;
+    position: static !important; transform: none !important; display: flex; order: 4; align-items: center; gap: 8px; list-style: none;
 }
-.veriyo-shell .nav-signin-link { border-color: var(--primary-accent); color: var(--primary-accent); white-space: nowrap; padding: 9px 14px; border-radius: 10px; }
-.veriyo-shell .bottom-nav-links { display: flex !important; visibility: visible; gap: 12px; padding: 6px 16px max(6px, env(safe-area-inset-bottom)); }
-.veriyo-shell .bottom-nav-item { width: 90px; min-width: 0; min-height: 52px; border-radius: 10px; position: relative; }
+.veriyo-shell .nav-signin-link { border-color: var(--primary-accent); color: var(--primary-accent); white-space: nowrap; padding: 6px 11px; border-radius: 8px; font-size: 13px; }
+.veriyo-shell .bottom-nav-links { display: flex !important; visibility: visible; gap: 8px; padding: 4px 16px max(4px, env(safe-area-inset-bottom)); }
+.veriyo-shell .bottom-nav-item { width: 80px; min-width: 0; min-height: 44px; border-radius: 10px; position: relative; }
 .veriyo-shell .bottom-nav-item.active { background: var(--ui-tint); }
 .veriyo-shell .bottom-nav-legal { display: none; }
 .veriyo-shell .bottom-nav--legal-only .bottom-nav-legal { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
 .veriyo-shell .bottom-nav-label { font-size: 11px; }
 .veriyo-shell .bottom-nav { box-shadow: 0 -4px 24px rgb(0 0 0 / 3%); }
 .veriyo-side-menu {
-    position: fixed; inset: 0 auto 0 0; margin: 0; width: min(340px, 88vw); height: 100dvh; max-height: none;
-    max-width: none; border: 0; border-right: 1px solid var(--border-color); padding: 26px 22px;
+    position: fixed; inset: 0 auto 0 0; margin: 0; width: min(300px, 88vw); height: 100dvh; max-height: none;
+    max-width: none; border: 0; border-right: 1px solid var(--border-color); padding: 20px 18px;
     background: var(--surface-color); color: var(--text-primary); box-shadow: var(--ui-shadow);
 }
 .veriyo-side-menu::backdrop { background: rgb(0 0 0 / 52%); backdrop-filter: blur(3px); }
@@ -78,20 +78,20 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
 .veriyo-menu-close { font-size: 26px; }
 .veriyo-menu-intro { color: var(--text-secondary); font-size: 13px; margin: 12px 0 28px; }
 .veriyo-side-links { display: flex; flex-direction: column; gap: 6px; }
-.veriyo-side-links a { padding: 13px 14px; border-radius: 10px; font-size: 14px; font-weight: 550; }
+.veriyo-side-links a { padding: 10px 12px; border-radius: 8px; font-size: 14px; font-weight: 550; }
 .veriyo-side-links a:hover, .veriyo-side-links a[aria-current] { background: var(--ui-tint); color: var(--primary-accent); }
 .veriyo-menu-footer { color: var(--text-secondary); border-top: 1px solid var(--border-color); margin-top: 30px; padding-top: 20px; font-size: 12px; }
 html:has(.veriyo-side-menu[open]) { overflow: hidden; }
 /* Page rhythm, cards and hero content. */
-.veriyo-page-motorist-home .container, .veriyo-page-workshop-home .container { max-width: 1160px !important; padding-top: 32px !important; }
+.veriyo-page-motorist-home .container, .veriyo-page-workshop-home .container { max-width: 1160px !important; padding-top: 24px !important; }
 #motoristLoggedOut .hero, .wh-landing-hero {
     max-width: none; border: 1px solid var(--border-color); border-radius: 22px;
     background: linear-gradient(120deg, var(--surface-color) 65%, var(--ui-tint));
-    padding: clamp(24px, 4.5vw, 58px); margin: 0 0 28px; box-shadow: var(--ui-shadow);
+    padding: clamp(20px, 3vw, 36px); margin: 0 0 22px; box-shadow: var(--ui-shadow);
 }
-#motoristLoggedOut .hero h1, .wh-landing-hero h1 { font-size: clamp(30px, 3.8vw, 48px); letter-spacing: -1.6px; line-height: 1.14; max-width: 780px; margin-bottom: 22px; }
-#motoristLoggedOut .hero p { font-size: 17px; line-height: 1.6; max-width: 670px; margin-bottom: 18px; }
-#motoristLoggedOut .hero .hero-supporting-text { margin-top: 0; font-size: 15px; }
+#motoristLoggedOut .hero h1, .wh-landing-hero h1 { font-size: clamp(25px, 3vw, 36px); letter-spacing: -1px; line-height: 1.14; max-width: 780px; margin-bottom: 16px; }
+#motoristLoggedOut .hero p { font-size: 15px; line-height: 1.6; max-width: 670px; margin-bottom: 14px; }
+#motoristLoggedOut .hero .hero-supporting-text { margin-top: 0; font-size: 14px; }
 #motoristLoggedOut .hero .cta-microcopy { font-size: 12px; margin: 16px 0 0; }
 #motoristLoggedOut .cta-group { gap: 12px; }
 .wh-landing-hero h1 { margin-left: auto; margin-right: auto; }
@@ -99,40 +99,40 @@ html:has(.veriyo-side-menu[open]) { overflow: hidden; }
 .motorist-context-text { margin: 0 0 28px; max-width: 800px; }
 .feature-grid { margin: 16px 0 32px; }
 .feature-card, .wh-landing-feature { box-shadow: var(--ui-shadow); border-radius: 16px; }
-.feature-card { padding: 24px; }
-.feature-icon-circle, .wh-feature-icon { width: 48px; height: 48px; border-radius: 12px; background: var(--ui-tint); }
-.feature-icon-circle svg, .wh-feature-icon svg { width: 28px; height: 28px; }
+.feature-card { padding: 18px; }
+.feature-icon-circle, .wh-feature-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--ui-tint); }
+.feature-icon-circle svg, .wh-feature-icon svg { width: 24px; height: 24px; }
 .wh-landing-features { padding: 0; max-width: none; }
 .value-banner { background: var(--surface-color); border-radius: 16px; margin-bottom: 28px; }
 .search-panel { background: var(--surface-color); border-radius: 18px; box-shadow: var(--ui-shadow); }
 .image-placeholder { background: var(--ui-tint); }
 .image-placeholder::before { background: linear-gradient(90deg, var(--hero-fade), transparent); }
 /* Welcome puts the two routes immediately after the proposition. */
-.welcome-page { max-width: 1060px; padding: 48px 24px 20px; min-height: auto; gap: 0; }
-.welcome-page > .welcome-section:first-of-type { padding: 32px 0 8px; }
-.welcome-headline { font-size: clamp(34px, 4.6vw, 54px); max-width: 860px; letter-spacing: -1.8px; line-height: 1.1; margin-bottom: 24px; }
-.welcome-tagline { max-width: 700px; font-size: 17px; line-height: 1.7; }
-.welcome-section { margin-bottom: 36px; }
-.welcome-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-.welcome-card { min-width: 0; padding: 28px; border-radius: 18px; box-shadow: var(--ui-shadow); }
-.welcome-card h2 { font-size: 22px; letter-spacing: -.5px; }
+.welcome-page { max-width: 1060px; padding: 28px 24px 16px; min-height: auto; gap: 0; }
+.welcome-page > .welcome-section:first-of-type { padding: 12px 0 4px; }
+.welcome-headline { font-size: clamp(28px, 3.4vw, 40px); max-width: 860px; letter-spacing: -1px; line-height: 1.15; margin-bottom: 18px; }
+.welcome-tagline { max-width: 700px; font-size: 15px; line-height: 1.7; }
+.welcome-section { margin-bottom: 26px; }
+.welcome-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.welcome-card { min-width: 0; padding: 20px; border-radius: 18px; box-shadow: var(--ui-shadow); }
+.welcome-card h2 { font-size: 19px; letter-spacing: -.5px; }
 .welcome-card p { line-height: 1.65; font-size: 14px; }
 .welcome-card-icon { font-size: 28px; margin-bottom: 10px; }
 .welcome-card-motorist .welcome-card-btn { background: #e0b34c; color: #19212b; }
 .welcome-card-manager .welcome-card-btn { background: var(--secondary-accent); color: var(--bg-color); }
-.welcome-card .welcome-card-btn { border-radius: 10px; padding: 13px 18px; min-height: 46px; }
+.welcome-card .welcome-card-btn { border-radius: 10px; padding: 10px 14px; min-height: 40px; font-size: 14px; }
 .welcome-body-text { max-width: 820px; }
 .welcome-steps { max-width: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.welcome-steps li { border: 1px solid var(--border-color); border-radius: 14px; padding: 22px 18px; background: var(--surface-color); flex-direction: column; }
+.welcome-steps li { border: 1px solid var(--border-color); border-radius: 14px; padding: 18px 16px; background: var(--surface-color); flex-direction: column; }
 .welcome-benefits { gap: 16px; }
 .welcome-benefit { background: var(--surface-color); border-radius: 12px; }
 /* Messages retain the existing IDs, authentication and realtime behavior. */
-.chat-page-container { max-width: 1080px; padding-top: 36px; }
-.chat-workshop-title { font-size: 28px; letter-spacing: -.7px; }
-.chat-header { margin-bottom: 22px; }
-.chat-thread { border-radius: 16px; min-height: 280px; max-height: min(480px, 52dvh); padding: 22px; background: var(--ui-tint); }
+.chat-page-container { max-width: 1080px; padding-top: 24px; }
+.chat-workshop-title { font-size: 24px; letter-spacing: -.7px; }
+.chat-header { margin-bottom: 16px; }
+.chat-thread { border-radius: 16px; min-height: 280px; max-height: min(480px, 52dvh); padding: 16px; background: var(--ui-tint); }
 .chat-bubble { max-width: 80%; }
-.chat-bubble-text { border-radius: 15px; padding: 12px 16px; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+.chat-bubble-text { border-radius: 15px; padding: 10px 14px; font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
 .chat-bubble-time { font-size: 11px; color: var(--text-secondary); }
 .chat-bubble--left .chat-bubble-text { background: var(--surface-color); border: 1px solid var(--border-color); color: var(--text-primary); }
 .chat-input-row { padding: 12px; border: 1px solid var(--border-color); border-radius: 14px; background: var(--surface-color); gap: 10px; }
@@ -140,49 +140,49 @@ html:has(.veriyo-side-menu[open]) { overflow: hidden; }
 .chat-send-btn { width: auto; min-width: 70px; }
 .chat-manager-layout { grid-template-columns: minmax(240px, .85fr) minmax(0, 1.7fr); align-items: start; }
 .chat-conv-list { border-radius: 16px; overflow: hidden; }
-.chat-conv-item { padding: 18px; }
+.chat-conv-item { padding: 14px; }
 .chat-active-thread { border-radius: 16px; overflow: hidden; min-width: 0; }
 #chatAuthRequired, #chatMotoristEmpty { background: var(--surface-color); border: 1px solid var(--border-color); border-radius: 22px; box-shadow: var(--ui-shadow); }
-#chatAuthRequired h1 { font-size: clamp(24px, 3vw, 34px); line-height: 1.2; letter-spacing: -.8px; }
-.chat-welcome-icon { display: grid; place-items: center; width: 68px; height: 68px; border-radius: 18px; color: var(--primary-accent); background: var(--ui-tint); margin: 0 auto 24px; }
+#chatAuthRequired h1 { font-size: clamp(22px, 2.5vw, 28px); line-height: 1.2; letter-spacing: -.8px; }
+.chat-welcome-icon { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 18px; color: var(--primary-accent); background: var(--ui-tint); margin: 0 auto 18px; }
 /* Remove fixed dark gradients in light mode, including sign-in and placeholders. */
 [data-theme="light"] .login-view, [data-theme="light"] .auth-page { background: radial-gradient(ellipse at top, #fff, var(--bg-color) 75%); }
 [data-theme="light"] .profile-hero-overlay { background: linear-gradient(0deg, #fff, transparent); }
 @media (max-width: 768px) {
-    .veriyo-shell { padding-top: 68px; padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
-    .veriyo-shell .navbar--top { height: 68px; padding: 0 12px; gap: 9px; }
-    .veriyo-shell .nav-logo .veriyo-brand-mark { width: 38px; height: 31px; border-radius: 6px; }
-    .veriyo-wordmark { font-size: 23px; }
-    .veriyo-menu-toggle, .veriyo-theme-toggle { width: 36px; height: 38px; }
+    .veriyo-shell { padding-top: 52px; padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+    .veriyo-shell .navbar--top { height: 52px; padding: 0 10px; gap: 7px; }
+    .veriyo-shell .nav-logo .veriyo-brand-mark { width: 32px; height: 25px; border-radius: 6px; }
+    .veriyo-wordmark { font-size: 20px; }
+    .veriyo-menu-toggle, .veriyo-theme-toggle { width: 34px; height: 36px; }
     .veriyo-shell .navbar--top > .nav-auth-item { gap: 8px; }
-    .veriyo-shell .nav-signin-link { padding: 8px 10px; font-size: 12px; }
+    .veriyo-shell .nav-signin-link { padding: 6px 9px; font-size: 12px; }
     .veriyo-shell .bottom-nav-links { gap: 0; padding-left: 8px; padding-right: 8px; justify-content: space-around; }
     .veriyo-shell .bottom-nav-item { width: auto; flex: 1; max-width: 90px; padding: 6px 2px; }
     .veriyo-shell .bottom-nav-label { font-size: 10px; }
-    .veriyo-page-motorist-home .container, .veriyo-page-workshop-home .container { padding: 20px 16px !important; }
-    #motoristLoggedOut .hero { padding: 28px 22px; }
+    .veriyo-page-motorist-home .container, .veriyo-page-workshop-home .container { padding: 16px 14px !important; }
+    #motoristLoggedOut .hero { padding: 20px 18px; }
     #motoristLoggedOut .hero h1, .wh-landing-hero h1 { letter-spacing: -1px; }
     #motoristLoggedOut .hero p { font-size: 15px; }
     #motoristLoggedOut .cta-group .btn { white-space: normal; }
-    .wh-landing-hero { padding: 30px 22px; }
+    .wh-landing-hero { padding: 22px 18px; }
     .wh-landing-cta .btn { min-width: 0; }
     .wh-landing-features { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .wh-landing-feature { padding: 20px 16px; }
-    .welcome-page { padding: 24px 18px 12px; }
+    .wh-landing-feature { padding: 16px 14px; }
+    .welcome-page { padding: 18px 16px 12px; }
     .welcome-page > .welcome-section:first-of-type { padding-top: 12px; }
-    .welcome-headline { font-size: 36px; letter-spacing: -1.2px; }
+    .welcome-headline { font-size: 28px; letter-spacing: -.7px; }
     .welcome-tagline { font-size: 15px; }
     .welcome-cards { grid-template-columns: 1fr; gap: 16px; }
-    .welcome-card { padding: 24px; }
-    .welcome-card h2 { font-size: 21px; }
+    .welcome-card { padding: 18px; }
+    .welcome-card h2 { font-size: 19px; }
     .welcome-card p { font-size: 14px; }
     .welcome-steps { grid-template-columns: 1fr; gap: 12px; }
     .welcome-steps li { flex-direction: row; }
-    .chat-page-container { padding: 24px 16px; }
+    .chat-page-container { padding: 18px 14px; }
     .chat-manager-layout { grid-template-columns: 1fr; }
     .chat-bubble { max-width: 90%; }
     .chat-thread { padding: 14px; max-height: 46dvh; min-height: 200px; }
-    .value-banner { padding: 24px; }
+    .value-banner { padding: 18px; }
     .veriyo-shell input, .veriyo-shell select, .veriyo-shell textarea { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -212,4 +212,23 @@ button.nav-avatar { border: 0; font: inherit; font-weight: 700; cursor: pointer;
     .counter-container > label { flex: 1 1 100%; }
     .radio-checkbox-group { row-gap: 14px; }
     .chat-manager-layout:has(.chat-active-thread[style*="flex"]) > .chat-conv-list { display: none; }
+}
+
+/* Compact shared components with legible inputs and usable controls. */
+.veriyo-shell .btn { font-size: 14px; padding: 10px 16px; min-height: 40px; }
+.veriyo-shell .navbar--top .nav-avatar { width: 30px; height: 30px; font-size: 13px; }
+.veriyo-shell .navbar--top .nav-bell { min-height: 36px; }
+.veriyo-shell .feature-card h3, .veriyo-shell .wh-landing-feature h3 { font-size: 16px; }
+.veriyo-shell .feature-card p, .veriyo-shell .wh-landing-feature p { font-size: 13px; }
+.veriyo-shell .feature-grid { gap: 16px; margin-bottom: 24px; }
+.veriyo-shell .value-banner { padding: 20px 24px; }
+.veriyo-shell .form-container { padding: 28px; }
+.veriyo-shell .welcome-card-icon { margin-bottom: 4px; }
+.veriyo-shell .welcome-card-icon svg { width: 24px; height: 24px; }
+.veriyo-shell .chat-welcome-icon svg { width: 26px; height: 26px; }
+.veriyo-shell #chatAuthRequired { padding: 32px 20px !important; }
+@media (max-width: 768px) {
+    .veriyo-shell .form-container { padding: 20px; }
+    .veriyo-shell .value-banner { padding: 18px; }
+    .veriyo-shell .bottom-nav-item { padding-top: 4px; padding-bottom: 4px; }
 }
