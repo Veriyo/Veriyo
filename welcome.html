@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="logo.png" type="image/png">
     <title>Veriyo — South Africa's Repair Price Transparency Platform</title>
+    <script src="theme.js"></script>
     <link rel="stylesheet" href="styles.css">
     <style>
         .welcome-page {
@@ -247,33 +248,51 @@
             .welcome-footer-note { font-size: 0.7rem; }
         }
     </style>
+    <link rel="stylesheet" href="veriyo-ui.css">
 </head>
 <body>
 <nav class="navbar navbar--top">
-        <a href="welcome.html" class="nav-logo">
-            <img src="logo.png" alt="Veriyo">
+        <a href="welcome.html" class="nav-logo" aria-label="Veriyo home">
+            <img src="logo.png" alt="" class="veriyo-brand-mark"><span class="veriyo-wordmark" aria-hidden="true">eriyo</span>
         </a>
         <div class="nav-auth-item">
             <a href="auth.html" class="nav-signin-link">Sign In</a>
         </div>
     </nav>
 
-    <div id="welcomeLoading" style="min-height:calc(100vh - 60px); display:flex; align-items:center; justify-content:center; color:var(--text-secondary);">
+    <div id="welcomeLoading" style="min-height:calc(100vh - 60px); display:none; align-items:center; justify-content:center; color:var(--text-secondary);">
         Loading…
     </div>
-    <main class="welcome-page" id="welcomeContent" style="display:none;">
-        <div class="welcome-brand">
-            <img src="logo.png" alt="Veriyo">
-            <h1>Veriyo</h1>
-        </div>
+    <main class="welcome-page" id="welcomeContent">
+
 
         <section class="welcome-section">
             <p class="welcome-eyebrow">South Africa's Repair Price Transparency Platform</p>
-            <h2 class="welcome-headline">Know what a repair should really cost — before you pay for it.</h2>
+            <h1 class="welcome-headline">Know what a repair should really cost — before you pay for it.</h1>
             <p class="welcome-tagline">
                 Car repair pricing in South Africa is rarely upfront. Veriyo makes it visible —
                 real prices from real drivers, so you know what's fair before you agree to anything.
             </p>
+        </section>
+
+        <section class="welcome-section">
+            <p class="welcome-section-label">Get Started</p>
+            <div class="welcome-cards">
+                <div class="welcome-card welcome-card-motorist">
+                    <div class="welcome-card-icon"><svg width="30" height="30" aria-hidden="true"><use href="icons.svg#icon-car"></use></svg></div>
+                    <h2>I'm a Motorist</h2>
+                    <p>Compare real repair prices paid by other South African drivers,
+                    and report your own experience to help the next person avoid overpaying.</p>
+                    <a href="motorist-home.html" class="welcome-card-btn">Continue as Motorist</a>
+                </div>
+                <div class="welcome-card welcome-card-manager">
+                    <div class="welcome-card-icon"><svg width="30" height="30" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg></div>
+                    <h2>I'm a Workshop Manager</h2>
+                    <p>List your workshop, publish honest pricing, and earn the trust of
+                    drivers who are comparing their options before they choose you.</p>
+                    <a href="workshop-home.html" class="welcome-card-btn">Continue as Workshop</a>
+                </div>
+            </div>
         </section>
 
         <section class="welcome-section">
@@ -318,25 +337,7 @@
             </ol>
         </section>
 
-        <section class="welcome-section">
-            <p class="welcome-section-label">Get Started</p>
-            <div class="welcome-cards">
-                <div class="welcome-card welcome-card-motorist">
-                    <div class="welcome-card-icon">&#128663;</div>
-                    <h2>I'm a Motorist</h2>
-                    <p>Compare real repair prices paid by other South African drivers,
-                    and report your own experience to help the next person avoid overpaying.</p>
-                    <a href="motorist-home.html" class="welcome-card-btn">Continue as Motorist</a>
-                </div>
-                <div class="welcome-card welcome-card-manager">
-                    <div class="welcome-card-icon">&#128295;</div>
-                    <h2>I'm a Workshop Manager</h2>
-                    <p>List your workshop, publish honest pricing, and earn the trust of
-                    drivers who are comparing their options before they choose you.</p>
-                    <a href="workshop-home.html" class="welcome-card-btn">Continue as Workshop</a>
-                </div>
-            </div>
-        </section>
+
 
         <section class="welcome-section">
             <div class="welcome-benefits">
@@ -394,7 +395,10 @@
             }
 
             window.location.replace(profile.account_type === 'workshop' ? 'workshop-home.html' : 'motorist-home.html');
-        })();
+        })().catch(function () {
+            document.getElementById('welcomeLoading').style.display = 'none';
+            document.getElementById('welcomeContent').style.display = 'flex';
+        });
     </script>
     <script src="main.js"></script>
 </body>

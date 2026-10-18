@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat — Veriyo</title>
+    <script src="theme.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="veriyo-ui.css">
 </head>
 <body>
     <nav class="navbar navbar--top">
-        <a href="welcome.html" class="nav-logo">
-            <img src="logo.png" alt="Veriyo">
+        <a href="welcome.html" class="nav-logo" aria-label="Veriyo home">
+            <img src="logo.png" alt="" class="veriyo-brand-mark"><span class="veriyo-wordmark" aria-hidden="true">eriyo</span>
         </a>
         <ul class="nav-links" id="chatNavLinks"></ul>
     </nav>
@@ -21,6 +23,7 @@
         <div id="chatMotoristListView" style="display:none;">
             <div class="chat-header">
                 <h1 class="chat-workshop-title">Messages</h1>
+                <p class="chat-subtitle">Your conversations with workshops, all in one place.</p>
             </div>
             <div id="chatMotoristConvList" class="chat-conv-list"></div>
             <div id="chatMotoristEmpty" class="empty-state" style="display:none;">
@@ -34,15 +37,15 @@
         <!-- Motorist view: single thread -->
         <div id="chatMotivistView" style="display:none;">
             <div class="chat-header">
-                <a href="javascript:history.back()" class="chat-back-link">&#8592; Back</a>
+                <a href="chat.html" class="chat-back-link">&#8592; Back</a>
                 <h1 id="chatWorkshopName" class="chat-workshop-title">Loading…</h1>
             </div>
             <p style="font-size:0.78rem; color:var(--text-secondary); text-align:center; padding:0.4rem 0;">Messages in this conversation are automatically deleted after 7 days.</p>
             <div id="chatThread" class="chat-thread" aria-live="polite"></div>
-            <div id="chatSendError" class="chat-send-error" style="display:none;"></div>
+            <div id="chatSendError" role="alert" class="chat-send-error" style="display:none;"></div>
             <div class="chat-input-row">
                 <input type="text" id="chatInput" class="form-control chat-input"
-                    placeholder="Type a message…" autocomplete="off" maxlength="1000">
+                    aria-label="Message to workshop" placeholder="Type a message…" autocomplete="off" maxlength="1000">
                 <button id="chatSendBtn" class="btn btn-primary chat-send-btn">Send</button>
             </div>
         </div>
@@ -67,10 +70,10 @@
                     </div>
                     <p style="font-size:0.78rem; color:var(--text-secondary); text-align:center; padding:0.4rem 0;">Messages in this conversation are automatically deleted after 7 days.</p>
 <div id="chatManagerThread" class="chat-thread" aria-live="polite"></div>
-                    <div id="chatManagerSendError" class="chat-send-error" style="display:none;"></div>
+                    <div id="chatManagerSendError" role="alert" class="chat-send-error" style="display:none;"></div>
                     <div class="chat-input-row">
                         <input type="text" id="chatManagerInput" class="form-control chat-input"
-                            placeholder="Reply…" autocomplete="off" maxlength="1000">
+                            aria-label="Reply to motorist" placeholder="Reply…" autocomplete="off" maxlength="1000">
                         <button id="chatManagerSendBtn" class="btn btn-primary chat-send-btn">Send</button>
                     </div>
                 </div>
@@ -82,11 +85,13 @@
 
         <!-- Auth required / loading state -->
         <div id="chatAuthRequired" style="display:none; text-align:center; padding:4rem 1rem;">
-            <p style="color:var(--text-secondary); margin-bottom:1.5rem;">You need to be signed in to use chat.</p>
+            <span class="chat-welcome-icon" aria-hidden="true"><svg width="32" height="32"><use href="icons.svg#icon-chat"></use></svg></span>
+            <h1>Keep your repair conversations together</h1>
+            <p class="chat-subtitle" style="margin:0.75rem auto 1.5rem;max-width:400px;">Sign in to message workshops about services, pricing and your next repair.</p>
             <a href="auth.html" id="chatSignInLink" class="btn btn-primary">Sign In</a>
         </div>
 
-        <div id="chatLoading" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
+        <div id="chatLoading" role="status" style="text-align:center; padding:4rem 1rem; color:var(--text-secondary);">
             Loading chat…
         </div>
 
