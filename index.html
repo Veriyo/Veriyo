@@ -2,11 +2,404 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-<script>
-        window.location.replace('welcome.html' + window.location.search);
-    </script>
-    <noscript><meta http-equiv="refresh" content="0;url=welcome.html"></noscript>
-    <title>Veriyo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="logo.png" type="image/png">
+    <title>Veriyo — South Africa's Repair Price Transparency Platform</title>
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .welcome-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 3rem 1.5rem 4rem;
+        }
+        .welcome-section {
+            margin-bottom: 3rem;
+        }
+        .welcome-section-label {
+            color: var(--secondary-accent);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.9rem;
+        }
+        .welcome-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+        }
+        .welcome-brand img {
+            height: 40px;
+            width: auto;
+        }
+        .welcome-brand h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-accent);
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+        .welcome-eyebrow {
+            color: var(--secondary-accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.85rem;
+        }
+        .welcome-headline {
+            font-size: clamp(1.9rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.25;
+            max-width: 620px;
+            margin-bottom: 1.1rem;
+        }
+        .welcome-tagline {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.65;
+            max-width: 560px;
+        }
+        .welcome-body-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-bottom: 1rem;
+        }
+        .welcome-body-text:last-child {
+            margin-bottom: 0;
+        }
+        .welcome-steps {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.4rem;
+            max-width: 600px;
+        }
+        .welcome-steps li {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .welcome-step-num {
+            flex-shrink: 0;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            color: var(--primary-accent);
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .welcome-steps h3 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+        .welcome-steps p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+        .welcome-cards {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            max-width: 700px;
+        }
+        .welcome-card {
+            flex: 1;
+            min-width: 260px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: var(--transition);
+        }
+        .welcome-card:hover {
+            border-color: var(--primary-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+        }
+        .welcome-card-icon {
+            font-size: 2rem;
+            line-height: 1;
+            color: var(--primary-accent);
+        }
+        .welcome-card h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .welcome-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-card-motorist .welcome-card-btn {
+            background-color: var(--primary-accent);
+            color: #000000;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            display: block;
+            transition: var(--transition);
+        }
+        .welcome-card-motorist .welcome-card-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+        .welcome-card-manager {
+            background-color: #0f1f2e;
+            border-color: #1a3347;
+        }
+        .welcome-card-manager:hover {
+            border-color: var(--secondary-accent);
+        }
+        .welcome-card-manager .welcome-card-icon {
+            color: var(--secondary-accent);
+        }
+        .welcome-card-manager .welcome-card-btn {
+            background-color: var(--secondary-accent);
+            color: #000000;
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            display: block;
+            transition: var(--transition);
+        }
+        .welcome-card-manager .welcome-card-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-2px);
+        }
+        .welcome-benefits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            max-width: 700px;
+        }
+        .welcome-benefit {
+            flex: 1;
+            min-width: 180px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+        }
+        .welcome-benefit h3 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.35rem;
+        }
+        .welcome-benefit p {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+        .welcome-footer-note {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .welcome-footer-note a {
+            color: var(--secondary-accent);
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .welcome-page {
+                padding: 1.5rem 1.25rem 3rem;
+            }
+            .welcome-section { margin-bottom: 2.25rem; }
+            .welcome-headline { font-size: 1.7rem; }
+            .welcome-tagline { font-size: 0.88rem; }
+            .welcome-body-text { font-size: 0.85rem; }
+            .welcome-cards { gap: 0.75rem; }
+            .welcome-card { padding: 1rem 1.25rem; gap: 0.4rem; min-width: 100%; }
+            .welcome-card-icon { font-size: 1.5rem; }
+            .welcome-card h2 { font-size: 1.05rem; }
+            .welcome-card p { font-size: 0.78rem; line-height: 1.35; margin-bottom: 0.2rem; }
+            .welcome-card-motorist .welcome-card-btn,
+            .welcome-card-manager .welcome-card-btn { padding: 0.5rem 1.2rem; font-size: 0.82rem; }
+            .welcome-benefits { flex-direction: column; }
+            .welcome-benefit { padding: 0.85rem 1rem; min-width: 100%; }
+            .welcome-footer-note { font-size: 0.7rem; }
+        }
+    </style>
+    <link rel="stylesheet" href="veriyo-ui.css">
 </head>
-<body></body>
+<body>
+<nav class="navbar navbar--top">
+        <a href="welcome.html" class="nav-logo" aria-label="Veriyo home">
+            <img src="logo.png" alt="" class="veriyo-brand-mark"><span class="veriyo-wordmark" aria-hidden="true">eriyo</span>
+        </a>
+        <div class="nav-auth-item">
+            <a href="auth.html" class="nav-signin-link">Sign In</a>
+        </div>
+    </nav>
+
+    <div id="welcomeLoading" style="min-height:calc(100vh - 60px); display:none; align-items:center; justify-content:center; color:var(--text-secondary);">
+        Loading…
+    </div>
+    <main class="welcome-page" id="welcomeContent">
+
+
+        <section class="welcome-section">
+            <p class="welcome-eyebrow">South Africa's Repair Price Transparency Platform</p>
+            <h1 class="welcome-headline">Know what a repair should really cost — before you pay for it.</h1>
+            <p class="welcome-tagline">
+                Car repair pricing in South Africa is rarely upfront. Veriyo makes it visible —
+                real prices from real drivers, so you know what's fair before you agree to anything.
+            </p>
+        </section>
+
+        <section class="welcome-section">
+            <p class="welcome-section-label">Get Started</p>
+            <div class="welcome-cards">
+                <div class="welcome-card welcome-card-motorist">
+                    <div class="welcome-card-icon"><svg width="30" height="30" aria-hidden="true"><use href="icons.svg#icon-car"></use></svg></div>
+                    <h2>I'm a Motorist</h2>
+                    <p>Compare real repair prices paid by other South African drivers,
+                    and report your own experience to help the next person avoid overpaying.</p>
+                    <a href="motorist-home.html" class="welcome-card-btn">Continue as Motorist</a>
+                </div>
+                <div class="welcome-card welcome-card-manager">
+                    <div class="welcome-card-icon"><svg width="30" height="30" aria-hidden="true"><use href="icons.svg#icon-workshops"></use></svg></div>
+                    <h2>I'm a Workshop Manager</h2>
+                    <p>List your workshop, publish honest pricing, and earn the trust of
+                    drivers who are comparing their options before they choose you.</p>
+                    <a href="workshop-home.html" class="welcome-card-btn">Continue as Workshop</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="welcome-section">
+            <p class="welcome-section-label">Why Veriyo Exists</p>
+            <p class="welcome-body-text">
+                Most drivers only find out what a repair "should" cost after they've already paid for it.
+                Workshops set prices with little visibility into what others charge, and have no easy way
+                to prove they're being fair to a new customer.
+            </p>
+            <p class="welcome-body-text">
+                Veriyo exists to change that, by putting real prices — reported by real people — out in the
+                open. Every driver who shares what they paid makes the picture clearer for the next person.
+                Every workshop that publishes its pricing gives customers a reason to trust it before they
+                ever walk through the door.
+            </p>
+        </section>
+
+        <section class="welcome-section">
+            <p class="welcome-section-label">How It Works</p>
+            <ol class="welcome-steps">
+                <li>
+                    <span class="welcome-step-num">1</span>
+                    <div>
+                        <h3>Report or Browse</h3>
+                        <p>Report what you actually paid for a repair, or browse prices other drivers have already shared.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="welcome-step-num">2</span>
+                    <div>
+                        <h3>Compare Workshops</h3>
+                        <p>See how pricing differs between workshops before you decide where to take your vehicle.</p>
+                    </div>
+                </li>
+                <li>
+                    <span class="welcome-step-num">3</span>
+                    <div>
+                        <h3>Choose With Confidence</h3>
+                        <p>Book a repair knowing the going rate, not just the one quote in front of you.</p>
+                    </div>
+                </li>
+            </ol>
+        </section>
+
+
+
+        <section class="welcome-section">
+            <div class="welcome-benefits">
+                <div class="welcome-benefit">
+                    <h3>Real Prices</h3>
+                    <p>Actual amounts drivers paid — not estimates.</p>
+                </div>
+                <div class="welcome-benefit">
+                    <h3>No Guessing</h3>
+                    <p>Compare workshops before you commit to one.</p>
+                </div>
+                <div class="welcome-benefit">
+                    <h3>Open Pricing</h3>
+                    <p>Workshops publish their rates for everyone to see.</p>
+                </div>
+            </div>
+        </section>
+
+        <p class="welcome-footer-note">
+            &copy; Veriyo | Built for South African drivers &nbsp;&middot;&nbsp;
+            <a href="privacy.html">Privacy Policy</a>
+        </p>
+    </main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="referral.js"></script>
+    <script>
+        // Spec 8.5: the Welcome Page no longer appears for a signed-in person —
+        // they're taken straight to their own home area instead.
+        (async function () {
+            const _supabaseWelcome = supabase.createClient(
+                'https://xxigkehuqtwaihyxaahk.supabase.co',
+                'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4aWdrZWh1cXR3YWloeXhhYWhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3ODQzNjQsImV4cCI6MjA5NTM2MDM2NH0.HNLzFWXGZw6jAxl9IHvJ2IOWPSJiC3iKoC1UXmsUQPc'
+            );
+            const { data: { session } } = await _supabaseWelcome.auth.getSession();
+
+            if (!session) {
+                document.getElementById('welcomeLoading').style.display = 'none';
+                document.getElementById('welcomeContent').style.display = 'flex';
+                return;
+            }
+
+            const { data: profile, error } = await _supabaseWelcome
+                .from('account_profiles')
+                .select('account_type')
+                .eq('user_id', session.user.id)
+                .single();
+
+            if (error || !profile) {
+                // Fail open — if we can't confirm the account type, don't strand
+                // a signed-in person on a blank loading screen.
+                document.getElementById('welcomeLoading').style.display = 'none';
+                document.getElementById('welcomeContent').style.display = 'flex';
+                return;
+            }
+
+            window.location.replace(profile.account_type === 'workshop' ? 'workshop-home.html' : 'motorist-home.html');
+        })().catch(function () {
+            document.getElementById('welcomeLoading').style.display = 'none';
+            document.getElementById('welcomeContent').style.display = 'flex';
+        });
+    </script>
+    <script src="main.js"></script>
+</body>
 </html>
