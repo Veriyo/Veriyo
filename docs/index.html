@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocChase | Automated Client Document Collection</title>
+    <style>
+        :root { --brand: #2563eb; --dark: #0f172a; --light: #f8fafc; --text: #334155; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; }
+        body { background: var(--light); color: var(--text); line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Hero Section */
+        header { background: white; padding: 100px 20px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+        h1 { font-size: 3rem; margin-bottom: 20px; font-weight: 800; color: var(--dark); line-height: 1.2; }
+        .highlight { color: var(--brand); }
+        h2 { font-size: 1.25rem; margin-bottom: 40px; color: #64748b; font-weight: 400; max-width: 700px; margin-left: auto; margin-right: auto; }
+        
+        /* Buttons */
+        .btn { display: inline-block; background: var(--brand); color: white; padding: 16px 32px; font-size: 1.1rem; font-weight: 600; border-radius: 6px; border: none; cursor: pointer; text-decoration: none; transition: 0.2s; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+        .btn:hover { background: #1d4ed8; }
+        
+        /* Features */
+        .features { display: flex; gap: 30px; padding: 80px 0; flex-wrap: wrap; justify-content: center; }
+        .card { background: white; padding: 40px 30px; border-radius: 8px; flex: 1 1 300px; border: 1px solid #e2e8f0; }
+        .card h3 { color: var(--dark); margin-bottom: 15px; font-size: 1.3rem; }
+        
+        /* Pricing */
+        .pricing { text-align: center; padding: 80px 20px; background: var(--dark); color: white; }
+        .price-box { max-width: 400px; margin: 40px auto 0; padding: 40px; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+        .price { font-size: 3.5rem; font-weight: 800; color: white; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); align-items: center; justify-content: center; z-index: 50; }
+        .modal-content { background: white; padding: 40px; border-radius: 8px; max-width: 400px; width: 90%; text-align: center; position: relative; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 1.5rem; cursor: pointer; color: #94a3b8; }
+        input[type="email"] { width: 100%; padding: 14px; margin: 20px 0; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Stop begging clients for <span class="highlight">missing documents.</span></h1>
+            <h2>You lose 5 billable hours a week chasing bank statements and receipts. Our automated portal chases your clients for you so you can actually get work done.</h2>
+            <button class="btn trigger-modal">Start 14-Day Free Trial</button>
+        </div>
+    </header>
+
+    <section class="container features">
+        <div class="card">
+            <h3>Automated Reminders</h3>
+            <p>Send a checklist to a client. If they don't upload everything, our system automatically emails and texts them every 3 days until the list is complete.</p>
+        </div>
+        <div class="card">
+            <h3>Secure Magic Links</h3>
+            <p>No passwords for clients to forget. They receive a secure, expiring magic link that opens directly to their secure upload portal on their phone or desktop.</p>
+        </div>
+    </section>
+
+    <section class="pricing">
+        <div class="container">
+            <h2>Buy back your billable hours.</h2>
+            <div class="price-box">
+                <div class="price">$39<span style="font-size:1.5rem; color:#94a3b8">/mo</span></div>
+                <p style="margin-bottom: 25px; color:#cbd5e1;">Unlimited clients. Secure storage.</p>
+                <button class="btn trigger-modal" style="width: 100%">Start Free Trial</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fake Door Modal -->
+    <div class="modal" id="docModal">
+        <div class="modal-content">
+            <span class="close" id="closeDocModal">&times;</span>
+            <h3 style="color: var(--dark); margin-bottom: 10px;">Private Beta Access</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 20px; color: #475569;">Enter your email to reserve your spot in our upcoming beta cohort and lock in early pricing.</p>
+            <!-- Replace "YOUR_FORMSPREE_ID" with your actual Formspree endpoint when ready -->
+            <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+                <input type="email" name="email" placeholder="you@accountingfirm.com" required>
+                <button type="submit" class="btn" style="width: 100%;">Join Waitlist</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('docModal');
+        document.querySelectorAll('.trigger-modal').forEach(btn => btn.onclick = () => modal.style.display = 'flex');
+        document.getElementById('closeDocModal').onclick = () => modal.style.display = 'none';
+        window.onclick = e => { if(e.target === modal) modal.style.display = 'none'; }
+    </script>
+</body>
+</html>
