@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LeadRoute | Instant WhatsApp Lead Alerts</title>
+    <style>
+        :root { --brand: #25D366; --dark: #111827; --light: #f9fafb; --text: #374151; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, system-ui, sans-serif; }
+        body { background: var(--light); color: var(--text); line-height: 1.6; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Hero Section */
+        header { background: var(--dark); color: white; padding: 100px 20px; text-align: center; }
+        h1 { font-size: 3rem; margin-bottom: 20px; font-weight: 800; line-height: 1.2; }
+        .highlight { color: var(--brand); }
+        h2 { font-size: 1.3rem; margin-bottom: 40px; color: #9ca3af; font-weight: 400; max-width: 700px; margin-left: auto; margin-right: auto; }
+        
+        /* Buttons */
+        .btn { display: inline-block; background: var(--brand); color: white; padding: 16px 32px; font-size: 1.1rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .btn:hover { background: #1ebc5c; }
+        
+        /* Features */
+        .features { display: flex; gap: 30px; padding: 80px 0; flex-wrap: wrap; justify-content: center; }
+        .card { background: white; padding: 40px 30px; border-radius: 12px; flex: 1 1 300px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center; }
+        .card h3 { color: var(--dark); margin-bottom: 15px; font-size: 1.4rem; }
+        
+        /* Pricing */
+        .pricing { text-align: center; padding: 80px 20px; background: white; border-top: 1px solid #e5e7eb; }
+        .price-box { max-width: 400px; margin: 40px auto 0; padding: 40px; border-radius: 12px; border: 2px solid var(--brand); background: var(--light); }
+        .price { font-size: 3.5rem; font-weight: 800; color: var(--dark); }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 50; }
+        .modal-content { background: white; padding: 40px; border-radius: 12px; max-width: 400px; width: 90%; text-align: center; position: relative; }
+        .close { position: absolute; right: 20px; top: 15px; font-size: 1.5rem; cursor: pointer; color: #6b7280; }
+        input[type="email"] { width: 100%; padding: 14px; margin: 20px 0; border: 1px solid #d1d5db; border-radius: 8px; font-size: 1rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>Don't let another expensive web lead <span class="highlight">go cold.</span></h1>
+            <h2>If you don't call a web lead within 5 minutes, your conversion rate drops 80%. Instantly route Facebook and Website leads directly to your phone via WhatsApp.</h2>
+            <button class="btn trigger-modal">Start 14-Day Free Trial</button>
+        </div>
+    </header>
+
+    <section class="container features">
+        <div class="card">
+            <h3>Instant WhatsApp Pings</h3>
+            <p>The second a customer submits a quote form, you get a WhatsApp message with their name, service requested, and a 1-tap button to call them.</p>
+        </div>
+        <div class="card">
+            <h3>Plugs Into Everything</h3>
+            <p>Connects seamlessly with Facebook Lead Ads, WordPress forms, Webflow, and standard landing pages in under 2 minutes.</p>
+        </div>
+    </section>
+
+    <section class="pricing">
+        <div class="container">
+            <h2>Close one extra job, and it pays for itself for the decade.</h2>
+            <div class="price-box">
+                <div class="price">$29<span style="font-size:1.5rem; color:#6b7280">/mo</span></div>
+                <p style="margin-bottom: 25px; color:#6b7280;">Unlimited leads. Cancel anytime.</p>
+                <button class="btn trigger-modal" style="width: 100%">Claim Your Free Trial</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Fake Door Modal -->
+    <div class="modal" id="leadModal">
+        <div class="modal-content">
+            <span class="close" id="closeLeadModal">&times;</span>
+            <h3 style="color: var(--dark); margin-bottom: 10px;">Lock in Beta Access</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 20px;">We are onboarding 10 more beta testers this week. Enter your email to secure the $29/mo pricing before public launch.</p>
+            <!-- Replace "YOUR_FORMSPREE_ID" with your actual Formspree endpoint when ready -->
+            <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+                <input type="email" name="email" placeholder="owner@yourbusiness.com" required>
+                <button type="submit" class="btn" style="width: 100%;">Get Early Access</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('leadModal');
+        document.querySelectorAll('.trigger-modal').forEach(btn => btn.onclick = () => modal.style.display = 'flex');
+        document.getElementById('closeLeadModal').onclick = () => modal.style.display = 'none';
+        window.onclick = e => { if(e.target === modal) modal.style.display = 'none'; }
+    </script>
+</body>
+</html>
